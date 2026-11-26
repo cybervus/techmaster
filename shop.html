@@ -85,12 +85,45 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .wiz-ptop{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
 .wiz-pbar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
 .wiz-pfill{height:100%;background:linear-gradient(90deg,#f03e38,#d61c17);border-radius:6px;transition:width .22s ease}
-.wiz-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:var(--sh)}
-.wiz-card h2{margin:0 0 4px;font-size:18px;font-weight:700;line-height:1.3}
-.wiz-hint{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.4}
+.wiz-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:var(--sh);overflow:hidden}
+.wiz-card.in-next{animation:wizInNext .28s cubic-bezier(.22,.9,.32,1) both}
+.wiz-card.in-prev{animation:wizInPrev .28s cubic-bezier(.22,.9,.32,1) both}
+.wiz-head{display:flex;align-items:center;gap:13px;margin-bottom:14px}
+.wiz-ico{width:54px;height:54px;border-radius:15px;background:var(--soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none;position:relative;overflow:hidden}
+.wiz-ico svg{width:34px;height:34px;display:block}
+.wiz-htxt{flex:1;min-width:0}
+.wiz-card h2{margin:0 0 3px;font-size:17.5px;font-weight:700;line-height:1.25}
+.wiz-hint{color:var(--muted);font-size:13px;margin:0;line-height:1.4}
 .wiz-opts{display:flex;flex-direction:column;gap:8px}
-.wopt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--line);border-radius:13px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer;transition:all .15s}
+.wopt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--line);border-radius:13px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer;transition:transform .14s ease,border-color .15s,background .15s;animation:wizOptIn .28s cubic-bezier(.22,.9,.32,1) both;animation-delay:calc(var(--i,0) * 28ms)}
+.wopt:active{transform:scale(.985)}
 .wopt.on{background:var(--soft);border-color:var(--accent)}
+.wopt.picked{animation:wizPop .18s ease both}
+@keyframes wizInNext{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes wizInPrev{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes wizOptIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes wizPop{0%{transform:scale(1)}50%{transform:scale(.975)}100%{transform:scale(1)}}
+@keyframes wizFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* Micro-animations inside step SVG icons */
+@keyframes wPulse{0%,100%{opacity:.28;transform:scale(.92)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes wPan{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes wBlink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes wDash{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
+@keyframes wFocus{0%,100%{transform:scale(1)}50%{transform:scale(.88)}}
+@keyframes wSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes wFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.wa-pulse{transform-box:fill-box;transform-origin:center;animation:wPulse 2.2s ease-in-out infinite}
+.wa-pan{transform-box:fill-box;transform-origin:25% 55%;animation:wPan 2.8s ease-in-out infinite}
+.wa-blink{animation:wBlink 1.1s ease-in-out infinite}
+.wa-dash{stroke-dasharray:4 4;animation:wDash 1.2s linear infinite}
+.wa-focus{transform-box:fill-box;transform-origin:center;animation:wFocus 2.1s ease-in-out infinite}
+.wa-spin{transform-box:fill-box;transform-origin:center;animation:wSpin 5s linear infinite}
+.wa-float{animation:wFloat 2.4s ease-in-out infinite}
+.res-sum,.acc-box{animation:wizFadeUp .3s cubic-bezier(.22,.9,.32,1) both}
+.acc-box{animation-delay:60ms}
+@media (prefers-reduced-motion:reduce){
+  .wiz-card,.wopt,.res-sum,.acc-box,.wa-pulse,.wa-pan,.wa-blink,.wa-dash,.wa-focus,.wa-spin,.wa-float{animation:none!important;transition:none!important}
+}
 .wopt-l{flex:1;min-width:0}
 .wopt-t{font-size:14.5px;font-weight:600;line-height:1.3}
 .wopt-s{font-size:12.5px;color:var(--muted);margin-top:2px}
@@ -791,6 +824,7 @@ let orderDone = null;
 
 /* CCTV Wizard State */
 let wizStep = 0; // 0..6
+let wizDir = 'next'; // 'next' | 'prev'
 let wizAns = {
   obj: '', objOther: '',
   cams: '', camsCustom: '',
@@ -1269,6 +1303,25 @@ function renderHome(L) {
   $('#allCatBtn').onclick = () => { activeCat = 'all'; brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; mode = 'all'; render(); window.scrollTo(0, 0); };
 }
 
+function wizStepAnimSvg(step) {
+  switch (step) {
+    case 0: // Object + pulsing radar waves
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17L18 7l13 10"/><path d="M9 14.5V29h18V14.5"/><rect x="15" y="21" width="6" height="8" rx="1"/><path class="wa-pulse" d="M25.5 6.5a6.5 6.5 0 0 1 4.5 4.5" stroke-width="1.8"/><circle class="wa-blink" cx="27" cy="9" r="1.6" fill="currentColor" stroke="none"/></svg>';
+    case 1: // Scanning CCTV camera + live REC dot
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g class="wa-pan"><path d="M5 14l17-5 5 8-17 5z"/><path d="M23 17l4 1.2 1.2 3.8-4 1.2"/><circle class="wa-blink" cx="11" cy="15.5" r="1.6" fill="currentColor" stroke="none"/></g><path d="M10 22v7h8"/></svg>';
+    case 2: // IP / Analog signal flow
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="10" height="8" rx="2"/><rect x="23" y="12" width="10" height="8" rx="2"/><path class="wa-dash" d="M13 16h10" stroke-width="2.2"/><circle class="wa-blink" cx="28" cy="16" r="1.4" fill="currentColor" stroke="none"/><path class="wa-pulse" d="M8 9a5 5 0 0 1 0-3M28 24v4M24 28h8" stroke-width="1.7"/></svg>';
+    case 3: // Megapixel focus viewfinder
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g class="wa-focus"><path d="M6 12V7h5M25 7h5v5M30 24v5h-5M11 29H6v-5"/></g><circle cx="18" cy="18" r="5.5"/><circle class="wa-pulse" cx="18" cy="18" r="2.2" fill="currentColor" stroke="none"/></svg>';
+    case 4: // Spinning HDD storage archive
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="24" height="28" rx="3.5"/><g class="wa-spin"><circle cx="18" cy="16" r="6.5" stroke-dasharray="12 5 18 5"/><circle cx="18" cy="16" r="2"/></g><line x1="11" y1="27" x2="18" y2="27"/><circle class="wa-blink" cx="24" cy="27" r="1.5" fill="currentColor" stroke="none"/></svg>';
+    case 5: // Animated cable tracing
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="3"/><circle cx="29" cy="26" r="3"/><path class="wa-dash" d="M10 10h9a4 4 0 0 1 4 4v8a4 4 0 0 0 3 4" stroke-width="2.2"/></svg>';
+    default: // Shield & brand checkmark
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g class="wa-float"><path d="M18 4l11 4.5v9c0 7.2-4.7 12.2-11 14.5-6.3-2.3-11-7.3-11-14.5v-9L18 4z"/><path class="wa-pulse" d="M13.5 18l3 3 6.5-6.5" stroke-width="2.3"/></g></svg>';
+  }
+}
+
 function renderCctvWizard(L) {
   const totalSteps = 7;
   const pct = Math.round(((wizStep + 1) / totalSteps) * 100);
@@ -1311,11 +1364,16 @@ function renderCctvWizard(L) {
       <div class="wiz-ptop"><span>${esc(L.wizTitle)} · ${esc(L.wizStep(wizStep + 1, totalSteps))}</span><span>${pct}%</span></div>
       <div class="wiz-pbar"><div class="wiz-pfill" style="width:${pct}%"></div></div>
     </div>
-    <section class="wiz-card">
-      <h2>${esc(qTitle)}</h2>
-      <div class="wiz-hint">${esc(qHint)}</div>
+    <section class="wiz-card ${wizDir === 'prev' ? 'in-prev' : 'in-next'}">
+      <div class="wiz-head">
+        <div class="wiz-ico" aria-hidden="true">${wizStepAnimSvg(wizStep)}</div>
+        <div class="wiz-htxt">
+          <h2>${esc(qTitle)}</h2>
+          <div class="wiz-hint">${esc(qHint)}</div>
+        </div>
+      </div>
       <div class="wiz-opts${cols2 ? ' cols2' : ''}">
-        ${opts.map(o => `<button type="button" class="wopt${curVal === o.v ? ' on' : ''}" data-wv="${esc(o.v)}">
+        ${opts.map((o, idx) => `<button type="button" class="wopt${curVal === o.v ? ' on' : ''}" style="--i:${idx}" data-wv="${esc(o.v)}">
           <div class="wopt-l">
             <div class="wopt-t">${esc(o.t)}</div>
             ${o.s ? `<div class="wopt-s">${esc(o.s)}</div>` : ''}
@@ -1351,6 +1409,7 @@ function renderCctvWizard(L) {
     }
     errEl.textContent = '';
     if (wizStep < totalSteps - 1) {
+      wizDir = 'next';
       wizStep++;
       render();
       window.scrollTo(0, 0);
@@ -1368,7 +1427,9 @@ function renderCctvWizard(L) {
       render();
       if ($('#wizOtherInp')) $('#wizOtherInp').focus();
     } else {
-      advance();
+      $('#app').querySelectorAll('[data-wv]').forEach(x => x.classList.remove('on'));
+      b.classList.add('on', 'picked');
+      setTimeout(advance, 140);
     }
   });
 
@@ -1377,7 +1438,7 @@ function renderCctvWizard(L) {
     inp.oninput = () => { wizAns[otherField] = inp.value; $('#wizErr').textContent = ''; };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
   }
-  if ($('#wizPrev')) $('#wizPrev').onclick = () => { wizStep--; render(); window.scrollTo(0, 0); };
+  if ($('#wizPrev')) $('#wizPrev').onclick = () => { wizDir = 'prev'; wizStep--; render(); window.scrollTo(0, 0); };
   $('#wizNext').onclick = advance;
 }
 
