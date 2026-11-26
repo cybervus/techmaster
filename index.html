@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Задачи и клиенты</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Задачи">
+<meta name="theme-color" content="#1e3a5f">
+<style>
+:root{--bg:#f2f4f7;--card:#fff;--text:#1a2330;--muted:#5a6675;--line:#d3d9e1;--accent:#1e3a5f;--on:#fff;--danger:#9e2a2b;--ok:#2f6b4f;--warn:#8a5a00;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;color-scheme:dark}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "IBM Plex Sans",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 90px;max-width:640px;margin-inline:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 12px;border-bottom:2px solid var(--text)}
+h1{font-size:21px;font-weight:600;margin:0;line-height:1.2}
+#date{color:var(--muted);font-size:13px;line-height:1.3}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{margin:0;line-height:0;color:var(--accent);flex:none}
+.logo svg{width:48px;height:48px;display:block}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hact{display:flex;align-items:center;gap:6px;flex:none}
+.hact .btn.ic{padding:8px 10px}
+#note{background:var(--card);border:1px solid var(--warn);border-left-width:4px;color:var(--warn);border-radius:3px;padding:8px 12px;font-size:13px;margin:10px 0}
+.chips{display:flex;gap:22px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:4px}
+.chip{flex:none;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);padding:12px 0 10px;margin-bottom:-1px;font:inherit;font-weight:500}
+.chip.on{color:var(--text);border-bottom-color:var(--accent)}
+.chip b{font-weight:400;margin-left:6px}
+h2{display:flex;justify-content:space-between;align-items:baseline;background:var(--card);font-size:15px;font-weight:600;margin:20px 0 0;padding:9px 8px 7px;border-top:2px solid var(--text)}
+h2 span{font-weight:400;font-size:13px;color:var(--muted)}
+h2.late{color:var(--danger);border-top-color:var(--danger)}
+.tr{display:grid;grid-template-columns:20px 3.4rem 1fr;gap:12px;align-items:start;background:var(--card);border-bottom:1px solid var(--line);padding:11px 8px}
+.tr.hi{box-shadow:inset 3px 0 0 var(--danger)}
+.tr.done .ttl{text-decoration:line-through;color:var(--muted)}
+.tm{font-weight:600;padding-top:1px}
+.tm small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.chk{position:relative;width:20px;height:20px;margin-top:2px;border-radius:3px;border:1.5px solid var(--muted);background:none;color:transparent;font-size:13px;line-height:1;padding:0}
+.chk::after{content:'';position:absolute;inset:-12px}
+.tr.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.tag{margin-left:8px;padding:1px 6px;border:1px solid var(--danger);color:var(--danger);border-radius:2px;font-size:12px;font-weight:500;vertical-align:1px}
+.cl{background:var(--card);border-bottom:1px solid var(--line);padding:12px 8px}
+.cl:first-child{border-top:2px solid var(--text)}
+.main{flex:1;min-width:0}
+.head{cursor:pointer}
+.ttl{font-weight:600}
+.meta{color:var(--muted);font-size:13px;margin-top:2px}
+.more{margin-top:10px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.more p{margin:0 0 8px;white-space:pre-wrap}
+.links a{color:var(--accent);margin-right:16px;text-decoration:underline;text-underline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{border:1px solid var(--muted);background:var(--card);color:var(--text);border-radius:3px;padding:8px 14px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn.d{color:var(--danger);border-color:var(--danger)}
+.btn:disabled{opacity:.6;cursor:default}
+.empty{color:var(--muted);text-align:center;padding:40px 10px}
+.bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:6px 6px 6px 12px;font-size:14px;margin:8px 0}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:14px 0;font:inherit;font-weight:500;cursor:pointer}
+nav button.on{color:var(--text);border-top-color:var(--accent);font-weight:600}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.ov form,.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:4px 4px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
+.ov h3{margin:0 0 6px;font-size:18px;font-weight:600}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--muted);border-radius:3px;padding:10px}
+textarea{min-height:90px;resize:vertical}
+.two{display:flex;gap:10px}.two>div{flex:1}
+.inl{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--text);font-size:15px}
+.inl input{width:auto}
+.calh{display:flex;align-items:center;justify-content:space-between;margin:6px 0;text-transform:capitalize}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:12px;color:var(--muted);padding:2px 0}
+.day{position:relative;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:3px;height:40px;font:inherit;font-size:15px;padding:0;cursor:pointer}
+.day.tod{border-color:var(--accent)}
+.day.sel{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.day i{position:absolute;left:50%;bottom:4px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--warn)}
+.day.sel i{background:var(--on)}
+.qk{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.qk .btn{padding:6px 10px;font-size:13px}
+.auth{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--text);border-radius:3px;padding:18px 16px;margin:24px 0}
+.auth h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px}
+.sec{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.sec-t{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:4px}
+#toast{position:fixed;left:50%;bottom:150px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:3px;font-size:14px;z-index:30}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1 class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg><span id="ttl" class="vh">Задачи</span></h1>
+    <div id="date"></div>
+  </div>
+  <div class="hact" id="hact" hidden>
+    <button class="btn p" id="add" data-act="fab">Новая задача</button>
+    <button class="btn ic" id="menuBtn" data-act="menu" aria-label="Меню и данные" title="Меню и данные">⋯</button>
+  </div>
+</header>
+<div id="note" hidden></div>
+<main id="app"><div class="empty">Загрузка…</div></main>
+<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button></nav>
+<input type="file" id="impfile" accept=".json,application/json" hidden>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import {
+  initializeFirestore,
+  getFirestore,
+  persistentLocalCache,
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+  writeBatch
+} from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+let db;
+try {
+  db = initializeFirestore(app, { localCache: persistentLocalCache() });
+} catch (e) {
+  db = getFirestore(app);
+}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const today = () => iso(new Date());
+const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d); };
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+
+let clients = [], tasks = [], view = 'tasks', filter = 'today', clientFilter = '';
+let user = null, authReady = false, ready = 0, armed = null, unsubs = [];
+const opened = new Set();
+
+// --- Portal (pub/portal) sync state & crypto ---
+const PORTAL_ITER = 600000;
+const PORTAL_WH = [9, 18];
+const PORTAL_DUR_H = 1;
+const keyCache = new Map();
+let portalSalt = null;
+let portalExists = false;
+let portalLastUpd = '';
+let portalStatus = '';
+let portalTimer = null;
+let portalRunning = false;
+let portalDirty = false;
+let portalChecked = false;
+
+const toB64 = u8 => {
+  let s = '';
+  for (let i = 0; i < u8.length; i++) s += String.fromCharCode(u8[i]);
+  return btoa(s);
+};
+const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const toHex = u8 => Array.from(u8, x => x.toString(16).padStart(2, '0')).join('');
+const normPhone = p => String(p || '').replace(/\D/g, '').slice(-9);
+
+function toast(m) {
+  const old = $('#toast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.id = 'toast';
+  t.textContent = m;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+function note(m) {
+  const n = $('#note');
+  n.textContent = m;
+  n.hidden = !m;
+}
+
+async function ensurePortalSalt() {
+  if (portalSalt) return portalSalt;
+  try {
+    const snap = await getDoc(doc(db, 'pub', 'portal'));
+    if (snap.exists()) {
+      const d = snap.data();
+      portalExists = true;
+      portalLastUpd = d.upd || '';
+      if (typeof d.salt === 'string' && fromB64(d.salt).length === 16) {
+        portalSalt = d.salt;
+        return portalSalt;
+      }
+    }
+  } catch (e) {}
+  portalSalt = toB64(crypto.getRandomValues(new Uint8Array(16)));
+  return portalSalt;
+}
+
+async function deriveForPhone(phone9, saltB64) {
+  const ck = saltB64 + ':' + phone9;
+  if (keyCache.has(ck)) return keyCache.get(ck);
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(phone9), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({
+    name: 'PBKDF2',
+    salt: fromB64(saltB64),
+    iterations: PORTAL_ITER,
+    hash: 'SHA-256'
+  }, km, 384));
+  const id = toHex(bits.slice(0, 16));
+  const key = await crypto.subtle.importKey('raw', bits.slice(16), 'AES-GCM', false, ['encrypt']);
+  const entry = { id, key };
+  keyCache.set(ck, entry);
+  return entry;
+}
+
+async function buildPortalPayload(clientsList, tasksList, saltB64) {
+  const busyMap = new Map();
+  const fullSet = new Set();
+  for (const t of tasksList) {
+    const d = t.date;
+    if (t.done || !d) continue;
+    const tm = (t.time || '').trim();
+    if (!tm) {
+      fullSet.add(d);
+      continue;
+    }
+    const parts = tm.split(':');
+    const h = Number(parts[0]), m = Number(parts[1] || 0);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) {
+      fullSet.add(d);
+      continue;
+    }
+    const s = h * 60 + m, e = s + PORTAL_DUR_H * 60;
+    for (let H = PORTAL_WH[0]; H < PORTAL_WH[1]; H++) {
+      if (H * 60 < e && (H + 1) * 60 > s) {
+        if (!busyMap.has(d)) busyMap.set(d, new Set());
+        busyMap.get(d).add(H);
+      }
+    }
+  }
+  const busy = {};
+  for (const [d, hs] of busyMap.entries()) {
+    busy[d] = [...hs].sort((a, b) => a - b);
+  }
+  const full = [...fullSet].sort();
+
+  const groups = new Map();
+  for (const c of clientsList) {
+    const n = normPhone(c.phone);
+    if (n.length < 7) continue;
+    const ts = tasksList
+      .filter(t => t.clientId === c.id)
+      .map(t => ({
+        t: t.title || '',
+        w: t.work || '',
+        e: t.equip || '',
+        d: t.date || '',
+        tm: t.time || '',
+        x: Boolean(t.done)
+      }));
+    if (!groups.has(n)) groups.set(n, []);
+    groups.get(n).push({ name: c.name || '', tasks: ts });
+  }
+
+  const enc = new TextEncoder();
+  const recs = [];
+  for (const [n, cl] of groups.entries()) {
+    const { id, key } = await deriveForPhone(n, saltB64);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const pt = enc.encode(JSON.stringify({ clients: cl }));
+    const ctBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, pt);
+    recs.push({ id, iv: toB64(iv), ct: toB64(new Uint8Array(ctBuf)) });
+  }
+
+  const upd = new Date().toLocaleString('ru-RU', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+  return { salt: saltB64, iter: PORTAL_ITER, wh: [...PORTAL_WH], busy, full, recs, upd };
+}
+
+function updatePortalStatusEl() {
+  const el = $('#pstat');
+  if (el) el.textContent = portalStatus || (portalLastUpd ? 'Обновлено: ' + portalLastUpd : 'Ещё не опубликовано');
+}
+
+function schedulePortal(delayMs = 3000) {
+  if (!user) return;
+  portalDirty = true;
+  if (portalTimer) clearTimeout(portalTimer);
+  portalTimer = setTimeout(() => {
+    portalTimer = null;
+    rebuildPortal(false);
+  }, delayMs);
+}
+
+async function rebuildPortal(notify = false) {
+  if (!user || ready < 2) return;
+  if (!(window.crypto && crypto.subtle)) {
+    portalStatus = 'WebCrypto недоступен';
+    updatePortalStatusEl();
+    return;
+  }
+  if (!navigator.onLine) {
+    portalDirty = true;
+    portalStatus = 'Ожидает подключения к сети';
+    updatePortalStatusEl();
+    return;
+  }
+  if (portalRunning) {
+    portalDirty = true;
+    return;
+  }
+  portalRunning = true;
+  portalDirty = false;
+  portalStatus = 'Обновляется…';
+  updatePortalStatusEl();
+  try {
+    const saltB64 = await ensurePortalSalt();
+    const payload = await buildPortalPayload(clients, tasks, saltB64);
+    await setDoc(doc(db, 'pub', 'portal'), payload);
+    portalExists = true;
+    portalLastUpd = payload.upd;
+    portalStatus = 'Обновлено: ' + payload.upd;
+    updatePortalStatusEl();
+    if (notify) toast('Страница клиента обновлена');
+  } catch (e) {
+    portalDirty = true;
+    portalStatus = 'Ошибка обновления';
+    updatePortalStatusEl();
+    if (notify) toast('Не удалось обновить страницу клиента');
+  } finally {
+    portalRunning = false;
+    if (portalDirty && navigator.onLine) schedulePortal(1500);
+  }
+}
+
+async function checkInitialPortal() {
+  if (portalChecked || !user || ready < 2) return;
+  portalChecked = true;
+  try {
+    const snap = await getDoc(doc(db, 'pub', 'portal'));
+    if (snap.exists()) {
+      const d = snap.data();
+      portalExists = true;
+      portalLastUpd = d.upd || '';
+      if (typeof d.salt === 'string' && fromB64(d.salt).length === 16) portalSalt = d.salt;
+      portalStatus = portalLastUpd ? 'Обновлено: ' + portalLastUpd : 'Опубликовано';
+      updatePortalStatusEl();
+    } else if (clients.length || tasks.length) {
+      schedulePortal(500);
+    }
+  } catch (e) {}
+}
+
+window.addEventListener('online', () => {
+  if (user) {
+    note('');
+    if (portalDirty) schedulePortal(1000);
+  }
+});
+window.addEventListener('offline', () => {
+  if (user) note('Нет связи: показаны сохранённые данные, изменения синхронизируются при появлении сети.');
+});
+
+// --- Firestore CRUD ---
+async function save(col, id, data) {
+  if (!user) return;
+  portalDirty = true;
+  schedulePortal(3000);
+  try {
+    await setDoc(doc(db, col, id), data);
+  } catch (e) {
+    toast('Не удалось сохранить');
+  }
+}
+async function del(col, id) {
+  if (!user) return;
+  portalDirty = true;
+  schedulePortal(3000);
+  try {
+    await deleteDoc(doc(db, col, id));
+  } catch (e) {
+    toast('Не удалось удалить');
+  }
+}
+
+// --- Export / Import JSON ---
+function exportJson() {
+  const payload = {
+    exported: today(),
+    note: 'Личные данные. НЕ загружать в публичный репозиторий.',
+    clients,
+    tasks
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'planner-backup-' + today() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast('Файл резервной копии скачан');
+}
+
+async function importJsonFile(file) {
+  if (!user || !file) return;
+  let data;
+  try {
+    data = JSON.parse(await file.text());
+  } catch (e) {
+    toast('Ошибка чтения JSON-файла');
+    return;
+  }
+  const impClients = Array.isArray(data.clients) ? data.clients : [];
+  const impTasks = Array.isArray(data.tasks) ? data.tasks : [];
+  if (!impClients.length && !impTasks.length) {
+    toast('В файле нет клиентов и задач');
+    return;
+  }
+  const ops = [];
+  for (const c of impClients) {
+    const id = String(c.id || uid());
+    ops.push({
+      col: 'clients',
+      id,
+      doc: {
+        name: String(c.name || '').trim(),
+        phone: String(c.phone || '').trim(),
+        address: String(c.address || '').trim(),
+        note: String(c.note || '').trim(),
+        created: Number(c.created) || Date.now()
+      }
+    });
+  }
+  for (const t of impTasks) {
+    const id = String(t.id || uid());
+    ops.push({
+      col: 'tasks',
+      id,
+      doc: {
+        clientId: String(t.clientId || ''),
+        title: String(t.title || '').trim(),
+        work: String(t.work || ''),
+        equip: String(t.equip || ''),
+        date: String(t.date || ''),
+        time: String(t.time || ''),
+        details: String(t.details || '').trim(),
+        high: Boolean(t.high),
+        done: Boolean(t.done),
+        created: Number(t.created) || Date.now()
+      }
+    });
+  }
+  try {
+    for (let i = 0; i < ops.length; i += 400) {
+      const batch = writeBatch(db);
+      for (const op of ops.slice(i, i + 400)) {
+        batch.set(doc(db, op.col, op.id), op.doc);
+      }
+      await batch.commit();
+    }
+    toast(`Импортировано: ${impClients.length} кл., ${impTasks.length} зад.`);
+    schedulePortal(500);
+  } catch (e) {
+    toast('Ошибка импорта: проверьте доступ к базе');
+  }
+}
+
+$('#impfile').addEventListener('change', async e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (file) await importJsonFile(file);
+});
+
+// --- Rendering ---
+function dayLabel(d) {
+  if (!d) return 'Без даты';
+  const t = today();
+  if (d < t) return 'Просрочено';
+  if (d === t) return 'Сегодня';
+  if (d === addDays(t, 1)) return 'Завтра';
+  return new Date(d + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' });
+}
+const shortDate = d => new Date(d + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+const cname = id => { const c = clients.find(x => x.id === id); return c ? c.name : '—'; };
+const tel = p => String(p || '').replace(/[^\d+]/g, '');
+
+function authHtml() {
+  return `<section class="auth">
+    <h3>Вход в планировщик</h3>
+    <div class="meta">Введите почту и пароль учётной записи Firebase.</div>
+    <form id="loginForm">
+      <label for="l-email">Почта</label>
+      <input id="l-email" name="email" type="email" autocomplete="username" required>
+      <label for="l-pass">Пароль</label>
+      <input id="l-pass" name="password" type="password" autocomplete="current-password" required>
+      <div id="l-err" class="err"></div>
+      <div class="row"><button class="btn p" id="l-btn" type="submit">Войти</button></div>
+    </form>
+  </section>`;
+}
+
+function wireLoginForm() {
+  const form = $('#loginForm');
+  if (!form) return;
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const email = form.email.value.trim();
+    const pass = form.password.value;
+    const btn = $('#l-btn');
+    const err = $('#l-err');
+    err.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Входим…';
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (ex) {
+      const code = ex && ex.code || '';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        err.textContent = 'Неверная почта или пароль.';
+      } else if (code === 'auth/invalid-email') {
+        err.textContent = 'Проверьте формат почты.';
+      } else if (code === 'auth/too-many-requests') {
+        err.textContent = 'Слишком много попыток. Подождите немного.';
+      } else if (code === 'auth/network-request-failed') {
+        err.textContent = 'Нет подключения к интернету.';
+      } else if (code === 'auth/unauthorized-domain') {
+        err.textContent = 'Домен не добавлен в Authorized domains в Firebase.';
+      } else {
+        err.textContent = 'Не удалось войти (' + (code || 'ошибка') + ').';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Войти';
+    }
+  };
+}
+
+function tasksHtml() {
+  const t0 = today();
+  const pass = {
+    today: t => !t.done && t.date && t.date <= t0,
+    later: t => !t.done && (!t.date || t.date > t0),
+    all: t => !t.done,
+    done: t => t.done
+  };
+  const cnt = k => tasks.filter(t => (!clientFilter || t.clientId === clientFilter) && pass[k](t)).length;
+  let h = '<div class="chips">' + [['today', 'Сегодня'], ['later', 'Позже'], ['all', 'Все'], ['done', 'Готово']].map(([k, l]) =>
+    `<button class="chip ${filter === k ? 'on' : ''}" data-act="filter" data-f="${k}">${l}<b>${cnt(k)}</b></button>`).join('') + '</div>';
+  if (clientFilter) h += `<div class="bar"><span>Клиент: <b>${esc(cname(clientFilter))}</b></span><button class="btn" data-act="clearc">Сбросить</button></div>`;
+  const list = tasks.filter(t => (!clientFilter || t.clientId === clientFilter) && pass[filter](t))
+    .sort((a, b) => ((a.date || '9999') + (a.time || '99:99')).localeCompare((b.date || '9999') + (b.time || '99:99')));
+  if (!list.length) return h + `<div class="empty">${tasks.length || clients.length ? 'Здесь пока пусто.' : 'Начните с вкладки «Клиенты» или импортируйте данные в меню (⋯).'}</div>`;
+  const gs = [];
+  for (const t of list) {
+    const lb = filter === 'done' ? 'Выполнено' : dayLabel(t.date), g = gs[gs.length - 1];
+    if (g && g.lb === lb) g.items.push(t); else gs.push({ lb, items: [t] });
+  }
+  for (const g of gs) h += `<h2 class="${g.lb === 'Просрочено' ? 'late' : ''}">${esc(g.lb[0].toUpperCase() + g.lb.slice(1))}<span>${g.items.length}</span></h2>` + g.items.map(t => cardHtml(t)).join('');
+  return h;
+}
+
+function cardHtml(t) {
+  const c = clients.find(x => x.id === t.clientId), o = opened.has(t.id);
+  const late = t.date && t.date < today() && !t.done;
+  const wt = [t.work, t.equip].filter(Boolean).map(esc).join(', ');
+  const tm = late ? esc(shortDate(t.date)) + '<small>' + esc(t.time || '') + '</small>' : (t.time ? esc(t.time) : '—');
+  let more = '';
+  if (o) {
+    const links = [];
+    if (c && c.phone) links.push(`<a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a>`);
+    if (c && c.address) links.push(`<a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a>`);
+    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}<div class="links">${links.join('')}</div>
+    <div class="row"><button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
+  }
+  return `<div class="tr${t.done ? ' done' : ''}${t.high ? ' hi' : ''}"><button class="chk" data-act="toggle" data-id="${t.id}" aria-label="Отметить выполненной">✓</button><div class="tm">${tm}</div>
+  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${t.high ? '<span class="tag">Срочно</span>' : ''}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}</div>${more}</div></div>`;
+}
+
+function clientsHtml() {
+  if (!clients.length) return '<div class="empty">Клиентов пока нет. Нажмите «Новый клиент» или импортируйте данные в меню (⋯).</div>';
+  return [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => {
+    const n = tasks.filter(t => t.clientId === c.id && !t.done).length;
+    return `<div class="cl"><div class="main"><div class="ttl">${esc(c.name)}</div>
+    <div class="meta">Открытых задач: ${n}</div>
+    ${c.phone ? `<div class="links meta"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
+    ${c.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a></div>` : ''}
+    ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
+    <div class="row"><button class="btn p" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button></div></div></div>`;
+  }).join('');
+}
+
+function render() {
+  armed = null;
+  $('#date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+  $('#hact').hidden = !user;
+  $('#nav').hidden = !user;
+  if (!authReady) {
+    $('#app').innerHTML = '<div class="empty">Загрузка…</div>';
+    return;
+  }
+  if (!user) {
+    $('#ttl').textContent = 'Вход';
+    $('#app').innerHTML = authHtml();
+    wireLoginForm();
+    return;
+  }
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === view));
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : 'Клиенты';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : 'Новый клиент';
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : clientsHtml());
+}
+
+// --- Modals ---
+function modal(title, body, onSave) {
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.innerHTML = `<form><h3>${title}</h3>${body}<div class="row"><button class="btn p" type="submit">Сохранить</button><button class="btn" type="button" data-x>Отмена</button></div></form>`;
+  document.body.appendChild(ov);
+  ov.querySelector('[data-x]').onclick = () => ov.remove();
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  ov.querySelector('form').onsubmit = async e => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(e.target));
+    f.high = !!e.target.high?.checked;
+    ov.remove();
+    await onSave(f);
+  };
+  const first = ov.querySelector('input[type=text]');
+  if (first) first.focus();
+  return ov;
+}
+
+function openMenu() {
+  const clientUrl = new URL('client.html', location.href).href;
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.innerHTML = `<div class="sheet">
+    <h3>Данные и настройки</h3>
+    <div class="sec">
+      <div class="sec-t">Страница клиента</div>
+      <div class="meta" id="pstat"></div>
+      <div class="row">
+        <button class="btn p" type="button" data-copy>Скопировать ссылку</button>
+        <button class="btn" type="button" data-sync>Обновить сейчас</button>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">Резервная копия (JSON)</div>
+      <div class="meta">Храните файл локально, не загружайте его в публичный репозиторий.</div>
+      <div class="row">
+        <button class="btn" type="button" data-exp>Экспорт JSON</button>
+        <button class="btn" type="button" data-imp>Импорт JSON</button>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">Учётная запись</div>
+      <div class="meta">${esc(user && user.email || '')}</div>
+      <div class="row">
+        <button class="btn d" type="button" data-out>Выйти</button>
+        <button class="btn" type="button" data-x>Закрыть</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  updatePortalStatusEl();
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  ov.querySelector('[data-x]').onclick = () => ov.remove();
+  ov.querySelector('[data-copy]').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(clientUrl);
+      toast('Ссылка для клиента скопирована');
+    } catch (e) {
+      prompt('Ссылка для клиента:', clientUrl);
+    }
+  };
+  ov.querySelector('[data-sync]').onclick = () => rebuildPortal(true);
+  ov.querySelector('[data-exp]').onclick = () => exportJson();
+  ov.querySelector('[data-imp]').onclick = () => { ov.remove(); $('#impfile').click(); };
+  ov.querySelector('[data-out]').onclick = async () => { ov.remove(); await signOut(auth); };
+}
+
+function openClient(id) {
+  const c = clients.find(x => x.id === id) || { name: '', phone: '', address: '', note: '' };
+  const ov = modal(id ? 'Клиент' : 'Новый клиент', `<label>Название / имя</label><input type="text" name="name" required value="${esc(c.name)}">
+  <label>Телефон</label><input type="tel" name="phone" value="${esc(c.phone)}">
+  <div class="qk"><button type="button" class="btn" data-pick>Из контактов</button><button type="button" class="btn" data-paste>Вставить номер</button></div>
+  <div id="chint" class="meta">В «Контактах» нажмите на номер → «Скопировать», затем «Вставить номер».</div>
+  <label>Адрес объекта</label><input type="text" name="address" value="${esc(c.address)}">
+  <label>Заметки (доступы, контакты, особенности)</label><textarea name="note">${esc(c.note)}</textarea>`,
+  f => save('clients', id || uid(), { name: f.name.trim(), phone: f.phone.trim(), address: f.address.trim(), note: f.note.trim(), created: c.created || Date.now() }));
+  wireContacts(ov);
+}
+
+const WORKS = ['Монтаж', 'Настройка', 'Пусконаладка', 'Диагностика', 'Ремонт', 'Обслуживание', 'Замена', 'Прокладка кабеля', 'Демонтаж', 'Консультация'];
+const EQUIPS = ['IP-камера', 'Видеорегистратор (NVR/DVR)', 'Wi-Fi точка доступа', 'Коммутатор', 'Маршрутизатор', 'Домофон / СКУД', 'Сигнализация', 'Сервер / NAS', 'Принтер / МФУ', 'Компьютер', 'Кабельная сеть'];
+const val = (f, n) => f[n] === '__other' ? (f[n + 'Other'] || '').trim() : (f[n] || '');
+
+function pick(name, label, list, v) {
+  const other = !!v && !list.includes(v);
+  return `<label>${label}</label><select name="${name}"><option value="">Не выбрано</option>${list.map(x => `<option${x === v ? ' selected' : ''}>${esc(x)}</option>`).join('')}<option value="__other"${other ? ' selected' : ''}>Другое…</option></select><input type="text" name="${name}Other" placeholder="Укажите вручную" value="${other ? esc(v) : ''}"${other ? '' : ' hidden'}>`;
+}
+
+function openTask(id, clientId) {
+  if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
+  const t = tasks.find(x => x.id === id) || { clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false };
+  const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
+  <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
+  ${pick('work', 'Вид работ', WORKS, t.work || '')}${pick('equip', 'Тип оборудования', EQUIPS, t.equip || '')}
+  <label>Дата</label><input type="hidden" name="date" value="${esc(t.date)}"><div id="seld" class="meta"></div>
+  <div class="qk"><button type="button" class="btn" data-d="today">Сегодня</button><button type="button" class="btn" data-d="tom">Завтра</button><button type="button" class="btn" data-d="">Без даты</button></div><div id="cal"></div>
+  <label>Время</label><input type="time" name="time" value="${esc(t.time)}">
+  <div class="qk">${['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '16:00', '18:00'].map(x => `<button type="button" class="btn" data-t="${x}">${x}</button>`).join('')}<button type="button" class="btn" data-t="">Без времени</button></div>
+  <label>Детали (что взять, что проверить)</label><textarea name="details">${esc(t.details)}</textarea>
+  <label class="inl"><input type="checkbox" name="high" ${t.high ? 'checked' : ''}> Срочно</label>`,
+  f => save('tasks', id || uid(), { clientId: f.clientId, title: f.title.trim(), work: val(f, 'work'), equip: val(f, 'equip'), date: f.date, time: f.time, details: f.details.trim(), high: f.high, done: !!t.done, created: t.created || Date.now() }));
+  initCal(ov);
+  ['work', 'equip'].forEach(n => {
+    const s = ov.querySelector('[name=' + n + ']'), o = ov.querySelector('[name=' + n + 'Other]');
+    s.onchange = () => { o.hidden = s.value !== '__other'; if (!o.hidden) o.focus(); };
+  });
+}
+
+function initCal(ov) {
+  const inp = ov.querySelector('[name=date]'), tin = ov.querySelector('[name=time]'), box = ov.querySelector('#cal'), lab = ov.querySelector('#seld');
+  const busy = new Set(tasks.filter(t => !t.done && t.date).map(t => t.date));
+  let ym = (inp.value || today()).slice(0, 7);
+  function draw() {
+    const [y, m] = ym.split('-').map(Number), off = (new Date(y, m - 1, 1).getDay() + 6) % 7, n = new Date(y, m, 0).getDate(), t0 = today();
+    lab.textContent = inp.value ? 'Выбрано: ' + new Date(inp.value + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Без даты';
+    let h = '<div class="calh"><button type="button" class="btn" data-m="-1">‹</button><b>' + new Date(y, m - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }) + '</b><button type="button" class="btn" data-m="1">›</button></div><div class="calg">' + ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(d => '<span class="wd">' + d + '</span>').join('');
+    for (let i = 0; i < off; i++) h += '<span></span>';
+    for (let d = 1; d <= n; d++) {
+      const s = y + '-' + pad(m) + '-' + pad(d);
+      h += '<button type="button" class="day' + (s === inp.value ? ' sel' : '') + (s === t0 ? ' tod' : '') + '" data-d="' + s + '">' + d + (busy.has(s) ? '<i></i>' : '') + '</button>';
+    }
+    box.innerHTML = h + '</div>';
+  }
+  ov.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.m) { const [y, m] = ym.split('-').map(Number); ym = iso(new Date(y, m - 1 + Number(b.dataset.m), 1)).slice(0, 7); }
+    else if (b.dataset.t !== undefined) { tin.value = b.dataset.t; return; }
+    else if (b.dataset.d !== undefined) { const k = b.dataset.d; inp.value = k === 'today' ? today() : k === 'tom' ? addDays(today(), 1) : k; if (inp.value) ym = inp.value.slice(0, 7); }
+    else return;
+    draw();
+  });
+  draw();
+}
+
+function wireContacts(ov) {
+  const ph = ov.querySelector('[name=phone]'), nm = ov.querySelector('[name=name]'), pk = ov.querySelector('[data-pick]');
+  const can = 'contacts' in navigator && navigator.contacts && navigator.contacts.select;
+  if (can) ov.querySelector('#chint').hidden = true; else pk.hidden = true;
+  pk.onclick = async () => {
+    try {
+      const r = await navigator.contacts.select(['name', 'tel'], { multiple: false }), c = r && r[0];
+      if (c) { if (c.tel && c.tel[0]) ph.value = c.tel[0]; if (c.name && c.name[0] && !nm.value) nm.value = c.name[0]; }
+    } catch (e) { toast('Не удалось открыть контакты'); }
+  };
+  ov.querySelector('[data-paste]').onclick = async () => {
+    let s = '';
+    try { s = await navigator.clipboard.readText(); }
+    catch (e) { toast('Нет доступа к буферу: нажмите на поле и выберите «Вставить»'); return; }
+    if (/BEGIN:VCARD/i.test(s)) {
+      const fn = (s.match(/^FN[^:]*:(.+)$/mi) || [])[1], tl = (s.match(/^(?:item\d+\.)?TEL[^:]*:(.+)$/mi) || [])[1];
+      if (tl) ph.value = tl.trim(); if (fn && !nm.value) nm.value = fn.trim(); return;
+    }
+    const m = s.match(/\+?\d[\d\s().-]{6,}\d/);
+    if (m) ph.value = m[0].trim(); else toast('В буфере нет номера');
+  };
+}
+
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const a = el.dataset.act, id = el.dataset.id;
+  if (a === 'tab') { view = el.dataset.v; render(); }
+  else if (a === 'fab') { view === 'tasks' ? openTask() : openClient(); }
+  else if (a === 'menu') { openMenu(); }
+  else if (a === 'filter') { filter = el.dataset.f; render(); }
+  else if (a === 'clearc') { clientFilter = ''; render(); }
+  else if (a === 'open') { opened.has(id) ? opened.delete(id) : opened.add(id); render(); }
+  else if (a === 'toggle') {
+    const t = tasks.find(x => x.id === id);
+    if (t) { const d = Object.assign({}, t, { done: !t.done }); delete d.id; save('tasks', id, d); }
+  }
+  else if (a === 'edittask') openTask(id);
+  else if (a === 'newtask') openTask(null, id);
+  else if (a === 'editclient') openClient(id);
+  else if (a === 'ctasks') { clientFilter = id; filter = 'all'; view = 'tasks'; render(); }
+  else if (a === 'deltask') {
+    if (armed !== id) { armed = id; el.textContent = 'Точно удалить?'; return; }
+    armed = null; await del('tasks', id);
+  }
+});
+
+// --- Auth & Firestore subscriptions ---
+render();
+onAuthStateChanged(auth, u => {
+  unsubs.forEach(fn => { try { fn(); } catch (e) {} });
+  unsubs = [];
+  if (portalTimer) { clearTimeout(portalTimer); portalTimer = null; }
+  user = u;
+  authReady = true;
+  clients = [];
+  tasks = [];
+  ready = 0;
+  portalSalt = null;
+  portalExists = false;
+  portalLastUpd = '';
+  portalStatus = '';
+  portalDirty = false;
+  portalChecked = false;
+  note('');
+  render();
+  if (!user) return;
+
+  if (!navigator.onLine) {
+    note('Нет связи: показаны сохранённые данные, изменения синхронизируются при появлении сети.');
+  }
+  const timer = setTimeout(() => {
+    if (ready < 2) note('Данные загружаются медленно — проверьте подключение или правила Firestore.');
+  }, 10000);
+
+  const sub = (col, set) => {
+    let first = true;
+    const unsub = onSnapshot(collection(db, col), s => {
+      set(s.docs.map(d => Object.assign({ id: d.id }, d.data())));
+      if (first) { first = false; ready++; }
+      if (!s.metadata.fromCache) { clearTimeout(timer); if (navigator.onLine) note(''); }
+      render();
+      if (ready >= 2) checkInitialPortal();
+    }, err => {
+      clearTimeout(timer);
+      note(err && err.code === 'permission-denied'
+        ? 'Нет доступа к базе: проверьте User UID в правилах Firestore.'
+        : 'Ошибка загрузки данных из Firestore.');
+      ready = 2;
+      render();
+    });
+    unsubs.push(unsub);
+  };
+  sub('clients', v => clients = v);
+  sub('tasks', v => tasks = v);
+});
+</script>
+</body>
+</html>

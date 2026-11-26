@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ваши задачи и график</title>
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--text:#14181f;--muted:#5f6b7a;--line:#e3e6eb;--accent:#1f6feb;--gbg:#d3f2dd;--gbd:#2e9d57;--rbg:#fad4d1;--rbd:#d1342f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--card:#171b22;--text:#e8ecf2;--muted:#98a3b3;--line:#262c36;--accent:#5b9dff;--gbg:#12351f;--gbd:#3fb97a;--rbg:#3d1815;--rbd:#ff6b64;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e1116;--card:#171b22;--text:#e8ecf2;--muted:#98a3b3;--line:#262c36;--accent:#5b9dff;--gbg:#12351f;--gbd:#3fb97a;--rbg:#3d1815;--rbd:#ff6b64;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:16px 14px 40px;max-width:560px;margin-inline:auto}
+h1{font-size:22px;margin:8px 0 6px}h2{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:22px 2px 8px}h3{font-size:16px;margin:12px 2px 6px}
+.m{color:var(--muted);font-size:14px}.err{color:var(--rbd);font-size:14px;margin-top:10px;min-height:20px}
+input{width:100%;font:inherit;font-size:18px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:14px 0 10px}
+.btn{width:100%;border:0;border-radius:12px;background:var(--accent);color:#fff;font:inherit;font-weight:600;padding:14px;cursor:pointer}.btn:disabled{opacity:.6;cursor:default}
+.t{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}.t.x{opacity:.65}.tt{font-weight:600}
+details{margin-top:6px}summary{color:var(--muted);font-size:14px;padding:6px 2px;cursor:pointer}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:4px;border:1.5px solid;vertical-align:-2px;margin-right:5px}
+.free{background:var(--gbg);border-color:var(--gbd)}.busy{background:var(--rbg);border-color:var(--rbd)}.part{background:linear-gradient(135deg,var(--rbg) 50%,var(--gbg) 50%);border-color:var(--rbd)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin:4px 0 8px;text-transform:capitalize;font-weight:600}
+.ch button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:9px;padding:6px 14px;font-size:18px;cursor:pointer}.ch button:disabled{opacity:.3;cursor:default}
+.g{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.wd{text-align:center;font-size:12px;color:var(--muted)}
+.d{position:relative;aspect-ratio:1;border-radius:9px;border:1.5px solid var(--line);background:var(--card);color:var(--text);font-size:15px;padding:0;cursor:pointer}
+.d.past{opacity:.35}.d.sel{outline:3px solid var(--accent);outline-offset:1px}
+.d.mine::after{content:'';position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.hs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.h{text-align:center;padding:9px 0;border-radius:9px;border:1.5px solid;font-size:15px}
+</style>
+</head>
+<body>
+<main>
+<section id="login">
+<h1>Ваши задачи и график</h1>
+<p class="m">Введите номер телефона, который вы указывали при заказе.</p>
+<input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+994 50 123 45 67">
+<button id="go" class="btn">Далее</button>
+<div id="err" class="err"></div>
+</section>
+<section id="view" hidden>
+<h1 id="hi"></h1>
+<h2>Ваши задачи</h2><div id="tasks"></div>
+<h2>График занятости</h2>
+<div class="leg"><span><i class="sw free"></i>свободно</span><span><i class="sw busy"></i>занято</span><span><i class="sw part"></i>занято частично</span><span><i class="sw" style="background:var(--accent);border-color:var(--accent);border-radius:50%"></i>ваши задачи</span></div>
+<div id="cal"></div><div id="hrs"></div>
+<p class="m" id="upd"></p>
+</section>
+</main>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-lite.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let D = null;
+let loadPromise = null;
+let wh = [9, 18];
+let N = 9;
+
+async function loadPortal() {
+  if (D) return D;
+  if (!loadPromise) {
+    loadPromise = getDoc(doc(db, 'pub', 'portal')).then(snap => {
+      if (!snap.exists()) { loadPromise = null; return null; }
+      D = snap.data();
+      wh = Array.isArray(D.wh) && D.wh.length === 2 ? D.wh : [9, 18];
+      N = wh[1] - wh[0];
+      return D;
+    }).catch(err => {
+      loadPromise = null;
+      throw err;
+    });
+  }
+  return loadPromise;
+}
+loadPortal().catch(() => {});
+
+/*CRYPTO*/
+const norm = p => String(p).replace(/\D/g, '').slice(-9);
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const hex = u => [...u].map(x => x.toString(16).padStart(2, '0')).join('');
+async function unlock(phone) {
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode(norm(phone)), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64(D.salt), iterations: D.iter, hash: 'SHA-256' }, km, 384));
+  const rec = (D.recs || []).find(r => r.id === hex(bits.slice(0, 16)));
+  if (!rec) return null;
+  const key = await crypto.subtle.importKey('raw', bits.slice(16), 'AES-GCM', false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(rec.iv) }, key, b64(rec.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+/*END*/
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const T0 = iso(new Date());
+const mine = new Set();
+let ym = T0.slice(0, 7), sel = T0;
+
+const hoursOf = d => (D.full || []).includes(d) ? 'all' : ((D.busy && D.busy[d]) || []);
+function state(d) {
+  if (d < T0) return 'past';
+  const b = hoursOf(d), n = b === 'all' ? N : b.length;
+  return n === 0 ? 'free' : n >= N ? 'busy' : 'part';
+}
+const fmtD = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'long' }) : 'Дата уточняется';
+const cmp = (a, b) => ((a.d || '9999') + (a.tm || '')).localeCompare((b.d || '9999') + (b.tm || ''));
+const taskHtml = t => `<div class="t${t.x ? ' x' : ''}"><div class="tt">${t.x ? '✓ ' : ''}${esc(t.t)}</div><div class="m">${esc([fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w, t.e].filter(Boolean).join(' · '))}</div></div>`;
+
+function drawCal() {
+  const [y, m] = ym.split('-').map(Number), b = T0.split('-').map(Number), k = (y * 12 + m) - (b[0] * 12 + b[1]);
+  const off = (new Date(y, m - 1, 1).getDay() + 6) % 7, n = new Date(y, m, 0).getDate();
+  let h = `<div class="ch"><button id="pm" ${k <= 0 ? 'disabled' : ''}>‹</button><span>${new Date(y, m - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</span><button id="nm" ${k >= 3 ? 'disabled' : ''}>›</button></div><div class="g">` + ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(x => `<span class="wd">${x}</span>`).join('');
+  for (let i = 0; i < off; i++) h += '<span></span>';
+  for (let d = 1; d <= n; d++) {
+    const s = y + '-' + pad(m) + '-' + pad(d), st = state(s);
+    h += `<button class="d ${st === 'past' ? 'past' : st}${s === sel ? ' sel' : ''}${mine.has(s) ? ' mine' : ''}" data-d="${s}">${d}</button>`;
+  }
+  $('#cal').innerHTML = h + '</div>';
+  $('#pm').onclick = () => { ym = iso(new Date(y, m - 2, 1)).slice(0, 7); drawCal(); };
+  $('#nm').onclick = () => { ym = iso(new Date(y, m, 1)).slice(0, 7); drawCal(); };
+  $('#cal').querySelectorAll('.d').forEach(e => e.onclick = () => { sel = e.dataset.d; drawCal(); drawHours(); });
+}
+
+function drawHours() {
+  let h = `<h3>${esc(fmtD(sel))}</h3>`;
+  if (sel < T0) h += '<p class="m">Этот день уже прошёл.</p>';
+  else {
+    const b = hoursOf(sel);
+    h += '<div class="hs">';
+    for (let x = wh[0]; x < wh[1]; x++) h += `<div class="h ${b === 'all' || b.includes(x) ? 'busy' : 'free'}">${pad(x)}:00</div>`;
+    h += '</div>';
+  }
+  $('#hrs').innerHTML = h;
+}
+
+function show(data) {
+  $('#login').hidden = true;
+  $('#view').hidden = false;
+  $('#hi').textContent = 'Здравствуйте, ' + data.clients.map(c => c.name).join(', ');
+  let h = '';
+  for (const c of data.clients) {
+    const open = c.tasks.filter(t => !t.x).sort(cmp), done = c.tasks.filter(t => t.x).sort(cmp).reverse();
+    if (data.clients.length > 1) h += `<h3>${esc(c.name)}</h3>`;
+    h += open.length ? open.map(taskHtml).join('') : '<p class="m">Активных задач пока нет.</p>';
+    if (done.length) h += `<details><summary>Выполнено (${done.length})</summary>${done.map(taskHtml).join('')}</details>`;
+    open.forEach(t => { if (t.d) mine.add(t.d); });
+  }
+  $('#tasks').innerHTML = h;
+  $('#upd').textContent = 'Данные обновлены: ' + (D.upd || '—') + '. График может измениться, уточняйте время у мастера.';
+  drawCal();
+  drawHours();
+}
+
+async function login() {
+  const err = m => { $('#err').textContent = m; }, btn = $('#go');
+  if (norm($('#ph').value).length < 7) { err('Введите номер телефона полностью.'); return; }
+  if (!(window.crypto && crypto.subtle)) { err('Этот браузер не поддерживает безопасную проверку номера.'); return; }
+  err('');
+  btn.disabled = true;
+  btn.textContent = 'Проверяем…';
+  try {
+    const portal = await loadPortal();
+    if (!portal) {
+      err('Данные графика пока не опубликованы. Попробуйте чуть позже.');
+      return;
+    }
+    const data = await unlock($('#ph').value);
+    if (!data) err('По этому номеру ничего не найдено. Проверьте номер.');
+    else show(data);
+  } catch (e) {
+    err('Не удалось загрузить данные. Проверьте подключение к интернету.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Далее';
+  }
+}
+
+$('#go').onclick = login;
+$('#ph').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+</script>
+</body>
+</html>
