@@ -12,9 +12,9 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#191c22" media="(prefers-color-scheme: dark)">
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1e242b;--muted:#7b8494;--line:#eceef2;--accent:#e52520;--on:#ffffff;--danger:#e52520;--ok:#00b578;--ok-bg:#e6f8f1;--warn:#fa8c16;--warn-bg:#fff5e6;--soft:#fdecec;--blue:#2563eb;--blue-bg:#eef4ff;--sh:0 2px 10px rgba(15,23,42,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
+:root{--bg:#f5f6f8;--card:#ffffff;--text:#1e242b;--muted:#7b8494;--line:#eceef2;--accent:#e52520;--on:#ffffff;--danger:#e52520;--ok:#00b578;--ok-bg:#e6f8f1;--warn:#fa8c16;--warn-bg:#fff5e6;--soft:#fdecec;--blue:#2563eb;--blue-bg:#eef4ff;--purp:#7c3aed;--purp-bg:#f3eeff;--sh:0 2px 10px rgba(15,23,42,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--purp:#a78bfa;--purp-bg:#24193d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--purp:#a78bfa;--purp-bg:#24193d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
 html{scroll-padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
@@ -23,7 +23,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-app
 
 /* Header */
 header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 -14px 12px;padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1;cursor:pointer}
 .logo{margin:0;line-height:0;flex:none;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(229,37,32,.25)}
 .logo svg{width:24px;height:24px;display:block}
 .btxt{min-width:0}
@@ -40,8 +40,13 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .lang button.on{background:var(--accent);color:var(--on)}
 .flag{width:15px;height:10px;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
 
-/* Toolbar: search + filters button */
-.toolbar{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
+/* Sub-header / back bar */
+.back-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:7px 12px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:var(--sh)}
+.skip-link{border:0;background:none;color:var(--accent);font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:6px 4px}
+
+/* Search & filters */
+.toolbar{display:flex;gap:8px;align-items:stretch;margin-bottom:12px}
 .search-wrap{position:relative;flex:1;min-width:0}
 .search-wrap svg.s-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted);pointer-events:none}
 .search-wrap input{width:100%;height:42px;padding:0 34px 0 38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:15px;box-shadow:var(--sh)}
@@ -52,11 +57,76 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .flt-btn svg{width:17px;height:17px;display:block}
 .flt-cnt{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
 
-/* Category strip & active filter pills */
-.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 0 10px}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--muted);padding:6px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
-.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on)}
+/* Category Landing Grid (11 minimalist cards) */
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:2px 2px 10px}
+.sec-head h2{margin:0;font-size:16px;font-weight:700}
+.sec-head span{font-size:12.5px;color:var(--muted)}
+.cat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ccard{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:9px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px 13px;cursor:pointer;font:inherit;color:var(--text);box-shadow:var(--sh);transition:border-color .15s,transform .15s}
+.ccard-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px}
+.cicon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.cicon svg{width:22px;height:22px;display:block}
+.cbadge-wiz{font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:10px;background:var(--soft);color:var(--accent)}
+.ctitle{font-weight:700;font-size:14.5px;line-height:1.25}
+.cdesc{font-size:12px;color:var(--muted);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ccnt{margin-top:auto;font-size:11.5px;font-weight:600;color:var(--muted)}
+
+/* Category accent colors */
+.t-red{background:var(--soft);color:var(--accent)}
+.t-blue{background:var(--blue-bg);color:var(--blue)}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-purp{background:var(--purp-bg);color:var(--purp)}
+.t-gray{background:var(--bg);color:var(--muted)}
+
+/* Interactive Wizard */
+.wiz-wrap{max-width:740px;margin-inline:auto}
+.wiz-prog{margin:2px 0 12px}
+.wiz-ptop{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.wiz-pbar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.wiz-pfill{height:100%;background:linear-gradient(90deg,#f03e38,#d61c17);border-radius:6px;transition:width .22s ease}
+.wiz-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:var(--sh)}
+.wiz-card h2{margin:0 0 4px;font-size:18px;font-weight:700;line-height:1.3}
+.wiz-hint{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.4}
+.wiz-opts{display:flex;flex-direction:column;gap:8px}
+.wopt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:13px 14px;border:1.5px solid var(--line);border-radius:13px;background:var(--bg);color:var(--text);font:inherit;cursor:pointer;transition:all .15s}
+.wopt.on{background:var(--soft);border-color:var(--accent)}
+.wopt-l{flex:1;min-width:0}
+.wopt-t{font-size:14.5px;font-weight:600;line-height:1.3}
+.wopt-s{font-size:12.5px;color:var(--muted);margin-top:2px}
+.wopt.on .wopt-s{color:var(--accent);opacity:.9}
+.wopt-r{font-size:12px;font-weight:700;padding:3px 9px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--text);flex:none;white-space:nowrap}
+.wopt.on .wopt-r{background:var(--accent);border-color:var(--accent);color:#fff}
+.wiz-other{margin-top:10px}
+.wiz-note{margin-top:12px;padding:10px 12px;border-radius:11px;background:var(--blue-bg);color:var(--text);border-left:3px solid var(--blue);font-size:12.5px;line-height:1.4}
+.wiz-nav{display:flex;gap:10px;margin-top:16px}
+.wiz-nav .btn.p{flex:1}
+
+/* Wizard Results: Summary + Auto Accessories + Grouped Products */
+.res-sum{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--sh);margin-bottom:14px}
+.res-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.res-top h2{margin:0;font-size:16.5px;font-weight:700}
+.res-tags{display:flex;gap:6px;flex-wrap:wrap}
+.rtag{font-size:12px;font-weight:600;padding:4px 10px;border-radius:14px;background:var(--bg);border:1px solid var(--line);color:var(--text)}
+.rtag b{color:var(--muted);font-weight:500;margin-right:4px}
+
+.acc-box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--sh);margin-bottom:16px}
+.acc-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.acc-hd h3{margin:0;font-size:15.5px;font-weight:700}
+.acc-sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.acc-list{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.acc-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.acc-row:last-child{border-bottom:0}
+.acc-chk{width:19px;height:19px;accent-color:var(--accent);flex:none;cursor:pointer}
+.acc-info{flex:1;min-width:0}
+.acc-n{font-weight:600;font-size:13.5px;line-height:1.3}
+.acc-d{font-size:12px;color:var(--muted);margin-top:1px}
+.acc-foot{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+
+.grp-h{display:flex;align-items:center;justify-content:space-between;margin:18px 2px 9px;font-size:14px;font-weight:700}
+.grp-h span{font-size:12px;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1px 8px}
+
+/* Active filter pills */
 .active-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:-2px 0 10px}
 .apill{display:inline-flex;align-items:center;gap:6px;background:var(--soft);color:var(--accent);border:0;border-radius:16px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .apill-reset{border:0;background:none;color:var(--muted);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:4px 6px}
@@ -65,10 +135,6 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .plist{display:flex;flex-direction:column;gap:10px}
 .pcard{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:var(--sh);cursor:pointer;transition:border-color .15s,transform .15s}
 .pthumb{width:54px;height:54px;border-radius:12px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--line);color:var(--accent)}
-.pthumb.cat-network{color:var(--blue);background:var(--blue-bg);border-color:transparent}
-.pthumb.cat-security{color:var(--accent);background:var(--soft);border-color:transparent}
-.pthumb.cat-access{color:var(--warn);background:var(--warn-bg);border-color:transparent}
-.pthumb.cat-smarthome{color:var(--ok);background:var(--ok-bg);border-color:transparent}
 .pthumb svg{width:26px;height:26px;display:block}
 .pimg{width:100%;height:100%;object-fit:cover;display:block}
 .pmain{flex:1;min-width:0;display:flex;flex-direction:column}
@@ -89,15 +155,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;
 textarea{min-height:74px;resize:vertical}
 .btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 13px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:5px}
 .btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:var(--on);box-shadow:0 3px 8px rgba(229,37,32,.22)}
+.btn.ok{background:var(--ok);border-color:transparent;color:#fff}
 .btn.sm{padding:7px 12px;font-size:13px}
 .btn.full{width:100%}
 .btn:disabled{opacity:.55;cursor:default}
-.qty{display:inline-flex;align-items:center;border:1px solid var(--accent);border-radius:10px;overflow:hidden;background:var(--card)}
-.qty button{border:0;background:var(--soft);color:var(--accent);width:32px;height:32px;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
-.qty span{min-width:28px;text-align:center;font-weight:700;font-size:13.5px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--accent);border-radius:10px;overflow:hidden;background:var(--card);flex:none}
+.qty button{border:0;background:var(--soft);color:var(--accent);width:30px;height:30px;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.qty span{min-width:28px;text-align:center;font-weight:700;font-size:13px;padding:0 3px}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.empty{color:var(--muted);text-align:center;padding:38px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh)}
-.foot-links{margin-top:20px;text-align:center;font-size:13px;color:var(--muted);display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.empty{color:var(--muted);text-align:center;padding:34px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh)}
+.foot-links{margin-top:22px;text-align:center;font-size:13px;color:var(--muted);display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
 .foot-links a{color:var(--muted);text-decoration:none;font-weight:500}
 
 /* Bottom floating cart bar */
@@ -106,7 +173,7 @@ textarea{min-height:74px;resize:vertical}
 .cart-sum{font-size:12.5px;line-height:1.3;color:var(--muted)}
 .cart-sum b{display:block;font-size:15.5px;color:var(--text)}
 
-/* Modals (Detail, Filters, Custom Item, Checkout) */
+/* Modals */
 .ov{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:25}
 .ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90dvh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)}
 .sheet-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
@@ -147,6 +214,10 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
   h1{font-size:15.5px}
   .icbtn{height:33px;min-width:33px;padding:0 7px}
   .lang button{padding:4px 6px;font-size:11px}
+  .cat-grid{gap:8px}
+  .ccard{padding:12px 11px}
+  .cicon{width:38px;height:38px}
+  .ctitle{font-size:13.5px}
   .pcard{padding:11px;gap:10px}
   .pthumb{width:46px;height:46px}
   .ph-row{gap:5px}
@@ -154,23 +225,24 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
   .ph-op{width:68px}
   .ph-op-c{width:50px}
 }
-/* Responsive: show compact text label on custom-add button on wider phones+ */
 @media (min-width:560px){
   .icbtn .ic-lbl{display:inline}
 }
-/* Responsive: hover feedback on desktop/mouse */
 @media (hover:hover){
   .btn:not(:disabled):hover{filter:brightness(.96)}
   .btn.p:not(:disabled):hover{filter:brightness(1.05)}
-  .icbtn:hover,.flt-btn:hover,.chip:not(.on):hover,.fpill:not(.on):hover{border-color:var(--accent);color:var(--accent)}
-  .pcard:hover{border-color:rgba(229,37,32,.35);transform:translateY(-1px)}
+  .icbtn:hover,.flt-btn:hover,.back-btn:hover,.fpill:not(.on):hover,.wopt:not(.on):hover{border-color:var(--accent);color:var(--accent)}
+  .ccard:hover,.pcard:hover{border-color:rgba(229,37,32,.38);transform:translateY(-1px)}
   .foot-links a:hover{color:var(--accent)}
 }
-/* Responsive: tablets (700px - 1079px) */
+/* Tablets (700px - 1079px) */
 @media (min-width:700px){
   body{max-width:1040px;padding:12px 24px 116px}
   header{margin:0 0 14px;padding:13px 18px;border-radius:16px;border:1px solid var(--line);top:12px}
-  .chips{flex-wrap:wrap;overflow-x:visible}
+  .cat-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .ccard{padding:16px 15px}
+  .wiz-card{padding:24px 26px}
+  .wiz-opts.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
   .pcard{height:100%}
   .pmain{height:100%}
@@ -178,38 +250,41 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
   .cart-bar{left:50%;right:auto;bottom:16px;transform:translateX(-50%);width:min(740px,calc(100vw - 32px));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 32px rgba(15,23,42,.16);padding:12px 18px}
   .cart-in{max-width:none}
   .ov{align-items:center;padding:24px}
-  .ov .sheet{border-radius:18px;max-width:580px;max-height:88dvh;padding:22px 24px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
-  .ok-panel{max-width:600px;margin:28px auto 0}
+  .ov .sheet{border-radius:18px;max-width:600px;max-height:88dvh;padding:22px 24px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+  .ok-panel{max-width:620px;margin:28px auto 0}
   #toast{bottom:96px}
 }
-/* Responsive: laptops & desktops (1080px - 1559px) */
+/* Laptops & Desktops (1080px+) */
 @media (min-width:1080px){
   body{max-width:1360px;padding:16px 32px 120px}
+  .cat-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
   .plist{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 }
-/* Responsive: wide desktop monitors (1560px+) */
+/* Wide desktop monitors (1560px+) */
 @media (min-width:1560px){
   body{max-width:1700px}
   .plist{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 }
-/* Responsive: Full HD+ / large monitors & TVs (1920px+) */
+/* Full HD+ / large monitors & TVs (1920px+) */
 @media (min-width:1920px){
   body{max-width:1960px;font-size:16.5px;padding:20px 40px 128px}
   .logo{width:44px;height:44px}
   h1{font-size:20px}
+  .ctitle{font-size:16px}
   .pname{font-size:15.5px}
   .pthumb{width:62px;height:62px}
 }
-/* Responsive: 4K monitors & large TVs (2400px+) */
+/* 4K monitors & large TVs (2400px+) */
 @media (min-width:2400px){
   body{max-width:2360px;font-size:18px}
+  .cat-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
   .plist{grid-template-columns:repeat(5,minmax(0,1fr));gap:20px}
 }
 </style>
 </head>
 <body>
 <header>
-  <div class="brand">
+  <div class="brand" id="homeBrand" title="На главную магазина">
     <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
     <div class="btxt">
       <h1 id="htitle">Магазин оборудования</h1>
@@ -269,6 +344,22 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&am
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const OP_CODES = ['50', '51', '55', '70', '77', '99', '10'];
 
+/* 11 Storefront Categories */
+const SHOP_CATS = [
+  { id: 'cctv', tone: 't-red', hasWiz: true },
+  { id: 'intercom', tone: 't-warn' },
+  { id: 'network', tone: 't-blue' },
+  { id: 'alarm', tone: 't-red' },
+  { id: 'smarthome', tone: 't-ok' },
+  { id: 'electrical', tone: 't-warn' },
+  { id: 'monitors', tone: 't-purp' },
+  { id: 'ups', tone: 't-ok' },
+  { id: 'audio', tone: 't-purp' },
+  { id: 'racks', tone: 't-gray' },
+  { id: 'barriers', tone: 't-blue' }
+];
+const CAT_IDS = SHOP_CATS.map(c => c.id);
+
 const I18N = {
   ru: {
     pageTitle: 'Магазин оборудования',
@@ -278,14 +369,23 @@ const I18N = {
     lnkReg: 'Анкета клиента',
     cartLbl: 'Корзина',
     loading: 'Загрузка каталога…',
-    emptyCatalog: 'Каталог пока пуст. Вы можете добавить нужный товар вручную.',
+    homeTitle: 'Выберите категорию',
+    homeSub: 'Нажмите на категорию для подбора или просмотра товаров',
+    allCatalogBtn: 'Смотреть весь каталог',
+    wizBadge: 'Подбор',
+    backCats: '← Категории',
+    skipToCat: 'Сразу к товарам →',
+    restartWiz: 'Изменить ответы',
+    startWizBtn: 'Подобрать систему',
+    catProdCnt: n => n ? `${n} поз.` : 'Под заказ',
+    emptyCatalog: 'В этой категории пока нет готовых позиций. Оставьте запрос — мы подберём и закажем нужное оборудование.',
     notFound: 'По вашему запросу ничего не найдено.',
     addOwnBtn: 'Добавить свой товар',
-    searchPh: 'Поиск по названию или модели…',
+    searchPh: 'Быстрый поиск по всему каталогу…',
+    searchCatPh: 'Поиск в категории…',
     filtersBtn: 'Фильтры',
-    filtersTitle: 'Фильтры каталога',
+    filtersTitle: 'Фильтры',
     fltBrand: 'Бренд',
-    fltCat: 'Категория',
     fltStock: 'Наличие',
     allBrands: 'Все бренды',
     allStock: 'Любое',
@@ -293,16 +393,14 @@ const I18N = {
     applyFlt: n => `Показать (${n})`,
     resetFlt: 'Сбросить',
     showMore: n => `Показать ещё (${n})`,
-    allCats: 'Все',
+    allCatsTitle: 'Весь каталог',
     inStock: 'В наличии',
     byOrder: 'Под заказ',
     priceAsk: 'Цена по запросу',
     detailsHint: 'Подробнее ›',
     addCart: 'В корзину',
     kBrand: 'Бренд',
-    kCat: 'Категория',
     kSku: 'Модель / артикул',
-    kStock: 'Статус',
     kPrice: 'Стоимость',
     customTitle: 'Добавить свой товар',
     customHint: 'Не нашли нужную модель в каталоге? Укажите её — мы добавим товар в ваш заказ.',
@@ -319,29 +417,154 @@ const I18N = {
     namePh: 'Например, Эльчин Мамедов',
     phoneLbl: 'Мобильный телефон',
     otherOp: 'Другой',
-    commentLbl: 'Комментарий (желаемая дата, уточнения)',
+    commentLbl: 'Комментарий (пожелания, адрес, детали)',
     commentPh: 'Необязательно',
     sendOrder: 'Отправить заказ',
     sending: 'Отправляем…',
     close: 'Закрыть',
+    back: 'Назад',
+    next: 'Далее',
+    showResult: 'Показать подбор',
     errName: 'Введите имя и фамилию (минимум 2 символа).',
     errOp: 'Укажите 2 цифры кода оператора.',
     errPhone: 'Введите 7 цифр номера.',
     errCart: 'Корзина пуста.',
     errSend: 'Не удалось отправить заказ. Проверьте подключение и попробуйте снова.',
     doneTitle: 'Заказ отправлен',
-    doneText: n => `Спасибо, ${n}! Список товаров передан мастеру. Статус закупки и дату получения вы сможете видеть в личном кабинете.`,
+    doneText: n => `Спасибо, ${n}! Список товаров и параметры подбора переданы мастеру. Статус закупки и дату получения вы сможете видеть в личном кабинете.`,
     backShop: 'Вернуться в магазин',
     goCab: 'Открыть личный кабинет',
+    /* 11 Category names & subtitles */
     cats: {
-      security: 'Видеонаблюдение',
-      network: 'Сеть и Wi-Fi',
-      access: 'Домофония и СКУД',
-      smarthome: 'Умный дом',
-      av: 'Аудио-видео',
-      cable: 'Кабель и монтаж',
-      other: 'Другое'
-    }
+      cctv: { t: 'Видеонаблюдение', d: 'Камеры, регистраторы, кабель и аксессуары' },
+      intercom: { t: 'Домофоны', d: 'Домофоны, вызывные панели, глазки и кабель' },
+      network: { t: 'Сетевые решения', d: 'Роутеры, коммутаторы, Wi-Fi, точки доступа, кабель' },
+      alarm: { t: 'Системы безопасности', d: 'Сигнализации, СКУД, контроллеры и замки' },
+      smarthome: { t: 'Системы «Умный дом»', d: 'Умные панели, датчики, сенсоры и автоматика' },
+      electrical: { t: 'Электрика и освещение', d: 'Электрика, автоматика и LED-освещение' },
+      monitors: { t: 'Мониторы', d: 'Мониторы, ТВ, LED-экраны, видеостены, проекторы' },
+      ups: { t: 'Батареи и UPS', d: 'ИБП, аккумуляторы и резервное питание' },
+      audio: { t: 'Аудиосистемы', d: 'Усилители, колонки, кабель и аксессуары' },
+      racks: { t: 'Органайзеры и аксессуары', d: 'Шкафчики, распред. коробки, rack-стойки' },
+      barriers: { t: 'Шлагбаумы и турникеты', d: 'Шлагбаумы, турникеты и автоматика доступа' }
+    },
+    /* CCTV Interactive Configurator */
+    wizStep: (i, n) => `Шаг ${i} из ${n}`,
+    wizTitle: 'Подбор видеонаблюдения',
+    wizResTitle: 'Ваш подбор видеонаблюдения',
+    wizAccTitle: 'Автоматически рассчитанные аксессуары и расходники',
+    wizAccSub: 'Количество рассчитано под ваш объект и число камер — можно скорректировать перед добавлением',
+    wizAddAcc: n => `Добавить аксессуары в корзину (${n})`,
+    wizAccAdded: 'Комплект аксессуаров добавлен в корзину',
+    wizSendCalc: 'Отправить ответы мастеру на расчёт',
+    wizGrpCams: 'Подходящие камеры',
+    wizGrpNvr: ch => `Видеорегистраторы (${ch} кан.)`,
+    wizGrpExtra: 'Накопители, коммутаторы и комплектующие',
+    wizDaysApprox: d => d >= 1 ? `~${d} дн.` : '< 1 дн.',
+    wizDaysNote: (cams, mp) => `Подсказка рассчитана для ${cams} камер (${mp} МП, запись 24/7 H.265). При записи по движению архив хранится в 1.5–2 раза дольше.`,
+    wizMpNote: 'При осмотре объекта специалист поможет точно определить нужное разрешение для каждой зоны.',
+    wizErrOther: 'Укажите ваш вариант в поле ниже.',
+    wizErrCams: 'Укажите количество камер (например, 72).',
+    q1Title: 'Куда требуется установить камеры?',
+    q1Hint: 'От типа объекта зависит тип корпуса камер и средний расход кабеля.',
+    q1Opts: [
+      { v: 'house', t: 'Частный дом + территория', s: 'Улица + периметр, защита IP67' },
+      { v: 'apt', t: 'Квартира', s: 'Внутренние компактные камеры' },
+      { v: 'office', t: 'Офис', s: 'Контроль помещений и входа' },
+      { v: 'enterprise', t: 'Предприятие / склад', s: 'Большая площадь и периметр' },
+      { v: 'transport', t: 'Транспорт', s: 'Спец. мобильные камеры' },
+      { v: 'other', t: 'Другое', s: 'Указать вручную' }
+    ],
+    q1Ph: 'Например, автомойка, магазин, кафе…',
+    q2Title: 'Сколько камер вы планируете установить?',
+    q2Hint: 'По количеству камер мы определим подходящий регистратор и число портов.',
+    q2Opts: [
+      { v: '1-4', t: '1–4 камеры', r: 'Рег. 4 кан.' },
+      { v: '4-8', t: '4–8 камер', r: 'Рег. 8 кан.' },
+      { v: '8-16', t: '8–16 камер', r: 'Рег. 16 кан.' },
+      { v: '16-32', t: '16–32 камеры', r: 'Рег. 32 кан.' },
+      { v: '32-64', t: '32–64 камеры', r: 'Рег. 64 кан.' },
+      { v: '64+', t: '64+ (указать вручную)', r: 'Другое' }
+    ],
+    q2Ph: 'Введите точное количество камер, например 80',
+    q3Title: 'Какую систему видеонаблюдения вы выбираете?',
+    q3Hint: 'От типа системы зависят кабель, питание и коммутационное оборудование.',
+    q3Opts: [
+      { v: 'ip', t: 'IP-видеонаблюдение (цифровое)', s: 'Кабель UTP + PoE, высокая чёткость и аналитика', r: 'Рекомендуем' },
+      { v: 'analog', t: 'Аналоговое (HD-TVI / CVI)', s: 'Коаксиальный кабель + питание 12В, бюджетное решение' },
+      { v: 'unsure', t: 'Не знаю — подскажите при осмотре', s: 'Рассчитаем универсальный вариант (IP)' }
+    ],
+    q4Title: 'Какое разрешение камер (МП) вы хотите?',
+    q4Hint: 'Чем выше мегапиксели, тем лучше детализация лиц и номеров.',
+    q4Opts: [
+      { v: '1', t: '1 МП (HD 720p)', s: 'Базовый обзор' },
+      { v: '2', t: '2 МП (Full HD 1080p)', s: 'Стандарт для помещений' },
+      { v: '4', t: '4 МП (2K)', s: 'Оптимально для дома и офиса', r: 'Популярный' },
+      { v: '5', t: '5 МП', s: 'Повышенная чёткость' },
+      { v: '6', t: '6 МП', s: 'Высокая детализация' },
+      { v: '8+', t: '8+ МП (4K)', s: 'Максимальная детализация, номера авто' },
+      { v: 'specialist', t: 'Определить при осмотре специалиста', s: 'Подберём под каждую зону отдельно' }
+    ],
+    q5Title: 'Какой объём архива записи вам нужен?',
+    q5Hint: 'Справа показана ориентировочная длительность хранения для ваших камер.',
+    q5SubBig: 'Увеличенный архив',
+    q5Tb: tb => `${tb} ТБ`,
+    chShort: 'кан.',
+    sysAnalogShort: 'Аналог',
+    brandRecShort: 'по рекомендации',
+    q5OtherT: 'Другое (указать желаемые дни / объём)',
+    q5Ph: 'Например, нужно хранение ровно 60 дней',
+    q6Title: 'Проведены ли кабели к точкам установки камер?',
+    q6Hint: 'От этого зависит, нужно ли включать в расчёт кабель и монтаж линий.',
+    q6Opts: [
+      { v: 'turnkey', t: 'Нет — спроектировать и проложить с нуля «под ключ»', s: 'Включим средний расчёт кабеля и монтажных расходников' },
+      { v: 'partial', t: 'Проведены частично', s: 'Включим половину расчётного кабеля на дотяжку' },
+      { v: 'done', t: 'Да, кабели уже проведены к точкам', s: 'Кабель не добавляем — только коробки и разъёмы' },
+      { v: 'other', t: 'Другое', s: 'Указать вручную' }
+    ],
+    q6Ph: 'Например, объект на этапе ремонта…',
+    q7Title: 'Какой бренд оборудования вы предпочитаете?',
+    q7Hint: 'Покажем в первую очередь модели выбранного производителя.',
+    q7Opts: [
+      { v: 'Hikvision', t: 'Hikvision', s: 'Мировой лидер, приложение Hik-Connect', r: 'Топ' },
+      { v: 'Dahua', t: 'Dahua', s: 'Надёжная альтернатива, DMSS' },
+      { v: 'EZVIZ', t: 'EZVIZ', s: 'Удобные решения для дома и квартиры' },
+      { v: 'Uniview', t: 'Uniview', s: 'Профессиональные IP-системы' },
+      { v: 'any', t: 'Любой — по рекомендации мастера', s: 'Покажем лучшие модели всех брендов' },
+      { v: 'other', t: 'Другое', s: 'Указать свой бренд' }
+    ],
+    q7Ph: 'Введите желаемый бренд…',
+    /* Auto-calculated accessory labels */
+    accBox: 'Монтажные распределительные коробки',
+    accBoxD: n => `По 1 коробке на каждую из ${n} камер`,
+    accRj45: 'Разъёмы RJ-45 (коннекторы Cat5e/6)',
+    accRj45D: 'По 2 разъёма на камеру + запас',
+    accPoe: (p, n) => `PoE-коммутатор ${p}-портовый`,
+    accPoeD: 'Питание и передача данных для IP-камер по одному кабелю',
+    accUtp: 'Кабель UTP Cat5e / Cat6 (витая пара)',
+    accUtpD: (m, c) => `Средний расчёт ~${m} м на камеру (${c} камер)`,
+    accBnc: 'BNC-разъёмы (видеосигнал)',
+    accBncD: 'По 2 разъёма на каждую аналоговую камеру',
+    accDc: 'Разъёмы питания DC 12В',
+    accDcD: 'Для подключения питания камер и блока',
+    accPsu: 'Блок питания 12В (распределительный бокс)',
+    accPsuD: 'Питание аналоговых камер с запасом по току',
+    accCoax: 'Комбинированный кабель (коаксиальный + питание)',
+    accCoaxD: (m, c) => `Средний расчёт ~${m} м на камеру (${c} камер)`,
+    accHdd: tb => `Жёсткий диск для видеонаблюдения (WD Purple / SkyHawk ${tb} ТБ)`,
+    accHddD: d => `Ориентировочно ${d} записи`,
+    accPatch: 'HDMI-кабель и патч-корд для подключения регистратора',
+    accPatchD: 'Подключение регистратора к монитору и роутеру',
+    unitPcs: 'шт.',
+    unitM: 'м',
+    sumObj: 'Объект',
+    sumCams: 'Камеры',
+    sumSys: 'Система',
+    sumMp: 'Разрешение',
+    sumArch: 'Архив',
+    sumCab: 'Кабели',
+    sumBrand: 'Бренд',
+    calcOrderItem: (cams, sys, mp, brand) => `Подбор комплекта видеонаблюдения: ${cams} камер, ${sys}, ${mp} МП (${brand})`
   },
   az: {
     pageTitle: 'Avadanlıq mağazası',
@@ -351,14 +574,23 @@ const I18N = {
     lnkReg: 'Müştəri anketi',
     cartLbl: 'Səbət',
     loading: 'Kataloq yüklənir…',
-    emptyCatalog: 'Kataloq hələ boşdur. Lazım olan məhsulu əl ilə əlavə edə bilərsiniz.',
+    homeTitle: 'Kateqoriya seçin',
+    homeSub: 'Sistem seçimi və ya məhsullara baxmaq üçün kateqoriyanı açın',
+    allCatalogBtn: 'Bütün kataloqa bax',
+    wizBadge: 'Seçim',
+    backCats: '← Kateqoriyalar',
+    skipToCat: 'Birbaşa məhsullara →',
+    restartWiz: 'Cavabları dəyiş',
+    startWizBtn: 'Sistemi seç',
+    catProdCnt: n => n ? `${n} məhsul` : 'Sifarişlə',
+    emptyCatalog: 'Bu kateqoriyada hələ hazır məhsul yoxdur. Sorğu göndərin — sizə uyğun avadanlığı seçib sifariş edək.',
     notFound: 'Sorğunuza uyğun məhsul tapılmadı.',
     addOwnBtn: 'Öz məhsulunu əlavə et',
-    searchPh: 'Ad və ya model üzrə axtarış…',
+    searchPh: 'Bütün kataloq üzrə sürətli axtarış…',
+    searchCatPh: 'Kateqoriyada axtarış…',
     filtersBtn: 'Filtrlər',
-    filtersTitle: 'Kataloq filtrləri',
+    filtersTitle: 'Filtrlər',
     fltBrand: 'Brend',
-    fltCat: 'Kateqoriya',
     fltStock: 'Mövcudluq',
     allBrands: 'Bütün brendlər',
     allStock: 'Hamısı',
@@ -366,16 +598,14 @@ const I18N = {
     applyFlt: n => `Göstər (${n})`,
     resetFlt: 'Sıfırla',
     showMore: n => `Daha çox göstər (${n})`,
-    allCats: 'Hamısı',
+    allCatsTitle: 'Bütün kataloq',
     inStock: 'Anbarda var',
     byOrder: 'Sifarişlə',
     priceAsk: 'Qiymət sorğu ilə',
     detailsHint: 'Ətraflı ›',
     addCart: 'Səbətə at',
     kBrand: 'Brend',
-    kCat: 'Kateqoriya',
     kSku: 'Model / artikul',
-    kStock: 'Status',
     kPrice: 'Qiymət',
     customTitle: 'Öz məhsulunu əlavə et',
     customHint: 'Lazım olan modeli tapmadınız? Adını yazın — sifarişinizə əlavə edək.',
@@ -392,29 +622,151 @@ const I18N = {
     namePh: 'Məsələn, Elçin Məmmədov',
     phoneLbl: 'Mobil nömrə',
     otherOp: 'Digər',
-    commentLbl: 'Şərh (istənilən tarix, qeydlər)',
+    commentLbl: 'Şərh (qeydlər, ünvan, təfərrüatlar)',
     commentPh: 'Məcburi deyil',
     sendOrder: 'Sifarişi göndər',
     sending: 'Göndərilir…',
     close: 'Bağla',
+    back: 'Geri',
+    next: 'Növbəti',
+    showResult: 'Seçimi göstər',
     errName: 'Ad və soyadınızı daxil edin (ən azı 2 simvol).',
     errOp: 'Operator kodunun 2 rəqəmini qeyd edin.',
     errPhone: 'Nömrənin 7 rəqəmini tam daxil edin.',
     errCart: 'Səbət boşdur.',
     errSend: 'Sifarişi göndərmək mümkün olmadı. İnterneti yoxlayın və yenidən cəhd edin.',
     doneTitle: 'Sifariş göndərildi',
-    doneText: n => `Təşəkkür edirik, ${n}! Məhsul siyahısı ustaya göndərildi. Alış statusunu və təhvil tarixini şəxsi kabinetdə izləyə biləcəksiniz.`,
+    doneText: n => `Təşəkkür edirik, ${n}! Məhsul siyahısı və seçim parametrləri ustaya göndərildi. Statusu şəxsi kabinetdə izləyə biləcəksiniz.`,
     backShop: 'Mağazaya qayıt',
     goCab: 'Şəxsi kabineti aç',
     cats: {
-      security: 'Videomüşahidə',
-      network: 'Şəbəkə və Wi-Fi',
-      access: 'Domofon və SKUD',
-      smarthome: 'Ağıllı ev',
-      av: 'Audio-video',
-      cable: 'Kabel və montaj',
-      other: 'Digər'
-    }
+      cctv: { t: 'Videomüşahidə', d: 'Kameralar, qeydiyyatçılar, kabel və aksesuarlar' },
+      intercom: { t: 'Domofonlar', d: 'Domofonlar, çağırış panelləri, gözcüklər və kabel' },
+      network: { t: 'Şəbəkə həlləri', d: 'Routerlər, kommutatorlar, Wi-Fi, giriş nöqtələri, kabel' },
+      alarm: { t: 'Təhlükəsizlik sistemləri', d: 'Siqnalizasiya, SKUD, kontroller və kilidlər' },
+      smarthome: { t: '«Ağıllı ev» sistemləri', d: 'Ağıllı panellər, sensorlar və avtomatika' },
+      electrical: { t: 'Elektrik və işıqlandırma', d: 'Elektrik, avtomatika və LED işıqlandırma' },
+      monitors: { t: 'Monitorlar', d: 'Monitorlar, TV, LED ekranlar, videodivar, proyektorlar' },
+      ups: { t: 'Batareyalar və UPS', d: 'UPS, akkumulyatorlar və ehtiyat qidalanma' },
+      audio: { t: 'Audio sistemlər', d: 'Gücləndiricilər, səsucaldanlar, kabel və aksesuarlar' },
+      racks: { t: 'Orqanayzerlər və aksesuarlar', d: 'Şkaflar, paylayıcı qutular, rack kabinələr' },
+      barriers: { t: 'Şlaqbaum və turniketlər', d: 'Şlaqbaum, turniket və giriş avtomatikası' }
+    },
+    wizStep: (i, n) => `Addım ${i} / ${n}`,
+    wizTitle: 'Videomüşahidə seçimi',
+    wizResTitle: 'Sizin videomüşahidə seçiminiz',
+    wizAccTitle: 'Avtomatik hesablanmış aksesuarlar və materiallar',
+    wizAccSub: 'Say obyektinizə və kamera sayına uyğun hesablanıb — əlavə etməzdən əvvəl dəyişə bilərsiniz',
+    wizAddAcc: n => `Aksesuarları səbətə əlavə et (${n})`,
+    wizAccAdded: 'Aksesuar dəsti səbətə əlavə olundu',
+    wizSendCalc: 'Cavabları ustaya hesablamaya göndər',
+    wizGrpCams: 'Uyğun kameralar',
+    wizGrpNvr: ch => `Videoqeydiyyatçılar (${ch} kanal)`,
+    wizGrpExtra: 'Yaddaş diskləri, kommutatorlar və hissələr',
+    wizDaysApprox: d => d >= 1 ? `~${d} gün` : '< 1 gün',
+    wizDaysNote: (cams, mp) => `Hesablama ${cams} kamera (${mp} MP, 24/7 H.265) üçün təxmini göstərilib. Hərəkətə görə çəkilişdə arxiv 1.5–2 dəfə uzun saxlanılır.`,
+    wizMpNote: 'Obyektə baxış zamanı mütəxəssis hər zona üçün dəqiq tələbatı müəyyən edəcək.',
+    wizErrOther: 'Aşağıdakı xanaya öz variantınızı yazın.',
+    wizErrCams: 'Kamera sayını daxil edin (məsələn, 72).',
+    q1Title: 'Kameralar harada quraşdırılacaq?',
+    q1Hint: 'Obyektin növündən kamera korpusu və orta kabel sərfi asılıdır.',
+    q1Opts: [
+      { v: 'house', t: 'Fərdi ev + həyət', s: 'Çöl + perimetr, IP67 qoruma' },
+      { v: 'apt', t: 'Mənzil', s: 'Daxili kompakt kameralar' },
+      { v: 'office', t: 'Ofis', s: 'Otaqların və girişin nəzarəti' },
+      { v: 'enterprise', t: 'Müəssisə / anbar', s: 'Geniş sahə və perimetr' },
+      { v: 'transport', t: 'Nəqliyyat', s: 'Xüsusi mobil kameralar' },
+      { v: 'other', t: 'Digər', s: 'Əl ilə qeyd et' }
+    ],
+    q1Ph: 'Məsələn, avtoyuma, mağaza, kafe…',
+    q2Title: 'Neçə kamera quraşdırmağı planlaşdırırsınız?',
+    q2Hint: 'Kamera sayına görə uyğun qeydiyyatçı və port sayı müəyyən edilir.',
+    q2Opts: [
+      { v: '1-4', t: '1–4 kamera', r: '4 kanallı' },
+      { v: '4-8', t: '4–8 kamera', r: '8 kanallı' },
+      { v: '8-16', t: '8–16 kamera', r: '16 kanallı' },
+      { v: '16-32', t: '16–32 kamera', r: '32 kanallı' },
+      { v: '32-64', t: '32–64 kamera', r: '64 kanallı' },
+      { v: '64+', t: '64+ (əl ilə daxil et)', r: 'Digər' }
+    ],
+    q2Ph: 'Dəqiq kamera sayını yazın, məsələn 80',
+    q3Title: 'Hansı videomüşahidə sistemini seçirsiniz?',
+    q3Hint: 'Sistem növündən kabel, qidalanma və şəbəkə avadanlığı asılıdır.',
+    q3Opts: [
+      { v: 'ip', t: 'IP videomüşahidə (rəqəmsal)', s: 'UTP kabel + PoE, yüksək keyfiyyət və analitika', r: 'Tövsiyə' },
+      { v: 'analog', t: 'Analoq (HD-TVI / CVI)', s: 'Koaksial kabel + 12V qidalanma, sərfəli həll' },
+      { v: 'unsure', t: 'Bilmirəm — baxış zamanı məsləhət verin', s: 'Universal variant (IP) hesablanacaq' }
+    ],
+    q4Title: 'Kameraların keyfiyyəti (MP) neçə olsun?',
+    q4Hint: 'Meqapiksel yüksək olduqca üzlər və nömrələr daha aydın görünür.',
+    q4Opts: [
+      { v: '1', t: '1 MP (HD 720p)', s: 'Əsas görüntü' },
+      { v: '2', t: '2 MP (Full HD 1080p)', s: 'Daxili məkanlar üçün standart' },
+      { v: '4', t: '4 MP (2K)', s: 'Ev və ofis üçün optimal', r: 'Populyar' },
+      { v: '5', t: '5 MP', s: 'Yüksək aydınlıq' },
+      { v: '6', t: '6 MP', s: 'Güclü detallıq' },
+      { v: '8+', t: '8+ MP (4K)', s: 'Maksimal detallıq, avtomobil nömrələri' },
+      { v: 'specialist', t: 'Mütəxəssis baxışında müəyyən edilsin', s: 'Hər zona üçün ayrıca seçəcəyik' }
+    ],
+    q5Title: 'Arxiv yaddaşı nə qədər lazımdır?',
+    q5Hint: 'Sağda seçdiyiniz kameralar üçün təxmini saxlama müddəti göstərilib.',
+    q5SubBig: 'Genişləndirilmiş arxiv',
+    q5Tb: tb => `${tb} TB`,
+    chShort: 'kan.',
+    sysAnalogShort: 'Analoq',
+    brandRecShort: 'ustanın tövsiyəsi',
+    q5OtherT: 'Digər (gün / həcm əl ilə qeyd et)',
+    q5Ph: 'Məsələn, dəqiq 60 gün arxiv lazımdır',
+    q6Title: 'Kamera nöqtələrinə kabellər çəkilibmi?',
+    q6Hint: 'Bundan kabel və montaj xərcinin hesablamaya daxil edilməsi asılıdır.',
+    q6Opts: [
+      { v: 'turnkey', t: 'Xeyr — sıfırdan «açar təhvil» layihələndirib çəkmək lazımdır', s: 'Orta kabel sərfi və materiallar əlavə ediləcək' },
+      { v: 'partial', t: 'Qismən çəkilib', s: 'Hesablanmış kabelin yarısı əlavə ediləcək' },
+      { v: 'done', t: 'Bəli, kabellər artıq çəkilib', s: 'Kabel əlavə edilmir — yalnız qutu və başlıqlar' },
+      { v: 'other', t: 'Digər', s: 'Əl ilə qeyd et' }
+    ],
+    q6Ph: 'Məsələn, obyekt təmir mərhələsindədir…',
+    q7Title: 'Hansı brendə üstünlük verirsiniz?',
+    q7Hint: 'İlk növbədə seçdiyiniz istehsalçının modelləri göstəriləcək.',
+    q7Opts: [
+      { v: 'Hikvision', t: 'Hikvision', s: 'Dünya lideri, Hik-Connect tətbiqi', r: 'Top' },
+      { v: 'Dahua', t: 'Dahua', s: 'Etibarlı alternativ, DMSS' },
+      { v: 'EZVIZ', t: 'EZVIZ', s: 'Ev və mənzil üçün rahat həllər' },
+      { v: 'Uniview', t: 'Uniview', s: 'Peşəkar IP sistemlər' },
+      { v: 'any', t: 'Fərqi yoxdur — ustanın tövsiyəsi ilə', s: 'Bütün brendlərin ən yaxşı modelləri' },
+      { v: 'other', t: 'Digər', s: 'Öz brendinizi yazın' }
+    ],
+    q7Ph: 'İstədiyiniz brendi yazın…',
+    accBox: 'Montaj paylayıcı qutular',
+    accBoxD: n => `Hər ${n} kameraya 1 qutu`,
+    accRj45: 'RJ-45 başlıqlar (Cat5e/6)',
+    accRj45D: 'Hər kameraya 2 başlıq + ehtiyat',
+    accPoe: (p, n) => `${p}-portlu PoE kommutator`,
+    accPoeD: 'IP kameralar üçün bir kabellə qidalanma və data',
+    accUtp: 'UTP Cat5e / Cat6 kabel',
+    accUtpD: (m, c) => `Orta hesabla ~${m} m / kamera (${c} kamera)`,
+    accBnc: 'BNC başlıqlar (video)',
+    accBncD: 'Hər analoq kameraya 2 başlıq',
+    accDc: 'DC 12V qidalanma başlıqları',
+    accDcD: 'Kamera və qida blokunun qoşulması üçün',
+    accPsu: '12V qida bloku (paylayıcı qutu)',
+    accPsuD: 'Analoq kameralar üçün ehtiyat güclü qidalanma',
+    accCoax: 'Kombinə edilmiş kabel (koaksial + qida)',
+    accCoaxD: (m, c) => `Orta hesabla ~${m} m / kamera (${c} kamera)`,
+    accHdd: tb => `Videomüşahidə sərt diski (WD Purple / SkyHawk ${tb} TB)`,
+    accHddD: d => `Təxminən ${d} arxiv`,
+    accPatch: 'HDMI kabel və patch-kord (qeydiyyatçı üçün)',
+    accPatchD: 'Qeydiyyatçının monitora və routerə qoşulması',
+    unitPcs: 'əd.',
+    unitM: 'm',
+    sumObj: 'Obyekt',
+    sumCams: 'Kameralar',
+    sumSys: 'Sistem',
+    sumMp: 'Keyfiyyət',
+    sumArch: 'Arxiv',
+    sumCab: 'Kabel',
+    sumBrand: 'Brend',
+    calcOrderItem: (cams, sys, mp, brand) => `Videomüşahidə dəsti seçimi: ${cams} kamera, ${sys}, ${mp} MP (${brand})`
   }
 };
 
@@ -428,13 +780,27 @@ let lang = (() => {
 
 let products = [];
 let loaded = false;
-let catFilter = 'all';
+let mode = 'home'; // 'home' | 'wiz' | 'wiz_res' | 'cat' | 'all'
+let activeCat = 'all';
 let brandFilter = 'all';
 let stockOnly = false;
 let searchQ = '';
 let pageLimit = 30;
 let cart = []; // { id, name, price, unit, qty }
 let orderDone = null;
+
+/* CCTV Wizard State */
+let wizStep = 0; // 0..6
+let wizAns = {
+  obj: '', objOther: '',
+  cams: '', camsCustom: '',
+  sys: '',
+  mp: '',
+  arch: '', archOther: '',
+  cab: '', cabOther: '',
+  brand: '', brandOther: ''
+};
+let wizAccDraft = []; // auto-calculated editable accessory items
 
 const KNOWN_BRANDS = ['Hikvision', 'Ubiquiti', 'Dahua', 'MikroTik', 'TP-Link', 'Keenetic', 'Cudy', 'EZVIZ', 'Ajax', 'Uniview', 'Shturmann', 'Schneider', 'Legrand', 'Famatel', 'Zubr', 'Teltonika', 'Starlink', 'WD Purple'];
 function detectBrand(p) {
@@ -445,28 +811,62 @@ function detectBrand(p) {
   return '';
 }
 
+/* Map existing 7-cat Firestore items + new 11-cat items cleanly into the 11 categories */
+function detectShopCat(p) {
+  if (p.cat && CAT_IDS.includes(p.cat)) return p.cat;
+  const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
+  if (/шлагбаум|турникет|барьер|привод ворот/.test(hay)) return 'barriers';
+  if (/домофон|вызывн|глазок|intercom|ds-kh|ds-kv|vto|vth|dp2|cp4/.test(hay)) return 'intercom';
+  if (/сигнал|ajax|скуд|замок|контроллер|считывател|ax pro|ds-k1|ds-pwa|motionprotect|doorprotect/.test(hay)) return 'alarm';
+  if (/\bups\b|ибп|аккумулятор|батаре|бесперебойн|резервн.*питан/.test(hay)) return 'ups';
+  if (/монитор|телевизор|\bтв\b|\btv\b|видеостен|проектор|дисплей/.test(hay)) return 'monitors';
+  if (/аудио|колонк|усилител.*звук|микрофон|динамик|ресивер|сабвуфер/.test(hay)) return 'audio';
+  if (/автомат|узо|дифавтомат|реле напряж|щиток|розетк|выключат|\bled\b|светильн|освещ|schneider|legrand|zubr/.test(hay)) return 'electrical';
+  if (/шкаф|rack|стойк|распред.*коробк|монтажн.*коробк|бокс|кронштейн|патч-панел|органайзер|ds-1280|ds-1273|famatel/.test(hay)) return 'racks';
+  if (p.cat === 'smarthome' || /умный дом|датчик|сенсор|zigbee|tuya/.test(hay)) return 'smarthome';
+  if (p.cat === 'network' || /роутер|коммутатор|switch|poe|wi-fi|wifi|точк.*доступ|unifi|mikrotik|cudy|keenetic|tp-link|маршрутизатор|патч-корд|utp|ftp|rj-45|rj45|starlink/.test(hay)) return 'network';
+  if (p.cat === 'security' || /камер|nvr|dvr|видеорегистратор|видеонаблюд|bnc|коаксиал|квк|wd purple|skyhawk|hikvision|dahua|ezviz|uniview/.test(hay)) return 'cctv';
+  if (p.cat === 'access') return 'alarm';
+  if (p.cat === 'av') return 'monitors';
+  if (p.cat === 'cable') return 'racks';
+  return 'racks';
+}
+
+function catTone(id) {
+  const f = SHOP_CATS.find(x => x.id === id);
+  return f ? f.tone : 't-gray';
+}
+
 function catIconSvg(cat) {
   switch (cat) {
-    case 'security':
+    case 'cctv':
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l13-4 4 7-13 4z"/><path d="M16 11l3 1 1 3-3 1"/><path d="M6 15v5h5"/></svg>';
+    case 'intercom':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="9.5" r="2.5"/><path d="M8.5 16.5h7"/></svg>';
     case 'network':
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/></svg>';
-    case 'access':
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="2.5"/><path d="M9 16h6"/></svg>';
+    case 'alarm':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>';
     case 'smarthome':
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><circle cx="12" cy="14" r="2"/></svg>';
-    case 'av':
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>';
-    case 'cable':
+    case 'electrical':
       return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+    case 'monitors':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>';
+    case 'ups':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="18" height="11" rx="2"/><line x1="22" y1="11" x2="22" y2="14"/><path d="M11 10l-2 3h4l-2 3"/></svg>';
+    case 'audio':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="14" r="4"/><circle cx="12" cy="6.5" r="1" fill="currentColor"/></svg>';
+    case 'barriers':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="5" height="10" rx="1"/><path d="M8 13l13-5"/><path d="M2 21h20"/></svg>';
     default:
-      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>';
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><circle cx="7" cy="6" r=".8" fill="currentColor"/><circle cx="7" cy="12" r=".8" fill="currentColor"/><circle cx="7" cy="18" r=".8" fill="currentColor"/></svg>';
   }
 }
 
 function thumbHtml(p, extraCls = '') {
-  const cat = p.cat || 'other';
-  const cls = `pthumb cat-${esc(cat)}${extraCls ? ' ' + extraCls : ''}`;
+  const cat = detectShopCat(p);
+  const cls = `pthumb ${catTone(cat)}${extraCls ? ' ' + extraCls : ''}`;
   if (p.img) {
     return `<div class="${cls}"><img class="pimg" src="${esc(p.img)}" alt="" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true">${catIconSvg(cat)}</span></div>`;
   }
@@ -496,15 +896,10 @@ function fmt7(d) {
   return s.slice(0, 3) + ' ' + s.slice(3, 5) + ' ' + s.slice(5);
 }
 
-function cartTotal() {
-  return cart.reduce((acc, it) => acc + (Number(it.price) > 0 ? Number(it.price) * it.qty : 0), 0);
-}
+function cartTotal() { return cart.reduce((acc, it) => acc + (Number(it.price) > 0 ? Number(it.price) * it.qty : 0), 0); }
+function cartCount() { return cart.reduce((acc, it) => acc + it.qty, 0); }
 
-function cartCount() {
-  return cart.reduce((acc, it) => acc + it.qty, 0);
-}
-
-function addToCart(prod, delta) {
+function addToCart(prod, delta, silent) {
   const i = cart.findIndex(x => x.id === prod.id);
   if (i < 0) {
     if (delta > 0) cart.push({ id: prod.id, name: prod.name, price: Number(prod.price) || 0, unit: prod.unit || 'шт.', qty: delta });
@@ -512,16 +907,187 @@ function addToCart(prod, delta) {
     cart[i].qty += delta;
     if (cart[i].qty <= 0) cart.splice(i, 1);
   }
-  render();
+  if (!silent) render();
+}
+
+/* CCTV Math Helpers */
+function wizCamCount() {
+  switch (wizAns.cams) {
+    case '1-4': return 4;
+    case '4-8': return 8;
+    case '8-16': return 16;
+    case '16-32': return 32;
+    case '32-64': return 64;
+    case '64+': {
+      const n = Math.round(Number(wizAns.camsCustom));
+      return Number.isFinite(n) && n > 0 ? n : 64;
+    }
+    default: return 4;
+  }
+}
+
+function wizNvrChannels() {
+  const n = wizCamCount();
+  if (n <= 4) return 4;
+  if (n <= 8) return 8;
+  if (n <= 16) return 16;
+  if (n <= 32) return 32;
+  if (n <= 64) return 64;
+  return Math.ceil(n / 64) * 64;
+}
+
+function wizMpNum() {
+  if (wizAns.mp === '1') return 1;
+  if (wizAns.mp === '2') return 2;
+  if (wizAns.mp === '4') return 4;
+  if (wizAns.mp === '5') return 5;
+  if (wizAns.mp === '6') return 6;
+  if (wizAns.mp === '8+') return 8;
+  return 4;
+}
+
+function calcArchiveDays(tb) {
+  const cams = wizCamCount();
+  const mp = wizMpNum();
+  const gbPerDayMap = { 1: 7.5, 2: 13, 4: 22, 5: 26, 6: 30, 8: 41 };
+  const perCam = gbPerDayMap[mp] || 22;
+  const usableGb = tb * 930;
+  return Math.floor(usableGb / (cams * perCam));
+}
+
+function buildWizAccessories() {
+  const L = I18N[lang];
+  const cams = wizCamCount();
+  const isAnalog = wizAns.sys === 'analog';
+  const avgMMap = { house: 25, apt: 15, office: 20, enterprise: 35, transport: 8, other: 20 };
+  const perCamM = avgMMap[wizAns.obj] || 20;
+  const cabFactor = wizAns.cab === 'done' ? 0 : (wizAns.cab === 'partial' ? 0.5 : 1);
+  const totalMeters = Math.ceil((cams * perCamM * cabFactor) / 10) * 10;
+
+  const list = [];
+  list.push({ id: 'acc_box', on: true, name: L.accBox, desc: L.accBoxD(cams), qty: cams, unit: L.unitPcs });
+
+  if (!isAnalog) {
+    list.push({ id: 'acc_rj45', on: true, name: L.accRj45, desc: L.accRj45D, qty: cams * 2 + 4, unit: L.unitPcs });
+    const swPorts = cams <= 4 ? 4 : (cams <= 8 ? 8 : 16);
+    const swQty = Math.ceil(cams / swPorts);
+    list.push({ id: 'acc_poe', on: true, name: L.accPoe(swPorts, swQty), desc: L.accPoeD, qty: swQty, unit: L.unitPcs });
+    if (totalMeters > 0) {
+      list.push({ id: 'acc_utp', on: true, name: L.accUtp, desc: L.accUtpD(Math.round(perCamM * cabFactor), cams), qty: totalMeters, unit: L.unitM });
+    }
+  } else {
+    list.push({ id: 'acc_bnc', on: true, name: L.accBnc, desc: L.accBncD, qty: cams * 2, unit: L.unitPcs });
+    list.push({ id: 'acc_dc', on: true, name: L.accDc, desc: L.accDcD, qty: cams * 2, unit: L.unitPcs });
+    list.push({ id: 'acc_psu', on: true, name: L.accPsu, desc: L.accPsuD, qty: Math.max(1, Math.ceil(cams / 8)), unit: L.unitPcs });
+    if (totalMeters > 0) {
+      list.push({ id: 'acc_coax', on: true, name: L.accCoax, desc: L.accCoaxD(Math.round(perCamM * cabFactor), cams), qty: totalMeters, unit: L.unitM });
+    }
+  }
+
+  const archTb = Number(wizAns.arch);
+  if (Number.isFinite(archTb) && archTb > 0) {
+    const hddUnit = archTb > 8 ? 8 : archTb;
+    const hddQty = archTb > 8 ? Math.ceil(archTb / 8) : 1;
+    list.push({ id: 'acc_hdd', on: true, name: L.accHdd(hddUnit), desc: L.accHddD(L.wizDaysApprox(calcArchiveDays(hddUnit * hddQty))), qty: hddQty, unit: L.unitPcs });
+  }
+
+  list.push({ id: 'acc_patch', on: true, name: L.accPatch, desc: L.accPatchD, qty: 1, unit: L.unitPcs });
+  wizAccDraft = list;
+}
+
+function wizSummaryPairs() {
+  const L = I18N[lang];
+  const findLbl = (arr, v) => { const f = arr.find(x => x.v === v); return f ? f.t : v; };
+  const objT = wizAns.obj === 'other' ? (wizAns.objOther || findLbl(L.q1Opts, 'other')) : findLbl(L.q1Opts, wizAns.obj);
+  const camsT = wizAns.cams === '64+' ? `${wizCamCount()} (${wizNvrChannels()} ${L.chShort})` : `${findLbl(L.q2Opts, wizAns.cams)} (${wizNvrChannels()} ${L.chShort})`;
+  const sysT = findLbl(L.q3Opts, wizAns.sys);
+  const mpT = findLbl(L.q4Opts, wizAns.mp);
+  const archTb = Number(wizAns.arch);
+  const archT = wizAns.arch === 'other'
+    ? (wizAns.archOther || L.q5OtherT)
+    : (Number.isFinite(archTb) && archTb > 0 ? `${L.q5Tb(archTb)} (${L.wizDaysApprox(calcArchiveDays(archTb))})` : '—');
+  const cabT = wizAns.cab === 'other' ? (wizAns.cabOther || findLbl(L.q6Opts, 'other')) : findLbl(L.q6Opts, wizAns.cab);
+  const brT = wizAns.brand === 'other' ? (wizAns.brandOther || findLbl(L.q7Opts, 'other')) : findLbl(L.q7Opts, wizAns.brand);
+  return [
+    [L.sumObj, objT],
+    [L.sumCams, camsT],
+    [L.sumSys, sysT],
+    [L.sumMp, mpT],
+    [L.sumArch, archT],
+    [L.sumCab, cabT],
+    [L.sumBrand, brT]
+  ];
+}
+
+function wizSummaryComment() {
+  if (!wizAns.obj && !wizAns.cams) return '';
+  const pairs = wizSummaryPairs().filter(([, v]) => v && v !== '—');
+  return `[${I18N[lang].wizTitle}]\n` + pairs.map(([k, v]) => `${k}: ${v}`).join('\n');
+}
+
+function matchWizProducts() {
+  const br = (wizAns.brand && wizAns.brand !== 'any' && wizAns.brand !== 'other') ? wizAns.brand.toLowerCase() : '';
+  const isAnalog = wizAns.sys === 'analog';
+  const ch = wizNvrChannels();
+  const mp = wizAns.mp && wizAns.mp !== 'specialist' ? wizAns.mp.replace('+', '') : '';
+
+  const cctvPool = products.filter(p => {
+    const c = detectShopCat(p);
+    return c === 'cctv' || (c === 'network' && /poe|utp|коммутатор|switch/i.test((p.name || '') + ' ' + (p.desc || ''))) || (c === 'racks' && /коробк|кронштейн|ds-12/i.test(p.name || ''));
+  });
+
+  const isReg = p => /nvr|dvr|регистратор|ds-7[1267]|nvr[0-9]|xvr/i.test((p.name || '') + ' ' + (p.sku || ''));
+  const isCam = p => !isReg(p) && detectShopCat(p) === 'cctv' && !/wd purple|skyhawk|hdd|диск|кабель|bnc|разъём|коробк|кронштейн|блок питан/i.test((p.name || '') + ' ' + (p.desc || ''));
+  const isExtra = p => !isReg(p) && !isCam(p);
+
+  const scoreBrand = p => (!br ? 1 : (detectBrand(p).toLowerCase() === br ? 3 : 0));
+
+  // 1. Cameras
+  let cams = cctvPool.filter(isCam).filter(p => {
+    const hay = ((p.name || '') + ' ' + (p.desc || '')).toLowerCase();
+    if (isAnalog && /\bip\b|poe|ds-2cd|ipc-/i.test(hay) && !/tvi|cvi|analog|turbo/i.test(hay)) return false;
+    if (!isAnalog && wizAns.sys === 'ip' && /turbo hd|hd-tvi|hd-cvi|ds-2ce|hac-/i.test(hay)) return false;
+    return true;
+  });
+  if (br) {
+    const brCams = cams.filter(p => detectBrand(p).toLowerCase() === br);
+    if (brCams.length) cams = brCams;
+  }
+  if (mp) {
+    const mpRx = new RegExp(`\\b${mp}\\s?(мп|mp)\\b`, 'i');
+    const mpCams = cams.filter(p => mpRx.test((p.name || '') + ' ' + (p.desc || '')));
+    if (mpCams.length >= 2) cams = mpCams;
+  }
+  if (!cams.length) cams = cctvPool.filter(isCam);
+  cams.sort((a, b) => scoreBrand(b) - scoreBrand(a));
+
+  // 2. Recorders (NVR/DVR)
+  let nvrs = cctvPool.filter(isReg);
+  if (br) {
+    const brNvr = nvrs.filter(p => detectBrand(p).toLowerCase() === br);
+    if (brNvr.length) nvrs = brNvr;
+  }
+  const chRx = new RegExp(`(\\b${ch}[\\s-]?кан|[-/]${ch}[pq]?\\b|\\b${ch}ch\\b)`, 'i');
+  nvrs.sort((a, b) => {
+    const am = chRx.test((a.name || '') + ' ' + (a.sku || '')) ? 2 : 0;
+    const bm = chRx.test((b.name || '') + ' ' + (b.sku || '')) ? 2 : 0;
+    return (bm + scoreBrand(b)) - (am + scoreBrand(a));
+  });
+
+  // 3. Extras (HDD, PoE switch, cables, mounts)
+  let extras = cctvPool.filter(isExtra);
+  extras.sort((a, b) => scoreBrand(b) - scoreBrand(a));
+
+  return { cams: cams.slice(0, 12), nvrs: nvrs.slice(0, 6), extras: extras.slice(0, 8) };
 }
 
 function getFiltered(opts = {}) {
-  const cf = opts.cat !== undefined ? opts.cat : catFilter;
+  const cf = opts.cat !== undefined ? opts.cat : activeCat;
   const bf = opts.brand !== undefined ? opts.brand : brandFilter;
   const st = opts.stockOnly !== undefined ? opts.stockOnly : stockOnly;
   const q = searchQ.trim().toLowerCase();
   return products.filter(p => {
-    if (cf !== 'all' && (p.cat || 'other') !== cf) return false;
+    if (cf !== 'all' && detectShopCat(p) !== cf) return false;
     if (bf !== 'all' && detectBrand(p) !== bf) return false;
     if (st && p.inStock === false) return false;
     if (q) {
@@ -529,6 +1095,50 @@ function getFiltered(opts = {}) {
       if (!hay.includes(q)) return false;
     }
     return true;
+  });
+}
+
+function productCardHtml(p) {
+  const L = I18N[lang];
+  const ci = cart.find(x => x.id === p.id);
+  const brand = detectBrand(p);
+  const catId = detectShopCat(p);
+  const catLbl = (L.cats[catId] && L.cats[catId].t) || '';
+  const subLbl = brand || catLbl;
+  const inStk = p.inStock !== false;
+  const stockHtml = `<span class="sdot ${inStk ? 'ok' : 'warn'}">${esc(inStk ? L.inStock : L.byOrder)}</span>`;
+  const hasPrice = Number(p.price) > 0;
+  const leftFoot = hasPrice
+    ? `<div class="price">${esc(fmtPrice(p.price))}${p.unit ? ` <small>/ ${esc(p.unit)}</small>` : ''}</div>`
+    : `<span class="more-hint">${esc(L.detailsHint)}</span>`;
+  const ctrl = ci
+    ? `<div class="qty"><button type="button" data-dec="${esc(p.id)}">−</button><span>${ci.qty}</span><button type="button" data-inc="${esc(p.id)}">+</button></div>`
+    : `<button type="button" class="btn p sm" data-inc="${esc(p.id)}">+ ${esc(L.addCart)}</button>`;
+  return `<article class="pcard" data-open="${esc(p.id)}">
+    ${thumbHtml(p)}
+    <div class="pmain">
+      <div class="pname">${esc(p.name)}</div>
+      <div class="pmeta">${subLbl ? `<span>${esc(subLbl)}</span>` : ''}${stockHtml}</div>
+      <div class="pfoot">${leftFoot}${ctrl}</div>
+    </div>
+  </article>`;
+}
+
+function bindProductCards(root) {
+  root.querySelectorAll('[data-inc]').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    const p = products.find(x => x.id === b.dataset.inc);
+    if (p) addToCart(p, 1);
+  });
+  root.querySelectorAll('[data-dec]').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    const p = products.find(x => x.id === b.dataset.dec);
+    if (p) addToCart(p, -1);
+  });
+  root.querySelectorAll('[data-open]').forEach(card => card.onclick = e => {
+    if (e.target.closest('button')) return;
+    const p = products.find(x => x.id === card.dataset.open);
+    if (p) openProductModal(p);
   });
 }
 
@@ -566,6 +1176,388 @@ function renderCartBar() {
   $('#cartSum').innerHTML = `<span>${esc(L.cartCount(cnt))}</span><b>${tot > 0 ? esc(fmtPrice(tot)) : esc(L.priceAsk)}</b>`;
 }
 
+function renderHome(L) {
+  // If user typed in global search on Home screen, show search results right away
+  let html = `<div class="toolbar">
+    <div class="search-wrap">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}">
+      ${searchQ ? '<button type="button" class="s-clr" id="qClr" aria-label="×">×</button>' : ''}
+    </div>
+  </div>`;
+
+  if (searchQ.trim()) {
+    const res = getFiltered({ cat: 'all', brand: 'all', stockOnly: false });
+    const shown = res.slice(0, pageLimit);
+    const rest = res.length - shown.length;
+    if (!res.length) {
+      html += `<div class="empty"><div>${esc(L.notFound)}</div><div class="row" style="justify-content:center;margin-top:14px"><button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button></div></div>`;
+    } else {
+      html += '<div class="plist">' + shown.map(productCardHtml).join('') + '</div>';
+      if (rest > 0) html += `<div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
+    }
+    $('#app').innerHTML = html;
+    const qInp = $('#qInp');
+    qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
+    if ($('#qClr')) $('#qClr').onclick = () => { searchQ = ''; render(); };
+    if ($('#emptyCustomBtn')) $('#emptyCustomBtn').onclick = openCustomModal;
+    if ($('#moreBtn')) $('#moreBtn').onclick = () => { pageLimit += 30; render(); };
+    bindProductCards($('#app'));
+    return;
+  }
+
+  // Count items per category
+  const counts = {};
+  for (const p of products) {
+    const cid = detectShopCat(p);
+    counts[cid] = (counts[cid] || 0) + 1;
+  }
+
+  html += `<div class="sec-head"><h2>${esc(L.homeTitle)}</h2><span>${esc(L.homeSub)}</span></div>`;
+  html += '<div class="cat-grid">' + SHOP_CATS.map(c => {
+    const info = L.cats[c.id];
+    const cnt = counts[c.id] || 0;
+    return `<button type="button" class="ccard" data-pickcat="${c.id}">
+      <div class="ccard-top">
+        <div class="cicon ${c.tone}">${catIconSvg(c.id)}</div>
+        ${c.hasWiz ? `<span class="cbadge-wiz">${esc(L.wizBadge)}</span>` : ''}
+      </div>
+      <div class="ctitle">${esc(info.t)}</div>
+      <div class="cdesc">${esc(info.d)}</div>
+      <div class="ccnt">${esc(L.catProdCnt(cnt))}</div>
+    </button>`;
+  }).join('') + '</div>';
+
+  html += `<div class="row" style="justify-content:center;margin-top:18px">
+    <button type="button" class="btn" id="allCatBtn">${esc(L.allCatalogBtn)} (${products.length})</button>
+  </div>`;
+
+  $('#app').innerHTML = html;
+  const qInp = $('#qInp');
+  qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
+  $('#app').querySelectorAll('[data-pickcat]').forEach(b => b.onclick = () => {
+    const cid = b.dataset.pickcat;
+    activeCat = cid;
+    brandFilter = 'all';
+    stockOnly = false;
+    searchQ = '';
+    pageLimit = 30;
+    const catMeta = SHOP_CATS.find(x => x.id === cid);
+    if (catMeta && catMeta.hasWiz) {
+      wizStep = 0;
+      mode = 'wiz';
+    } else {
+      mode = 'cat';
+    }
+    render();
+    window.scrollTo(0, 0);
+  });
+  $('#allCatBtn').onclick = () => { activeCat = 'all'; brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; mode = 'all'; render(); window.scrollTo(0, 0); };
+}
+
+function renderCctvWizard(L) {
+  const totalSteps = 7;
+  const pct = Math.round(((wizStep + 1) / totalSteps) * 100);
+  let qTitle = '', qHint = '', opts = [], field = '', otherField = '', otherPh = '', extraNote = '', isNumOther = false, cols2 = false;
+
+  if (wizStep === 0) {
+    qTitle = L.q1Title; qHint = L.q1Hint; opts = L.q1Opts; field = 'obj'; otherField = 'objOther'; otherPh = L.q1Ph; cols2 = true;
+  } else if (wizStep === 1) {
+    qTitle = L.q2Title; qHint = L.q2Hint; opts = L.q2Opts; field = 'cams'; otherField = 'camsCustom'; otherPh = L.q2Ph; isNumOther = true; cols2 = true;
+  } else if (wizStep === 2) {
+    qTitle = L.q3Title; qHint = L.q3Hint; opts = L.q3Opts; field = 'sys';
+  } else if (wizStep === 3) {
+    qTitle = L.q4Title; qHint = L.q4Hint; opts = L.q4Opts; field = 'mp'; extraNote = L.wizMpNote; cols2 = true;
+  } else if (wizStep === 4) {
+    qTitle = L.q5Title; qHint = L.q5Hint; field = 'arch'; otherField = 'archOther'; otherPh = L.q5Ph; cols2 = true;
+    const tbs = [1, 2, 4, 6, 8, 16];
+    opts = tbs.map(tb => ({
+      v: String(tb),
+      t: tb <= 8 ? L.q5Tb(tb) : `${L.q5Tb(tb)} (2 × ${L.q5Tb(8)})`,
+      s: tb <= 2 ? 'WD Purple / SkyHawk' : L.q5SubBig,
+      r: L.wizDaysApprox(calcArchiveDays(tb))
+    }));
+    opts.push({ v: 'other', t: L.q5OtherT, s: '' });
+    extraNote = L.wizDaysNote(wizCamCount(), wizMpNum());
+  } else if (wizStep === 5) {
+    qTitle = L.q6Title; qHint = L.q6Hint; opts = L.q6Opts; field = 'cab'; otherField = 'cabOther'; otherPh = L.q6Ph;
+  } else {
+    qTitle = L.q7Title; qHint = L.q7Hint; opts = L.q7Opts; field = 'brand'; otherField = 'brandOther'; otherPh = L.q7Ph; cols2 = true;
+  }
+
+  const curVal = wizAns[field];
+  const needsOther = (curVal === 'other' || curVal === '64+') && otherField;
+
+  let html = `<div class="wiz-wrap">
+    <div class="back-bar">
+      <button type="button" class="back-btn" id="wizBackCats">${esc(L.backCats)}</button>
+      <button type="button" class="skip-link" id="wizSkip">${esc(L.skipToCat)}</button>
+    </div>
+    <div class="wiz-prog">
+      <div class="wiz-ptop"><span>${esc(L.wizTitle)} · ${esc(L.wizStep(wizStep + 1, totalSteps))}</span><span>${pct}%</span></div>
+      <div class="wiz-pbar"><div class="wiz-pfill" style="width:${pct}%"></div></div>
+    </div>
+    <section class="wiz-card">
+      <h2>${esc(qTitle)}</h2>
+      <div class="wiz-hint">${esc(qHint)}</div>
+      <div class="wiz-opts${cols2 ? ' cols2' : ''}">
+        ${opts.map(o => `<button type="button" class="wopt${curVal === o.v ? ' on' : ''}" data-wv="${esc(o.v)}">
+          <div class="wopt-l">
+            <div class="wopt-t">${esc(o.t)}</div>
+            ${o.s ? `<div class="wopt-s">${esc(o.s)}</div>` : ''}
+          </div>
+          ${o.r ? `<span class="wopt-r">${esc(o.r)}</span>` : ''}
+        </button>`).join('')}
+      </div>
+      ${needsOther ? `<div class="wiz-other">
+        <input id="wizOtherInp" type="${isNumOther ? 'number' : 'text'}" ${isNumOther ? 'min="65" max="999" inputmode="numeric"' : 'maxlength="120"'} placeholder="${esc(otherPh)}" value="${esc(wizAns[otherField] || '')}">
+      </div>` : ''}
+      ${extraNote ? `<div class="wiz-note">${esc(extraNote)}</div>` : ''}
+      <div class="err" id="wizErr"></div>
+      <div class="wiz-nav">
+        ${wizStep > 0 ? `<button type="button" class="btn" id="wizPrev">${esc(L.back)}</button>` : ''}
+        <button type="button" class="btn p" id="wizNext" ${!curVal ? 'disabled' : ''}>${esc(wizStep === totalSteps - 1 ? L.showResult : L.next)}</button>
+      </div>
+    </section>
+  </div>`;
+
+  $('#app').innerHTML = html;
+
+  $('#wizBackCats').onclick = () => { mode = 'home'; render(); window.scrollTo(0, 0); };
+  $('#wizSkip').onclick = () => { activeCat = 'cctv'; mode = 'cat'; render(); window.scrollTo(0, 0); };
+
+  const advance = () => {
+    const errEl = $('#wizErr');
+    if (!wizAns[field]) return;
+    if (wizAns[field] === '64+' && isNumOther) {
+      const num = Math.round(Number(wizAns[otherField]));
+      if (!Number.isFinite(num) || num < 65) { errEl.textContent = L.wizErrCams; if ($('#wizOtherInp')) $('#wizOtherInp').focus(); return; }
+    } else if (wizAns[field] === 'other' && otherField) {
+      if (!(wizAns[otherField] || '').trim()) { errEl.textContent = L.wizErrOther; if ($('#wizOtherInp')) $('#wizOtherInp').focus(); return; }
+    }
+    errEl.textContent = '';
+    if (wizStep < totalSteps - 1) {
+      wizStep++;
+      render();
+      window.scrollTo(0, 0);
+    } else {
+      buildWizAccessories();
+      mode = 'wiz_res';
+      render();
+      window.scrollTo(0, 0);
+    }
+  };
+
+  $('#app').querySelectorAll('[data-wv]').forEach(b => b.onclick = () => {
+    wizAns[field] = b.dataset.wv;
+    if (b.dataset.wv === 'other' || b.dataset.wv === '64+') {
+      render();
+      if ($('#wizOtherInp')) $('#wizOtherInp').focus();
+    } else {
+      advance();
+    }
+  });
+
+  if ($('#wizOtherInp')) {
+    const inp = $('#wizOtherInp');
+    inp.oninput = () => { wizAns[otherField] = inp.value; $('#wizErr').textContent = ''; };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
+  }
+  if ($('#wizPrev')) $('#wizPrev').onclick = () => { wizStep--; render(); window.scrollTo(0, 0); };
+  $('#wizNext').onclick = advance;
+}
+
+function renderCctvResults(L) {
+  const pairs = wizSummaryPairs();
+  const matched = matchWizProducts();
+  const selAcc = wizAccDraft.filter(a => a.on && a.qty > 0);
+  const ch = wizNvrChannels();
+
+  let html = `<div class="back-bar">
+    <button type="button" class="back-btn" id="resBackCats">${esc(L.backCats)}</button>
+    <button type="button" class="skip-link" id="resAllCctv">${esc(L.skipToCat)}</button>
+  </div>`;
+
+  // 1. Summary card
+  html += `<section class="res-sum">
+    <div class="res-top">
+      <h2>${esc(L.wizResTitle)}</h2>
+      <button type="button" class="btn sm" id="resRestart">${esc(L.restartWiz)}</button>
+    </div>
+    <div class="res-tags">
+      ${pairs.map(([k, v]) => `<span class="rtag"><b>${esc(k)}:</b>${esc(v)}</span>`).join('')}
+    </div>
+  </section>`;
+
+  // 2. Auto-calculated accessories card
+  html += `<section class="acc-box">
+    <div class="acc-hd">
+      <div>
+        <h3>${esc(L.wizAccTitle)}</h3>
+        <div class="acc-sub">${esc(L.wizAccSub)}</div>
+      </div>
+    </div>
+    <div class="acc-list">
+      ${wizAccDraft.map((a, idx) => `<div class="acc-row">
+        <input type="checkbox" class="acc-chk" data-achk="${idx}" ${a.on ? 'checked' : ''}>
+        <div class="acc-info">
+          <div class="acc-n">${esc(a.name)}</div>
+          <div class="acc-d">${esc(a.desc)}</div>
+        </div>
+        <div class="qty">
+          <button type="button" data-adec="${idx}">−</button>
+          <span>${a.qty} ${esc(a.unit)}</span>
+          <button type="button" data-ainc="${idx}">+</button>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="acc-foot">
+      <button type="button" class="btn ok" id="addAccBtn" ${selAcc.length ? '' : 'disabled'}>${esc(L.wizAddAcc(selAcc.length))}</button>
+      <button type="button" class="btn p" id="sendCalcBtn">${esc(L.wizSendCalc)}</button>
+    </div>
+  </section>`;
+
+  // 3. Grouped matching catalog items
+  if (matched.cams.length) {
+    html += `<div class="grp-h">${esc(L.wizGrpCams)}<span>${matched.cams.length}</span></div>`;
+    html += '<div class="plist">' + matched.cams.map(productCardHtml).join('') + '</div>';
+  }
+  if (matched.nvrs.length) {
+    html += `<div class="grp-h">${esc(L.wizGrpNvr(ch))}<span>${matched.nvrs.length}</span></div>`;
+    html += '<div class="plist">' + matched.nvrs.map(productCardHtml).join('') + '</div>';
+  }
+  if (matched.extras.length) {
+    html += `<div class="grp-h">${esc(L.wizGrpExtra)}<span>${matched.extras.length}</span></div>`;
+    html += '<div class="plist">' + matched.extras.map(productCardHtml).join('') + '</div>';
+  }
+
+  $('#app').innerHTML = html;
+
+  $('#resBackCats').onclick = () => { mode = 'home'; render(); window.scrollTo(0, 0); };
+  $('#resAllCctv').onclick = () => { activeCat = 'cctv'; mode = 'cat'; render(); window.scrollTo(0, 0); };
+  $('#resRestart').onclick = () => { wizStep = 0; mode = 'wiz'; render(); window.scrollTo(0, 0); };
+
+  $('#app').querySelectorAll('[data-achk]').forEach(cb => cb.onchange = () => {
+    wizAccDraft[Number(cb.dataset.achk)].on = cb.checked;
+    render();
+  });
+  $('#app').querySelectorAll('[data-ainc]').forEach(b => b.onclick = () => {
+    const it = wizAccDraft[Number(b.dataset.ainc)];
+    const step = it.unit === L.unitM ? 10 : 1;
+    it.qty += step;
+    it.on = true;
+    render();
+  });
+  $('#app').querySelectorAll('[data-adec]').forEach(b => b.onclick = () => {
+    const it = wizAccDraft[Number(b.dataset.adec)];
+    const step = it.unit === L.unitM ? 10 : 1;
+    it.qty = Math.max(step, it.qty - step);
+    render();
+  });
+
+  $('#addAccBtn').onclick = () => {
+    let added = 0;
+    for (const a of wizAccDraft) {
+      if (!a.on || a.qty <= 0) continue;
+      addToCart({ id: 'wiz_' + a.id, name: a.name, price: 0, unit: a.unit }, a.qty, true);
+      added++;
+    }
+    if (added) { render(); toast(L.wizAccAdded); }
+  };
+
+  $('#sendCalcBtn').onclick = () => {
+    // Ensure cart has the selected kit + summary item if empty so checkout works cleanly
+    if (!cart.length) {
+      const sysShort = wizAns.sys === 'analog' ? L.sysAnalogShort : 'IP';
+      const brShort = (wizAns.brand && wizAns.brand !== 'any') ? (wizAns.brand === 'other' ? wizAns.brandOther : wizAns.brand) : L.brandRecShort;
+      addToCart({ id: 'wiz_kit_' + uid(), name: L.calcOrderItem(wizCamCount(), sysShort, wizMpNum(), brShort || '—'), price: 0, unit: L.unitPcs }, 1, true);
+      for (const a of wizAccDraft) {
+        if (a.on && a.qty > 0) addToCart({ id: 'wiz_' + a.id, name: a.name, price: 0, unit: a.unit }, a.qty, true);
+      }
+      render();
+    }
+    openCheckout(wizSummaryComment());
+  };
+
+  bindProductCards($('#app'));
+}
+
+function renderCatalogView(L) {
+  const catInfo = activeCat === 'all' ? { t: L.allCatsTitle } : L.cats[activeCat];
+  const catMeta = SHOP_CATS.find(x => x.id === activeCat);
+  const pool = activeCat === 'all' ? products : products.filter(p => detectShopCat(p) === activeCat);
+  const usedBrands = [...new Set(pool.map(detectBrand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  if (brandFilter !== 'all' && !usedBrands.includes(brandFilter)) brandFilter = 'all';
+
+  const filtered = getFiltered();
+  const shown = filtered.slice(0, pageLimit);
+  const rest = filtered.length - shown.length;
+  const activeFltCnt = (brandFilter !== 'all' ? 1 : 0) + (stockOnly ? 1 : 0);
+
+  let html = `<div class="back-bar">
+    <button type="button" class="back-btn" id="catBack">${esc(L.backCats)}</button>
+    ${catMeta && catMeta.hasWiz ? `<button type="button" class="btn p sm" id="catStartWiz">${esc(L.startWizBtn)}</button>` : ''}
+  </div>`;
+
+  html += `<div class="sec-head"><h2>${esc(catInfo ? catInfo.t : L.allCatsTitle)}</h2><span>${filtered.length}</span></div>`;
+
+  html += `<div class="toolbar">
+    <div class="search-wrap">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="qInp" type="search" placeholder="${esc(L.searchCatPh)}" value="${esc(searchQ)}">
+      ${searchQ ? '<button type="button" class="s-clr" id="qClr" aria-label="×">×</button>' : ''}
+    </div>
+    ${usedBrands.length > 1 || pool.length > 0 ? `<button type="button" class="flt-btn${activeFltCnt ? ' on' : ''}" id="openFltBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+      <span>${esc(L.filtersBtn)}</span>
+      ${activeFltCnt ? `<span class="flt-cnt">${activeFltCnt}</span>` : ''}
+    </button>` : ''}
+  </div>`;
+
+  if (activeFltCnt) {
+    html += '<div class="active-bar">';
+    if (brandFilter !== 'all') html += `<button type="button" class="apill" id="clrBrand">${esc(brandFilter)} ×</button>`;
+    if (stockOnly) html += `<button type="button" class="apill" id="clrStock">${esc(L.onlyInStock)} ×</button>`;
+    html += `<button type="button" class="apill-reset" id="clrAllFlt">${esc(L.resetFlt)}</button></div>`;
+  }
+
+  if (!pool.length) {
+    html += `<div class="empty">
+      <div>${esc(L.emptyCatalog)}</div>
+      <div class="row" style="justify-content:center;margin-top:14px"><button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button></div>
+    </div>`;
+  } else if (!filtered.length) {
+    html += `<div class="empty">
+      <div>${esc(L.notFound)}</div>
+      <div class="row" style="justify-content:center;margin-top:14px">
+        <button type="button" class="btn" id="emptyResetBtn">${esc(L.resetFlt)}</button>
+        <button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button>
+      </div>
+    </div>`;
+  } else {
+    html += '<div class="plist">' + shown.map(productCardHtml).join('') + '</div>';
+    if (rest > 0) {
+      html += `<div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
+    }
+  }
+
+  $('#app').innerHTML = html;
+
+  $('#catBack').onclick = () => { mode = 'home'; searchQ = ''; render(); window.scrollTo(0, 0); };
+  if ($('#catStartWiz')) $('#catStartWiz').onclick = () => { wizStep = 0; mode = 'wiz'; render(); window.scrollTo(0, 0); };
+  const qInp = $('#qInp');
+  qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
+  if ($('#qClr')) $('#qClr').onclick = () => { searchQ = ''; pageLimit = 30; render(); };
+  if ($('#openFltBtn')) $('#openFltBtn').onclick = () => openFiltersModal(usedBrands);
+  if ($('#clrBrand')) $('#clrBrand').onclick = () => { brandFilter = 'all'; pageLimit = 30; render(); };
+  if ($('#clrStock')) $('#clrStock').onclick = () => { stockOnly = false; pageLimit = 30; render(); };
+  if ($('#clrAllFlt')) $('#clrAllFlt').onclick = () => { brandFilter = 'all'; stockOnly = false; pageLimit = 30; render(); };
+  if ($('#emptyResetBtn')) $('#emptyResetBtn').onclick = () => { brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; render(); };
+  if ($('#emptyCustomBtn')) $('#emptyCustomBtn').onclick = openCustomModal;
+  if ($('#moreBtn')) $('#moreBtn').onclick = () => { pageLimit += 30; render(); };
+  bindProductCards($('#app'));
+}
+
 function render() {
   applyLangStatic();
   const L = I18N[lang];
@@ -576,14 +1568,14 @@ function render() {
       <div class="ok-head"><span class="ok-badge">✓</span><h2 style="margin:0;font-size:18px">${esc(L.doneTitle)}</h2></div>
       <p style="margin:0 0 12px;color:var(--muted);font-size:14px">${esc(L.doneText(orderDone.name))}</p>
       <div style="border-top:1px solid var(--line)">
-        ${orderDone.items.map(it => `<div class="citem"><div class="citem-n">${esc(it.name)} × ${it.qty}</div><div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price * it.qty)) : ''}</div></div>`).join('')}
+        ${orderDone.items.map(it => `<div class="citem"><div class="citem-n">${esc(it.name)} × ${it.qty} ${esc(it.unit || '')}</div><div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price * it.qty)) : ''}</div></div>`).join('')}
       </div>
       <div class="row" style="margin-top:14px">
         <button type="button" class="btn" id="backShopBtn">${esc(L.backShop)}</button>
         <a class="btn p" href="client.html">${esc(L.goCab)}</a>
       </div>
     </section>`;
-    $('#backShopBtn').onclick = () => { orderDone = null; render(); };
+    $('#backShopBtn').onclick = () => { orderDone = null; mode = 'home'; render(); };
     return;
   }
 
@@ -592,120 +1584,10 @@ function render() {
     return;
   }
 
-  const usedCats = [...new Set(products.map(p => p.cat || 'other'))];
-  const catTabs = ['all', ...usedCats];
-  if (!catTabs.includes(catFilter)) catFilter = 'all';
-
-  const usedBrands = [...new Set(products.map(detectBrand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
-  if (brandFilter !== 'all' && !usedBrands.includes(brandFilter)) brandFilter = 'all';
-
-  const filtered = getFiltered();
-  const shown = filtered.slice(0, pageLimit);
-  const rest = filtered.length - shown.length;
-  const activeFltCnt = (brandFilter !== 'all' ? 1 : 0) + (stockOnly ? 1 : 0);
-
-  // 1. Compact search + filters toolbar
-  let html = `<div class="toolbar">
-    <div class="search-wrap">
-      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}">
-      ${searchQ ? '<button type="button" class="s-clr" id="qClr" aria-label="Очистить">×</button>' : ''}
-    </div>
-    <button type="button" class="flt-btn${activeFltCnt ? ' on' : ''}" id="openFltBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
-      <span>${esc(L.filtersBtn)}</span>
-      ${activeFltCnt ? `<span class="flt-cnt">${activeFltCnt}</span>` : ''}
-    </button>
-  </div>`;
-
-  // 2. Single clean category strip
-  if (usedCats.length > 1) {
-    html += '<div class="chips">' + catTabs.map(c => {
-      const lbl = c === 'all' ? L.allCats : (L.cats[c] || c);
-      return `<button type="button" class="chip${catFilter === c ? ' on' : ''}" data-cat="${esc(c)}">${esc(lbl)}</button>`;
-    }).join('') + '</div>';
-  }
-
-  // Active extra filter badges (brand / stock)
-  if (activeFltCnt) {
-    html += '<div class="active-bar">';
-    if (brandFilter !== 'all') html += `<button type="button" class="apill" id="clrBrand">${esc(brandFilter)} ×</button>`;
-    if (stockOnly) html += `<button type="button" class="apill" id="clrStock">${esc(L.onlyInStock)} ×</button>`;
-    html += `<button type="button" class="apill-reset" id="clrAllFlt">${esc(L.resetFlt)}</button></div>`;
-  }
-
-  // 3. Clean storefront cards
-  if (!products.length) {
-    html += `<div class="empty">
-      <div>${esc(L.emptyCatalog)}</div>
-      <div class="row" style="justify-content:center;margin-top:14px"><button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button></div>
-    </div>`;
-  } else if (!filtered.length) {
-    html += `<div class="empty">
-      <div>${esc(L.notFound)}</div>
-      <div class="row" style="justify-content:center;margin-top:14px">
-        ${(catFilter !== 'all' || brandFilter !== 'all' || stockOnly || searchQ) ? `<button type="button" class="btn" id="emptyResetBtn">${esc(L.resetFlt)}</button>` : ''}
-        <button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button>
-      </div>
-    </div>`;
-  } else {
-    html += '<div class="plist">' + shown.map(p => {
-      const ci = cart.find(x => x.id === p.id);
-      const brand = detectBrand(p);
-      const catLbl = L.cats[p.cat || 'other'] || '';
-      const subLbl = brand || catLbl;
-      const inStk = p.inStock !== false;
-      const stockHtml = `<span class="sdot ${inStk ? 'ok' : 'warn'}">${esc(inStk ? L.inStock : L.byOrder)}</span>`;
-      const hasPrice = Number(p.price) > 0;
-      const leftFoot = hasPrice
-        ? `<div class="price">${esc(fmtPrice(p.price))}${p.unit ? ` <small>/ ${esc(p.unit)}</small>` : ''}</div>`
-        : `<span class="more-hint">${esc(L.detailsHint)}</span>`;
-      const ctrl = ci
-        ? `<div class="qty"><button type="button" data-dec="${esc(p.id)}">−</button><span>${ci.qty}</span><button type="button" data-inc="${esc(p.id)}">+</button></div>`
-        : `<button type="button" class="btn p sm" data-inc="${esc(p.id)}">+ ${esc(L.addCart)}</button>`;
-      return `<article class="pcard" data-open="${esc(p.id)}">
-        ${thumbHtml(p)}
-        <div class="pmain">
-          <div class="pname">${esc(p.name)}</div>
-          <div class="pmeta">${subLbl ? `<span>${esc(subLbl)}</span>` : ''}${stockHtml}</div>
-          <div class="pfoot">${leftFoot}${ctrl}</div>
-        </div>
-      </article>`;
-    }).join('') + '</div>';
-    if (rest > 0) {
-      html += `<div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
-    }
-  }
-
-  $('#app').innerHTML = html;
-
-  const qInp = $('#qInp');
-  qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
-  if ($('#qClr')) $('#qClr').onclick = () => { searchQ = ''; pageLimit = 30; render(); };
-  $('#openFltBtn').onclick = () => openFiltersModal(usedBrands, catTabs);
-  if ($('#clrBrand')) $('#clrBrand').onclick = () => { brandFilter = 'all'; pageLimit = 30; render(); };
-  if ($('#clrStock')) $('#clrStock').onclick = () => { stockOnly = false; pageLimit = 30; render(); };
-  if ($('#clrAllFlt')) $('#clrAllFlt').onclick = () => { brandFilter = 'all'; stockOnly = false; pageLimit = 30; render(); };
-  if ($('#emptyResetBtn')) $('#emptyResetBtn').onclick = () => { catFilter = 'all'; brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; render(); };
-  if ($('#emptyCustomBtn')) $('#emptyCustomBtn').onclick = openCustomModal;
-  if ($('#moreBtn')) $('#moreBtn').onclick = () => { pageLimit += 30; render(); };
-
-  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catFilter = b.dataset.cat; pageLimit = 30; render(); });
-  document.querySelectorAll('[data-inc]').forEach(b => b.onclick = e => {
-    e.stopPropagation();
-    const p = products.find(x => x.id === b.dataset.inc);
-    if (p) addToCart(p, 1);
-  });
-  document.querySelectorAll('[data-dec]').forEach(b => b.onclick = e => {
-    e.stopPropagation();
-    const p = products.find(x => x.id === b.dataset.dec);
-    if (p) addToCart(p, -1);
-  });
-  document.querySelectorAll('[data-open]').forEach(card => card.onclick = e => {
-    if (e.target.closest('button')) return;
-    const p = products.find(x => x.id === card.dataset.open);
-    if (p) openProductModal(p);
-  });
+  if (mode === 'home') renderHome(L);
+  else if (mode === 'wiz') renderCctvWizard(L);
+  else if (mode === 'wiz_res') renderCctvResults(L);
+  else renderCatalogView(L);
 }
 
 function renderListOnly() {
@@ -720,7 +1602,8 @@ function openProductModal(p) {
   const ov = document.createElement('div');
   ov.className = 'ov';
   const brand = detectBrand(p);
-  const catLbl = L.cats[p.cat || 'other'] || '';
+  const catId = detectShopCat(p);
+  const catLbl = (L.cats[catId] && L.cats[catId].t) || '';
   const inStk = p.inStock !== false;
 
   function draw() {
@@ -763,14 +1646,14 @@ function openProductModal(p) {
   draw();
 }
 
-function openFiltersModal(usedBrands, catTabs) {
+function openFiltersModal(usedBrands) {
   const L = I18N[lang];
   const ov = document.createElement('div');
   ov.className = 'ov';
-  let tmpCat = catFilter, tmpBrand = brandFilter, tmpStock = stockOnly;
+  let tmpBrand = brandFilter, tmpStock = stockOnly;
 
   function draw() {
-    const cnt = getFiltered({ cat: tmpCat, brand: tmpBrand, stockOnly: tmpStock }).length;
+    const cnt = getFiltered({ brand: tmpBrand, stockOnly: tmpStock }).length;
     ov.innerHTML = `<div class="sheet">
       <div class="sheet-hd">
         <h2>${esc(L.filtersTitle)}</h2>
@@ -781,12 +1664,6 @@ function openFiltersModal(usedBrands, catTabs) {
         <div class="fpills">
           <button type="button" class="fpill${tmpBrand === 'all' ? ' on' : ''}" data-fb="all">${esc(L.allBrands)}</button>
           ${usedBrands.map(b => `<button type="button" class="fpill${tmpBrand === b ? ' on' : ''}" data-fb="${esc(b)}">${esc(b)}</button>`).join('')}
-        </div>
-      </div>` : ''}
-      ${catTabs.length > 2 ? `<div class="fsec">
-        <div class="fsec-t">${esc(L.fltCat)}</div>
-        <div class="fpills">
-          ${catTabs.map(c => `<button type="button" class="fpill${tmpCat === c ? ' on' : ''}" data-fc="${esc(c)}">${esc(c === 'all' ? L.allCats : (L.cats[c] || c))}</button>`).join('')}
         </div>
       </div>` : ''}
       <div class="fsec">
@@ -804,11 +1681,10 @@ function openFiltersModal(usedBrands, catTabs) {
 
     ov.querySelector('#flClose').onclick = () => ov.remove();
     ov.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => { tmpBrand = b.dataset.fb; draw(); });
-    ov.querySelectorAll('[data-fc]').forEach(b => b.onclick = () => { tmpCat = b.dataset.fc; draw(); });
     ov.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { tmpStock = b.dataset.fs === '1'; draw(); });
-    ov.querySelector('#flReset').onclick = () => { tmpCat = 'all'; tmpBrand = 'all'; tmpStock = false; draw(); };
+    ov.querySelector('#flReset').onclick = () => { tmpBrand = 'all'; tmpStock = false; draw(); };
     ov.querySelector('#flApply').onclick = () => {
-      catFilter = tmpCat; brandFilter = tmpBrand; stockOnly = tmpStock; pageLimit = 30;
+      brandFilter = tmpBrand; stockOnly = tmpStock; pageLimit = 30;
       ov.remove();
       render();
     };
@@ -850,19 +1726,21 @@ function openCustomModal() {
     const nm = (ov.querySelector('#cmName').value || '').trim();
     const qv = Math.max(1, Math.round(Number(ov.querySelector('#cmQty').value) || 1));
     if (nm.length < 2) { ov.querySelector('#cmName').focus(); return; }
-    addToCart({ id: 'custom_' + uid(), name: nm, price: 0, unit: 'шт.' }, qv);
+    addToCart({ id: 'custom_' + uid(), name: nm, price: 0, unit: L.unitPcs }, qv);
     close();
     toast(L.customAdded);
   };
   ov.querySelector('#cmName').focus();
 }
 
-function openCheckout() {
+function openCheckout(prefillComment) {
   if (!cart.length) return;
   const L = I18N[lang];
   const ov = document.createElement('div');
   ov.className = 'ov';
-  let nameVal = '', commentVal = '', opSel = '50', opCustom = '', num7 = '';
+  let nameVal = '';
+  let commentVal = typeof prefillComment === 'string' && prefillComment ? prefillComment : wizSummaryComment();
+  let opSel = '50', opCustom = '', num7 = '';
 
   function drawSheet() {
     const tot = cartTotal();
@@ -873,7 +1751,7 @@ function openCheckout() {
       </div>
       <div style="border-top:1px solid var(--line)">
         ${cart.map(it => `<div class="citem">
-          <div class="citem-n">${esc(it.name)}<div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price)) + ' × ' + it.qty + ' = ' + esc(fmtPrice(it.price * it.qty)) : esc(L.priceAsk)}</div></div>
+          <div class="citem-n">${esc(it.name)}<div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price)) + ' × ' + it.qty + ' ' + esc(it.unit || '') + ' = ' + esc(fmtPrice(it.price * it.qty)) : esc(L.priceAsk) + ' · ' + it.qty + ' ' + esc(it.unit || '')}</div></div>
           <div class="qty"><button type="button" data-cdec="${esc(it.id)}">−</button><span>${it.qty}</span><button type="button" data-cinc="${esc(it.id)}">+</button></div>
         </div>`).join('')}
       </div>
@@ -937,7 +1815,7 @@ function openCheckout() {
       const sendBtn = ov.querySelector('#o-send');
       const name = ov.querySelector('#o-name').value.trim();
       const opCode = opSel === '__other' ? opCustom.replace(/\D/g, '').slice(0, 2) : opSel;
-      const comment = ov.querySelector('#o-comm').value.trim();
+      const comment = ov.querySelector('#o-comm').value.trim().slice(0, 400);
       if (!cart.length) { errEl.textContent = L.errCart; return; }
       if (name.length < 2) { errEl.textContent = L.errName; return; }
       if (opCode.length !== 2) { errEl.textContent = L.errOp; return; }
@@ -975,12 +1853,14 @@ function openCheckout() {
   drawSheet();
 }
 
-$('#openCartBtn').onclick = openCheckout;
-$('#hdrCartBtn').onclick = openCheckout;
+$('#homeBrand').onclick = () => { orderDone = null; mode = 'home'; searchQ = ''; render(); window.scrollTo(0, 0); };
+$('#openCartBtn').onclick = () => openCheckout();
+$('#hdrCartBtn').onclick = () => openCheckout();
 $('#hdrCustomBtn').onclick = openCustomModal;
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
   lang = b.dataset.lang;
   try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
+  if (mode === 'wiz_res') buildWizAccessories();
   render();
 });
 
