@@ -85,8 +85,23 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .empty{color:var(--muted);text-align:center;padding:40px 10px}
 .bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:6px 6px 6px 12px;font-size:14px;margin:8px 0}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:14px 2px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:13px 2px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+@media (max-width:440px){nav button{font-size:11.5px;padding:13px 1px}}
 nav button.on{color:var(--text);border-top-color:var(--accent);font-weight:600}
+.chat-sheet{background:var(--card);width:100%;max-width:640px;height:86dvh;max-height:760px;border-radius:4px 4px 0 0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
+.chat-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:none}
+.chat-hd h3{margin:0;font-size:16px;font-weight:600}
+.chat-hd .btn{padding:5px 10px;font-size:16px;line-height:1}
+.chat-log{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.chat-day{align-self:center;font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:2px;padding:2px 8px;margin:6px 0 2px}
+.mbub{max-width:82%;padding:9px 12px;border-radius:4px;font-size:14px;line-height:1.4;white-space:pre-wrap;word-break:break-word}
+.mbub.me{align-self:flex-end;background:var(--accent);color:var(--on)}
+.mbub.them{align-self:flex-start;background:var(--card);color:var(--text);border:1px solid var(--line)}
+.mbub .mt{font-size:11px;opacity:.7;margin-top:4px;text-align:right}
+.chat-bar{display:flex;gap:8px;align-items:flex-end;padding:10px 12px;border-top:1px solid var(--line);background:var(--card);flex:none}
+.chat-bar textarea{flex:1;font:inherit;font-size:15px;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:3px;padding:9px 10px;min-height:42px;max-height:110px;resize:none}
+.chat-bar .btn{padding:10px 16px;flex:none}
+.mprev{margin-top:5px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .ov form,.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:4px 4px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
 .ov h3{margin:0 0 6px;font-size:18px;font-weight:600}
@@ -127,7 +142,7 @@ textarea{min-height:90px;resize:vertical}
 </header>
 <div id="note" hidden></div>
 <main id="app"><div class="empty">Загрузка…</div></main>
-<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button><button data-act="tab" data-v="shop">Магазин<span id="ordb" class="nbadge" hidden></span></button></nav>
+<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="messages">Сообщения<span id="msgb" class="nbadge" hidden></span></button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button><button data-act="tab" data-v="shop">Магазин<span id="ordb" class="nbadge" hidden></span></button></nav>
 <input type="file" id="impfile" accept=".json,application/json" hidden>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -140,9 +155,12 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
   deleteDoc,
   onSnapshot,
-  writeBatch
+  writeBatch,
+  arrayUnion,
+  increment
 } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import { firebaseConfig } from './firebase-config.js';
 
@@ -163,9 +181,9 @@ const today = () => iso(new Date());
 const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d); };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
-let clients = [], tasks = [], requests = [], products = [], orders = [];
-let reqErr = false, prodErr = false, ordErr = false, view = 'tasks', filter = 'today', shopTab = 'orders', clientFilter = '';
-let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null;
+let clients = [], tasks = [], requests = [], products = [], orders = [], chats = [];
+let reqErr = false, prodErr = false, ordErr = false, chatErr = false, view = 'tasks', filter = 'today', shopTab = 'orders', clientFilter = '';
+let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null, openChatId = null, openChatMeta = null;
 const opened = new Set();
 
 const SHOP_CATS = { security: 'Видеонаблюдение', network: 'Сеть и Wi-Fi', access: 'Домофония и СКУД', smarthome: 'Умный дом', av: 'Аудио-видео', cable: 'Кабель и расходники', other: 'Другое' };
@@ -865,6 +883,32 @@ function shopHtml() {
   }).join('');
 }
 
+function messagesHtml() {
+  if (chatErr) return '<div class="empty">Нет доступа к сообщениям. Обновите правила Firestore (раздел <code>chats</code>) и обновите страницу.</div>';
+  if (!chats.length) return '<div class="empty">Сообщений пока нет. Нажмите «Написать», чтобы начать чат с клиентом.</div>';
+  const list = [...chats].sort((a, b) => (Number(b.lastTs) || 0) - (Number(a.lastTs) || 0));
+  return list.map(ch => {
+    const p9 = normPhone(ch.phone);
+    const cl = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
+    const title = (cl && cl.name) || ch.clientName || 'Клиент';
+    const dt = ch.lastTs ? new Date(ch.lastTs).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    const u = Number(ch.unreadAdmin) || 0;
+    const badge = u > 0 ? `<span class="tag">${u} нов.</span>` : '';
+    const pref = ch.lastFrom === 'admin' ? 'Вы: ' : '';
+    return `<div class="cl"><div class="main">
+      <div class="head" data-act="openchat" data-id="${ch.id}">
+        <div class="ttl">${esc(title)}${badge}</div>
+        <div class="meta">${esc([ch.phone, dt].filter(Boolean).join(' · '))}</div>
+        ${ch.lastText ? `<div class="mprev">${esc(pref + ch.lastText)}</div>` : ''}
+      </div>
+      <div class="row">
+        <button class="btn p" data-act="openchat" data-id="${ch.id}">Открыть чат</button>
+        <button class="btn d" data-act="delchat" data-id="${ch.id}">Удалить</button>
+      </div>
+    </div></div>`;
+  }).join('');
+}
+
 function render() {
   armed = null;
   $('#date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -887,9 +931,12 @@ function render() {
   const newOrds = orders.filter(o => o.status !== 'linked').length;
   const ob = $('#ordb');
   if (ob) { ob.textContent = newOrds; ob.hidden = newOrds === 0; }
-  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'requests' ? 'Заявки' : 'Магазин';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
-  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'requests' ? requestsHtml() : shopHtml());
+  const unreadMsgs = chats.reduce((acc, c) => acc + (Number(c.unreadAdmin) || 0), 0);
+  const mb = $('#msgb');
+  if (mb) { mb.textContent = unreadMsgs; mb.hidden = unreadMsgs === 0; }
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
 }
 
 // --- Modals ---
@@ -1324,6 +1371,132 @@ function wireContacts(ov) {
   };
 }
 
+function renderAdminChatLog() {
+  if (!openChatId) return;
+  const log = $('#admChatLog');
+  if (!log) return;
+  const ch = chats.find(x => x.id === openChatId);
+  const msgs = (ch && Array.isArray(ch.messages)) ? ch.messages : [];
+  if (!msgs.length) {
+    log.innerHTML = '<div class="meta" style="text-align:center;margin:auto">Сообщений пока нет. Напишите клиенту первым.</div>';
+    return;
+  }
+  let html = '', lastDay = '';
+  for (const m of msgs) {
+    const dStr = m.ts ? new Date(m.ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) : '';
+    const tStr = m.ts ? new Date(m.ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '';
+    if (dStr && dStr !== lastDay) { lastDay = dStr; html += `<div class="chat-day">${esc(dStr)}</div>`; }
+    const isMe = m.from === 'admin';
+    html += `<div class="mbub ${isMe ? 'me' : 'them'}">${esc(m.text)}<div class="mt">${esc(tStr)}</div></div>`;
+  }
+  log.innerHTML = html;
+  log.scrollTop = log.scrollHeight;
+  if (ch && Number(ch.unreadAdmin) > 0) {
+    updateDoc(doc(db, 'chats', openChatId), { unreadAdmin: 0 }).catch(() => {});
+  }
+}
+
+function openAdminChat(cid, fallbackName, fallbackPhone) {
+  const ch = chats.find(x => x.id === cid);
+  const phone = (ch && ch.phone) || fallbackPhone || '';
+  const p9 = normPhone(phone);
+  const cl = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
+  const title = (cl && cl.name) || (ch && ch.clientName) || fallbackName || 'Клиент';
+
+  const old = $('#admChatOv');
+  if (old) old.remove();
+  openChatId = cid;
+  openChatMeta = { name: title, phone };
+
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.id = 'admChatOv';
+  ov.innerHTML = `<div class="chat-sheet">
+    <div class="chat-hd">
+      <div><h3>${esc(title)}</h3>${phone ? `<div class="meta">${esc(phone)}</div>` : ''}</div>
+      <button type="button" class="btn" id="admChatClose" aria-label="Закрыть">×</button>
+    </div>
+    <div class="chat-log" id="admChatLog"></div>
+    <form class="chat-bar" id="admChatForm">
+      <textarea id="admChatInp" rows="1" maxlength="1000" placeholder="Ответить клиенту…"></textarea>
+      <button type="submit" class="btn p" id="admChatSend">Отправить</button>
+    </form>
+  </div>`;
+  document.body.appendChild(ov);
+  renderAdminChatLog();
+
+  const close = () => { openChatId = null; openChatMeta = null; ov.remove(); };
+  ov.querySelector('#admChatClose').onclick = close;
+  ov.onclick = e => { if (e.target === ov) close(); };
+
+  const inp = ov.querySelector('#admChatInp');
+  const sendBtn = ov.querySelector('#admChatSend');
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ov.querySelector('#admChatForm').requestSubmit(); }
+  });
+
+  ov.querySelector('#admChatForm').onsubmit = async e => {
+    e.preventDefault();
+    const text = inp.value.trim();
+    if (!text || sendBtn.disabled) return;
+    sendBtn.disabled = true;
+    const now = Date.now();
+    const msg = { id: uid(), from: 'admin', text, ts: now };
+    const exists = chats.some(x => x.id === cid);
+    try {
+      const ref = doc(db, 'chats', cid);
+      if (exists) {
+        await updateDoc(ref, {
+          clientName: title,
+          phone,
+          messages: arrayUnion(msg),
+          lastTs: now,
+          lastFrom: 'admin',
+          lastText: text.slice(0, 140),
+          unreadAdmin: 0,
+          unreadClient: increment(1)
+        });
+      } else {
+        await setDoc(ref, {
+          clientName: title,
+          phone,
+          messages: [msg],
+          lastTs: now,
+          lastFrom: 'admin',
+          lastText: text.slice(0, 140),
+          unreadAdmin: 0,
+          unreadClient: 1
+        });
+      }
+      inp.value = '';
+    } catch (ex) {
+      toast('Не удалось отправить сообщение');
+    } finally {
+      sendBtn.disabled = false;
+      inp.focus();
+    }
+  };
+  inp.focus();
+}
+
+function openNewChatModal() {
+  const withPhone = [...clients].filter(c => normPhone(c.phone).length >= 7).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  if (!withPhone.length) { toast('Нет клиентов с номером телефона'); return; }
+  const opts = withPhone.map(c => `<option value="${c.id}">${esc(c.name)} (${esc(c.phone)})</option>`).join('');
+  modal('Написать клиенту', `<label>Выберите клиента</label><select name="cid">${opts}</select>`, async f => {
+    const c = clients.find(x => x.id === f.cid);
+    if (!c) return;
+    toast('Открываем чат…');
+    try {
+      const saltB64 = await ensurePortalSalt();
+      const { id } = await deriveForPhone(normPhone(c.phone), saltB64);
+      openAdminChat(id, c.name, c.phone);
+    } catch (e) {
+      toast('Не удалось открыть чат');
+    }
+  });
+}
+
 async function deleteClientWithTasks(cid) {
   if (!user || !cid) return;
   const cTasks = tasks.filter(t => t.clientId === cid);
@@ -1388,9 +1561,16 @@ document.addEventListener('click', async e => {
   else if (a === 'fab') {
     if (view === 'tasks') openTask();
     else if (view === 'clients') openClient();
+    else if (view === 'messages') openNewChatModal();
     else if (view === 'requests') copyUrl('register.html', 'Ссылка на анкету');
     else if (shopTab === 'catalog') openProduct();
     else copyUrl('shop.html', 'Ссылка на магазин');
+  }
+  else if (a === 'openchat') { openAdminChat(id); }
+  else if (a === 'delchat') {
+    if (armed !== 'ch:' + id) { armed = 'ch:' + id; el.textContent = 'Точно удалить?'; return; }
+    armed = null;
+    try { await deleteDoc(doc(db, 'chats', id)); toast('Чат удалён'); } catch (ex) { toast('Не удалось удалить чат'); }
   }
   else if (a === 'shoptab') { shopTab = el.dataset.st; render(); }
   else if (a === 'impcat') { $('#impfile').click(); }
@@ -1476,9 +1656,12 @@ onAuthStateChanged(auth, u => {
   requests = [];
   products = [];
   orders = [];
+  chats = [];
   reqErr = false;
   prodErr = false;
   ordErr = false;
+  chatErr = false;
+  openChatId = null;
   ready = 0;
   portalSalt = null;
   portalExists = false;
@@ -1539,6 +1722,15 @@ onAuthStateChanged(auth, u => {
     render();
   }, () => {
     ordErr = true;
+    render();
+  }));
+  unsubs.push(onSnapshot(collection(db, 'chats'), s => {
+    chatErr = false;
+    chats = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    render();
+    if (openChatId) renderAdminChatLog();
+  }, () => {
+    chatErr = true;
     render();
   }));
 });
