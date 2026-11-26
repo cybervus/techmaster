@@ -552,8 +552,9 @@ async function importJsonFile(file) {
   }
   const impClients = Array.isArray(data.clients) ? data.clients : [];
   const impTasks = Array.isArray(data.tasks) ? data.tasks : [];
-  if (!impClients.length && !impTasks.length) {
-    toast('В файле нет клиентов и задач');
+  const impProds = Array.isArray(data.products) ? data.products : [];
+  if (!impClients.length && !impTasks.length && !impProds.length) {
+    toast('В файле нет данных для импорта');
     return;
   }
   const ops = [];
@@ -601,7 +602,6 @@ async function importJsonFile(file) {
     };
     ops.push({ col: 'tasks', id, doc: docData });
   }
-  const impProds = Array.isArray(data.products) ? data.products : [];
   for (const p of impProds) {
     const id = String(p.id || uid());
     ops.push({
@@ -629,8 +629,13 @@ async function importJsonFile(file) {
       }
       await batch.commit();
     }
-    toast(`Импортировано: ${impClients.length} кл., ${impTasks.length} зад.`);
-    schedulePortal(500);
+    const parts = [];
+    if (impClients.length) parts.push(`${impClients.length} кл.`);
+    if (impTasks.length) parts.push(`${impTasks.length} зад.`);
+    if (impProds.length) parts.push(`${impProds.length} тов.`);
+    toast('Импортировано: ' + parts.join(', '));
+    if (impClients.length || impTasks.length) schedulePortal(500);
+    if (impProds.length) scheduleCatalog(500);
   } catch (e) {
     toast('Ошибка импорта: проверьте доступ к базе');
   }
@@ -838,11 +843,12 @@ function shopHtml() {
   }
 
   if (prodErr) return h + '<div class="empty">Нет доступа к каталогу. Обновите правила Firestore (раздел <code>products</code>) и обновите страницу.</div>';
+  const catBar = `<div class="bar"><span>Товаров в каталоге: <b>${products.length}</b></span><div style="display:flex;gap:6px"><button class="btn" data-act="impcat">Импорт JSON</button><button class="btn" data-act="synccat">Опубликовать</button></div></div>`;
   if (!products.length) {
-    return h + `<div class="empty">В каталоге пока нет товаров.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn p" data-act="newprod">Добавить товар</button><button class="btn" data-act="seedprod">Добавить 6 примеров</button></div></div>`;
+    return h + catBar + `<div class="empty">В каталоге пока нет товаров.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn p" data-act="impcat">Импорт каталога JSON</button><button class="btn" data-act="newprod">Добавить вручную</button><button class="btn" data-act="seedprod">6 примеров</button></div></div>`;
   }
   const list = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'));
-  return h + list.map(p => {
+  return h + catBar + list.map(p => {
     const catLbl = SHOP_CATS[p.cat] || 'Другое';
     const pr = fmtAzn(p.price) || 'По запросу';
     const tags = (p.inStock !== false ? '<span class="tag ok">В наличии</span>' : '<span class="tag warn">Под заказ</span>')
@@ -1387,6 +1393,8 @@ document.addEventListener('click', async e => {
     else copyUrl('shop.html', 'Ссылка на магазин');
   }
   else if (a === 'shoptab') { shopTab = el.dataset.st; render(); }
+  else if (a === 'impcat') { $('#impfile').click(); }
+  else if (a === 'synccat') { await syncCatalog(true); }
   else if (a === 'newprod') { openProduct(); }
   else if (a === 'editprod') { openProduct(id); }
   else if (a === 'seedprod') { await seedSampleProducts(); }
