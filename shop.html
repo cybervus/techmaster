@@ -12,70 +12,121 @@
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#191c22" media="(prefers-color-scheme: dark)">
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1e242b;--muted:#7b8494;--line:#eceef2;--accent:#e52520;--on:#ffffff;--danger:#e52520;--ok:#00b578;--ok-bg:#e6f8f1;--warn:#fa8c16;--warn-bg:#fff5e6;--soft:#fdecec;--sh:0 2px 10px rgba(15,23,42,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#332211;--soft:#331819;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#332211;--soft:#331819;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
+:root{--bg:#f5f6f8;--card:#ffffff;--text:#1e242b;--muted:#7b8494;--line:#eceef2;--accent:#e52520;--on:#ffffff;--danger:#e52520;--ok:#00b578;--ok-bg:#e6f8f1;--warn:#fa8c16;--warn-bg:#fff5e6;--soft:#fdecec;--blue:#2563eb;--blue-bg:#eef4ff;--sh:0 2px 10px rgba(15,23,42,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
 html{scroll-padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 104px;max-width:720px;margin-inline:auto;overflow-x:clip}
-header{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px 10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.logo{margin:0;line-height:0;flex:none;width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(229,37,32,.25)}
-.logo svg{width:26px;height:26px;display:block}
-h1{font-size:18px;font-weight:700;margin:0;line-height:1.2}
-.sub{color:var(--muted);font-size:12.5px;margin-top:1px}
+
+/* Header */
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 -14px 12px;padding:11px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.logo{margin:0;line-height:0;flex:none;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(229,37,32,.25)}
+.logo svg{width:24px;height:24px;display:block}
+.btxt{min-width:0}
+h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{color:var(--muted);font-size:12px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hright{display:flex;align-items:center;gap:6px;flex:none}
+.icbtn{position:relative;height:36px;min-width:36px;padding:0 9px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;text-decoration:none;font:inherit;font-size:12.5px;font-weight:600;flex:none;transition:border-color .15s,color .15s}
+.icbtn svg{width:18px;height:18px;display:block;flex:none}
+.icbtn.accent-soft{background:var(--soft);border-color:transparent;color:var(--accent)}
+.icbtn .ic-lbl{display:none}
+.icdot{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
 .lang{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--bg);flex:none;padding:2px}
-.lang button{display:inline-flex;align-items:center;gap:5px;border:0;background:none;color:var(--muted);padding:5px 10px;border-radius:16px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.lang button{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:var(--muted);padding:4px 8px;border-radius:16px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}
 .lang button.on{background:var(--accent);color:var(--on)}
-.flag{width:16px;height:11px;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
-.top-links{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px;font-size:13px}
-.top-links a{color:var(--accent);text-decoration:none;font-weight:600;background:var(--card);border:1px solid var(--line);padding:5px 12px;border-radius:16px}
-.search-bar{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
-.search-bar input{flex:1;min-width:180px}
-.search-bar select{flex:none;width:168px}
-@media (max-width:460px){.search-bar select{width:100%}}
-input[type=text],input[type=search],input[type=tel],input[type=number],select,textarea{width:100%;font:inherit;font-size:15.5px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:var(--sh)}
+.flag{width:15px;height:10px;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
+
+/* Toolbar: search + filters button */
+.toolbar{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
+.search-wrap{position:relative;flex:1;min-width:0}
+.search-wrap svg.s-ic{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--muted);pointer-events:none}
+.search-wrap input{width:100%;height:42px;padding:0 34px 0 38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:15px;box-shadow:var(--sh)}
+.search-wrap input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(229,37,32,.12)}
+.s-clr{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+.flt-btn{position:relative;flex:none;height:42px;padding:0 13px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--sh)}
+.flt-btn.on{border-color:var(--accent);color:var(--accent);background:var(--soft)}
+.flt-btn svg{width:17px;height:17px;display:block}
+.flt-cnt{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+
+/* Category strip & active filter pills */
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding:0 0 10px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--muted);padding:6px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.active-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:-2px 0 10px}
+.apill{display:inline-flex;align-items:center;gap:6px;background:var(--soft);color:var(--accent);border:0;border-radius:16px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.apill-reset{border:0;background:none;color:var(--muted);font:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:4px 6px}
+
+/* Clean Product Grid & Cards */
+.plist{display:flex;flex-direction:column;gap:10px}
+.pcard{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px;box-shadow:var(--sh);cursor:pointer;transition:border-color .15s,transform .15s}
+.pthumb{width:54px;height:54px;border-radius:12px;flex:none;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--line);color:var(--accent)}
+.pthumb.cat-network{color:var(--blue);background:var(--blue-bg);border-color:transparent}
+.pthumb.cat-security{color:var(--accent);background:var(--soft);border-color:transparent}
+.pthumb.cat-access{color:var(--warn);background:var(--warn-bg);border-color:transparent}
+.pthumb.cat-smarthome{color:var(--ok);background:var(--ok-bg);border-color:transparent}
+.pthumb svg{width:26px;height:26px;display:block}
+.pimg{width:100%;height:100%;object-fit:cover;display:block}
+.pmain{flex:1;min-width:0;display:flex;flex-direction:column}
+.pname{font-weight:600;font-size:14.5px;line-height:1.32;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pmeta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:4px}
+.sdot{display:inline-flex;align-items:center;gap:4px;font-weight:600}
+.sdot::before{content:'';width:6px;height:6px;border-radius:50%;flex:none}
+.sdot.ok{color:var(--ok)}.sdot.ok::before{background:var(--ok)}
+.sdot.warn{color:var(--warn)}.sdot.warn::before{background:var(--warn)}
+.pfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.price{font-weight:700;font-size:15.5px;color:var(--text)}
+.price small{font-weight:500;font-size:12px;color:var(--muted)}
+.more-hint{font-size:12.5px;font-weight:600;color:var(--muted)}
+
+/* Controls & forms */
+input[type=text],input[type=tel],input[type=number],select,textarea{width:100%;font:inherit;font-size:15.5px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(229,37,32,.12)}
 textarea{min-height:74px;resize:vertical}
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0 10px;margin-bottom:4px}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--muted);padding:7px 14px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.chip.on{background:var(--soft);border-color:var(--accent);color:var(--accent)}
-.plist{display:flex;flex-direction:column;gap:10px}
-.pcard{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--sh)}
-.pimg{width:76px;height:76px;object-fit:cover;border:1px solid var(--line);border-radius:10px;flex:none;background:var(--bg)}
-.pmain{flex:1;min-width:0}
-.pname{font-weight:600;font-size:15px;line-height:1.3}
-.pmeta{color:var(--muted);font-size:12px;margin-top:3px}
-.pdesc{font-size:13px;color:var(--muted);margin-top:5px;white-space:pre-wrap}
-.pfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px}
-.price{font-weight:700;font-size:16px;color:var(--text)}
-.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:var(--bg);color:var(--muted);margin-left:6px;vertical-align:1px}
-.tag.ok{background:var(--ok-bg);color:var(--ok)}
-.tag.warn{background:var(--warn-bg);color:var(--warn)}
-.btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:8px 13px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:5px}
 .btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:var(--on);box-shadow:0 3px 8px rgba(229,37,32,.22)}
-.btn.d{background:var(--soft);color:var(--danger);border-color:transparent}
+.btn.sm{padding:7px 12px;font-size:13px}
+.btn.full{width:100%}
 .btn:disabled{opacity:.55;cursor:default}
 .qty{display:inline-flex;align-items:center;border:1px solid var(--accent);border-radius:10px;overflow:hidden;background:var(--card)}
 .qty button{border:0;background:var(--soft);color:var(--accent);width:32px;height:32px;font:inherit;font-size:17px;font-weight:700;cursor:pointer}
-.qty span{min-width:30px;text-align:center;font-weight:700;font-size:14px}
-.custom-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px;box-shadow:var(--sh)}
-.custom-box h3{margin:0 0 4px;font-size:15px;font-weight:700}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.empty{color:var(--muted);text-align:center;padding:36px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px}
-.cart-bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(15,23,42,.1);padding:12px 14px calc(12px + env(safe-area-inset-bottom,0px));z-index:10}
+.qty span{min-width:28px;text-align:center;font-weight:700;font-size:13.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.empty{color:var(--muted);text-align:center;padding:38px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh)}
+.foot-links{margin-top:20px;text-align:center;font-size:13px;color:var(--muted);display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.foot-links a{color:var(--muted);text-decoration:none;font-weight:500}
+
+/* Bottom floating cart bar */
+.cart-bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(15,23,42,.1);padding:11px 14px calc(11px + env(safe-area-inset-bottom,0px));z-index:12}
 .cart-in{max-width:720px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.cart-sum{font-size:13px;line-height:1.3;color:var(--muted)}
-.cart-sum b{display:block;font-size:16px;color:var(--text)}
-.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:20}
-.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
-.ov h2{margin:0 0 10px;font-size:18px;font-weight:700}
+.cart-sum{font-size:12.5px;line-height:1.3;color:var(--muted)}
+.cart-sum b{display:block;font-size:15.5px;color:var(--text)}
+
+/* Modals (Detail, Filters, Custom Item, Checkout) */
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:25}
+.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:90dvh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)}
+.sheet-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.sheet-hd h2{margin:0;font-size:17px;font-weight:700}
+.sheet-hd .btn{padding:5px 10px;font-size:16px;line-height:1}
+.fsec{margin-top:14px}
+.fsec-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px}
+.fpills{display:flex;gap:7px;flex-wrap:wrap}
+.fpill{border:1px solid var(--line);border-radius:18px;background:var(--bg);color:var(--text);padding:6px 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer}
+.fpill.on{background:var(--soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+.det-top{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.det-thumb{width:68px;height:68px;border-radius:14px}
+.det-thumb svg{width:32px;height:32px}
+.det-desc{font-size:14px;line-height:1.5;color:var(--text);background:var(--bg);border-radius:12px;padding:12px;margin:12px 0;white-space:pre-wrap}
+.det-kv{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.det-kv span:first-child{color:var(--muted)}
+.det-kv b{font-weight:600;text-align:right}
 label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 5px}
 .ph-row{display:flex;gap:8px;align-items:stretch}
-.ph-cc{flex:none;display:flex;align-items:center;padding:0 11px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-weight:700;font-size:15px}
+.ph-cc{flex:none;display:flex;align-items:center;padding:0 11px;border:1px solid var(--line);border-radius:11px;background:var(--bg);font-weight:700;font-size:15px}
 .ph-op{flex:none;width:78px;text-align:center;font-weight:600}
 .ph-op-c{flex:none;width:58px;text-align:center}
 .ph-num{flex:1;min-width:0}
@@ -86,62 +137,68 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
 .ok-panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 16px;margin-top:16px;box-shadow:var(--sh)}
 .ok-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .ok-badge{width:30px;height:30px;border-radius:50%;background:var(--ok);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
-#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#1e242b;color:#fff;padding:10px 16px;border-radius:20px;font-size:13.5px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.22);z-index:30;max-width:calc(100vw - 24px);text-align:center}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:#1e242b;color:#fff;padding:10px 16px;border-radius:20px;font-size:13.5px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.22);z-index:35;max-width:calc(100vw - 24px);text-align:center}
+
 /* Responsive: small phones */
 @media (max-width:420px){
   body{padding:0 10px 98px;font-size:14.5px}
-  header{margin:0 -10px 10px;padding:10px;gap:8px}
-  .logo{width:36px;height:36px}
-  h1{font-size:16px}
+  header{margin:0 -10px 10px;padding:10px;gap:6px}
+  .logo{width:34px;height:34px}
+  h1{font-size:15.5px}
+  .icbtn{height:33px;min-width:33px;padding:0 7px}
+  .lang button{padding:4px 6px;font-size:11px}
   .pcard{padding:11px;gap:10px}
-  .pimg{width:62px;height:62px}
+  .pthumb{width:46px;height:46px}
   .ph-row{gap:5px}
   .ph-cc{padding:0 8px;font-size:14px}
   .ph-op{width:68px}
   .ph-op-c{width:50px}
 }
+/* Responsive: show compact text label on custom-add button on wider phones+ */
+@media (min-width:560px){
+  .icbtn .ic-lbl{display:inline}
+}
 /* Responsive: hover feedback on desktop/mouse */
 @media (hover:hover){
   .btn:not(:disabled):hover{filter:brightness(.96)}
   .btn.p:not(:disabled):hover{filter:brightness(1.05)}
-  .chip:hover,.top-links a:hover{border-color:var(--accent);color:var(--accent)}
-  .pcard:hover{border-color:rgba(229,37,32,.32);transform:translateY(-1px);transition:transform .15s ease,border-color .15s ease}
+  .icbtn:hover,.flt-btn:hover,.chip:not(.on):hover,.fpill:not(.on):hover{border-color:var(--accent);color:var(--accent)}
+  .pcard:hover{border-color:rgba(229,37,32,.35);transform:translateY(-1px)}
+  .foot-links a:hover{color:var(--accent)}
 }
 /* Responsive: tablets (700px - 1079px) */
 @media (min-width:700px){
   body{max-width:1040px;padding:12px 24px 116px}
-  header{margin:0 0 14px;padding:14px 20px;border-radius:16px;border:1px solid var(--line);top:12px}
+  header{margin:0 0 14px;padding:13px 18px;border-radius:16px;border:1px solid var(--line);top:12px}
   .chips{flex-wrap:wrap;overflow-x:visible}
   .plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
   .pcard{height:100%}
-  .pmain{display:flex;flex-direction:column;height:100%}
+  .pmain{height:100%}
   .pfoot{margin-top:auto;padding-top:10px}
-  .cart-bar{left:50%;right:auto;bottom:16px;transform:translateX(-50%);width:min(760px,calc(100vw - 32px));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 32px rgba(15,23,42,.16);padding:12px 18px}
+  .cart-bar{left:50%;right:auto;bottom:16px;transform:translateX(-50%);width:min(740px,calc(100vw - 32px));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 32px rgba(15,23,42,.16);padding:12px 18px}
   .cart-in{max-width:none}
   .ov{align-items:center;padding:24px}
-  .ov .sheet{border-radius:18px;max-width:620px;max-height:88dvh;padding:22px 24px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
-  .ok-panel{max-width:620px;margin:28px auto 0}
+  .ov .sheet{border-radius:18px;max-width:580px;max-height:88dvh;padding:22px 24px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+  .ok-panel{max-width:600px;margin:28px auto 0}
   #toast{bottom:96px}
 }
 /* Responsive: laptops & desktops (1080px - 1559px) */
 @media (min-width:1080px){
-  body{max-width:1380px;padding:16px 32px 120px}
+  body{max-width:1360px;padding:16px 32px 120px}
   .plist{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-  .search-bar select{width:220px}
-  .custom-box{max-width:760px}
 }
 /* Responsive: wide desktop monitors (1560px+) */
 @media (min-width:1560px){
-  body{max-width:1720px}
+  body{max-width:1700px}
   .plist{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
 }
 /* Responsive: Full HD+ / large monitors & TVs (1920px+) */
 @media (min-width:1920px){
-  body{max-width:1980px;font-size:16.5px;padding:20px 40px 128px}
-  .logo{width:46px;height:46px}
-  h1{font-size:21px}
-  .pname{font-size:16px}
-  .pimg{width:88px;height:88px}
+  body{max-width:1960px;font-size:16.5px;padding:20px 40px 128px}
+  .logo{width:44px;height:44px}
+  h1{font-size:20px}
+  .pname{font-size:15.5px}
+  .pthumb{width:62px;height:62px}
 }
 /* Responsive: 4K monitors & large TVs (2400px+) */
 @media (min-width:2400px){
@@ -154,29 +211,43 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
 <header>
   <div class="brand">
     <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
-    <div>
+    <div class="btxt">
       <h1 id="htitle">Магазин оборудования</h1>
-      <div class="sub">Techmaster IT Solutions</div>
+      <div class="sub" id="hsub">Techmaster IT Solutions</div>
     </div>
   </div>
-  <div class="lang" role="group" aria-label="Language">
-    <button type="button" data-lang="ru" id="btn-ru">
-      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#ffffff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>
-      <span>RU</span>
+  <div class="hright">
+    <button type="button" class="icbtn accent-soft" id="hdrCustomBtn" aria-label="Свой товар" title="Добавить свой товар">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span class="ic-lbl" id="hdrCustomLbl">Свой товар</span>
     </button>
-    <button type="button" data-lang="az" id="btn-az">
-      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
-      <span>AZ</span>
+    <a class="icbtn" href="client.html" id="hdrCabLink" aria-label="Личный кабинет" title="Личный кабинет">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+    <button type="button" class="icbtn" id="hdrCartBtn" aria-label="Корзина" title="Корзина" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="icdot" id="hdrCartBadge" hidden></span>
     </button>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="ru" id="btn-ru">
+        <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#ffffff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>
+        <span>RU</span>
+      </button>
+      <button type="button" data-lang="az" id="btn-az">
+        <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
+        <span>AZ</span>
+      </button>
+    </div>
   </div>
 </header>
 
-<div class="top-links">
-  <a href="client.html" id="lnkCab">Личный кабинет</a>
-  <a href="register.html" id="lnkReg">Анкета клиента</a>
-</div>
-
 <main id="app"><div class="empty">Загрузка…</div></main>
+
+<footer class="foot-links">
+  <a href="client.html" id="lnkCab">Личный кабинет</a>
+  <span>·</span>
+  <a href="register.html" id="lnkReg">Анкета клиента</a>
+</footer>
 
 <div class="cart-bar" id="cartBar" hidden>
   <div class="cart-in">
@@ -201,23 +272,44 @@ const OP_CODES = ['50', '51', '55', '70', '77', '99', '10'];
 const I18N = {
   ru: {
     pageTitle: 'Магазин оборудования',
+    itemsCount: n => `В каталоге: ${n}`,
+    hdrCustom: 'Свой товар',
     lnkCab: 'Личный кабинет',
     lnkReg: 'Анкета клиента',
+    cartLbl: 'Корзина',
     loading: 'Загрузка каталога…',
-    emptyCatalog: 'Каталог пока пуст. Вы можете добавить нужный товар вручную ниже.',
+    emptyCatalog: 'Каталог пока пуст. Вы можете добавить нужный товар вручную.',
     notFound: 'По вашему запросу ничего не найдено.',
+    addOwnBtn: 'Добавить свой товар',
     searchPh: 'Поиск по названию или модели…',
+    filtersBtn: 'Фильтры',
+    filtersTitle: 'Фильтры каталога',
+    fltBrand: 'Бренд',
+    fltCat: 'Категория',
+    fltStock: 'Наличие',
     allBrands: 'Все бренды',
+    allStock: 'Любое',
+    onlyInStock: 'Только в наличии',
+    applyFlt: n => `Показать (${n})`,
+    resetFlt: 'Сбросить',
     showMore: n => `Показать ещё (${n})`,
     allCats: 'Все',
     inStock: 'В наличии',
     byOrder: 'Под заказ',
     priceAsk: 'Цена по запросу',
+    detailsHint: 'Подробнее ›',
     addCart: 'В корзину',
-    customTitle: 'Не нашли нужный товар?',
-    customHint: 'Укажите название или модель — мы добавим его в ваш заказ на закупку.',
+    kBrand: 'Бренд',
+    kCat: 'Категория',
+    kSku: 'Модель / артикул',
+    kStock: 'Статус',
+    kPrice: 'Стоимость',
+    customTitle: 'Добавить свой товар',
+    customHint: 'Не нашли нужную модель в каталоге? Укажите её — мы добавим товар в ваш заказ.',
+    customNameLbl: 'Название или модель',
+    customQtyLbl: 'Количество',
     customPh: 'Например, Hikvision DS-2CD2043G2-I',
-    customAdd: 'Добавить в заказ',
+    customAdd: 'Добавить в корзину',
     customAdded: 'Товар добавлен в корзину',
     cartCount: n => `В корзине: ${n}`,
     checkout: 'Оформить заказ',
@@ -227,7 +319,7 @@ const I18N = {
     namePh: 'Например, Эльчин Мамедов',
     phoneLbl: 'Мобильный телефон',
     otherOp: 'Другой',
-    commentLbl: 'Комментарий (желаемая дата, модель, уточнения)',
+    commentLbl: 'Комментарий (желаемая дата, уточнения)',
     commentPh: 'Необязательно',
     sendOrder: 'Отправить заказ',
     sending: 'Отправляем…',
@@ -247,29 +339,50 @@ const I18N = {
       access: 'Домофония и СКУД',
       smarthome: 'Умный дом',
       av: 'Аудио-видео',
-      cable: 'Кабель и расходники',
+      cable: 'Кабель и монтаж',
       other: 'Другое'
     }
   },
   az: {
     pageTitle: 'Avadanlıq mağazası',
+    itemsCount: n => `Kataloqda: ${n}`,
+    hdrCustom: 'Öz məhsul',
     lnkCab: 'Şəxsi kabinet',
     lnkReg: 'Müştəri anketi',
+    cartLbl: 'Səbət',
     loading: 'Kataloq yüklənir…',
-    emptyCatalog: 'Kataloq hələ boşdur. Lazım olan məhsulu aşağıda əl ilə əlavə edə bilərsiniz.',
+    emptyCatalog: 'Kataloq hələ boşdur. Lazım olan məhsulu əl ilə əlavə edə bilərsiniz.',
     notFound: 'Sorğunuza uyğun məhsul tapılmadı.',
+    addOwnBtn: 'Öz məhsulunu əlavə et',
     searchPh: 'Ad və ya model üzrə axtarış…',
+    filtersBtn: 'Filtrlər',
+    filtersTitle: 'Kataloq filtrləri',
+    fltBrand: 'Brend',
+    fltCat: 'Kateqoriya',
+    fltStock: 'Mövcudluq',
     allBrands: 'Bütün brendlər',
+    allStock: 'Hamısı',
+    onlyInStock: 'Yalnız anbarda olanlar',
+    applyFlt: n => `Göstər (${n})`,
+    resetFlt: 'Sıfırla',
     showMore: n => `Daha çox göstər (${n})`,
     allCats: 'Hamısı',
     inStock: 'Anbarda var',
     byOrder: 'Sifarişlə',
     priceAsk: 'Qiymət sorğu ilə',
+    detailsHint: 'Ətraflı ›',
     addCart: 'Səbətə at',
-    customTitle: 'Lazım olan məhsulu tapmadınız?',
-    customHint: 'Adını və ya modelini yazın — alış sifarişinizə əlavə edək.',
+    kBrand: 'Brend',
+    kCat: 'Kateqoriya',
+    kSku: 'Model / artikul',
+    kStock: 'Status',
+    kPrice: 'Qiymət',
+    customTitle: 'Öz məhsulunu əlavə et',
+    customHint: 'Lazım olan modeli tapmadınız? Adını yazın — sifarişinizə əlavə edək.',
+    customNameLbl: 'Ad və ya model',
+    customQtyLbl: 'Say',
     customPh: 'Məsələn, Hikvision DS-2CD2043G2-I',
-    customAdd: 'Sifarişə əlavə et',
+    customAdd: 'Səbətə əlavə et',
     customAdded: 'Məhsul səbətə əlavə olundu',
     cartCount: n => `Səbətdə: ${n}`,
     checkout: 'Sifarişi rəsmiləşdir',
@@ -279,7 +392,7 @@ const I18N = {
     namePh: 'Məsələn, Elçin Məmmədov',
     phoneLbl: 'Mobil nömrə',
     otherOp: 'Digər',
-    commentLbl: 'Şərh (istənilən tarix, model, qeydlər)',
+    commentLbl: 'Şərh (istənilən tarix, qeydlər)',
     commentPh: 'Məcburi deyil',
     sendOrder: 'Sifarişi göndər',
     sending: 'Göndərilir…',
@@ -299,7 +412,7 @@ const I18N = {
       access: 'Domofon və SKUD',
       smarthome: 'Ağıllı ev',
       av: 'Audio-video',
-      cable: 'Kabel və materiallar',
+      cable: 'Kabel və montaj',
       other: 'Digər'
     }
   }
@@ -317,6 +430,7 @@ let products = [];
 let loaded = false;
 let catFilter = 'all';
 let brandFilter = 'all';
+let stockOnly = false;
 let searchQ = '';
 let pageLimit = 30;
 let cart = []; // { id, name, price, unit, qty }
@@ -329,6 +443,34 @@ function detectBrand(p) {
     if (hay.toLowerCase().includes(b.toLowerCase())) return b;
   }
   return '';
+}
+
+function catIconSvg(cat) {
+  switch (cat) {
+    case 'security':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l13-4 4 7-13 4z"/><path d="M16 11l3 1 1 3-3 1"/><path d="M6 15v5h5"/></svg>';
+    case 'network':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/></svg>';
+    case 'access':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><circle cx="12" cy="10" r="2.5"/><path d="M9 16h6"/></svg>';
+    case 'smarthome':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20h14V9.5"/><circle cx="12" cy="14" r="2"/></svg>';
+    case 'av':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="18" x2="12" y2="21"/></svg>';
+    case 'cable':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+    default:
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>';
+  }
+}
+
+function thumbHtml(p, extraCls = '') {
+  const cat = p.cat || 'other';
+  const cls = `pthumb cat-${esc(cat)}${extraCls ? ' ' + extraCls : ''}`;
+  if (p.img) {
+    return `<div class="${cls}"><img class="pimg" src="${esc(p.img)}" alt="" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true">${catIconSvg(cat)}</span></div>`;
+  }
+  return `<div class="${cls}" aria-hidden="true">${catIconSvg(cat)}</div>`;
 }
 
 function toast(m) {
@@ -373,11 +515,35 @@ function addToCart(prod, delta) {
   render();
 }
 
+function getFiltered(opts = {}) {
+  const cf = opts.cat !== undefined ? opts.cat : catFilter;
+  const bf = opts.brand !== undefined ? opts.brand : brandFilter;
+  const st = opts.stockOnly !== undefined ? opts.stockOnly : stockOnly;
+  const q = searchQ.trim().toLowerCase();
+  return products.filter(p => {
+    if (cf !== 'all' && (p.cat || 'other') !== cf) return false;
+    if (bf !== 'all' && detectBrand(p) !== bf) return false;
+    if (st && p.inStock === false) return false;
+    if (q) {
+      const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
 function applyLangStatic() {
   const L = I18N[lang];
   document.documentElement.lang = lang;
   document.title = L.pageTitle + ' — Techmaster';
   $('#htitle').textContent = L.pageTitle;
+  $('#hsub').textContent = loaded && products.length ? L.itemsCount(products.length) : 'Techmaster IT Solutions';
+  $('#hdrCustomLbl').textContent = L.hdrCustom;
+  $('#hdrCustomBtn').title = L.customTitle;
+  $('#hdrCabLink').title = L.lnkCab;
+  $('#hdrCabLink').setAttribute('aria-label', L.lnkCab);
+  $('#hdrCartBtn').title = L.cartLbl;
+  $('#hdrCartBtn').setAttribute('aria-label', L.cartLbl);
   $('#lnkCab').textContent = L.lnkCab;
   $('#lnkReg').textContent = L.lnkReg;
   $('#btn-ru').classList.toggle('on', lang === 'ru');
@@ -387,7 +553,12 @@ function applyLangStatic() {
 
 function renderCartBar() {
   const bar = $('#cartBar');
+  const hdrBtn = $('#hdrCartBtn');
+  const hdrBadge = $('#hdrCartBadge');
   const cnt = cartCount();
+  hdrBtn.hidden = orderDone || cnt === 0;
+  hdrBadge.hidden = cnt === 0;
+  hdrBadge.textContent = cnt;
   if (orderDone || cnt === 0) { bar.hidden = true; return; }
   bar.hidden = false;
   const tot = cartTotal();
@@ -428,24 +599,26 @@ function render() {
   const usedBrands = [...new Set(products.map(detectBrand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
   if (brandFilter !== 'all' && !usedBrands.includes(brandFilter)) brandFilter = 'all';
 
-  const q = searchQ.trim().toLowerCase();
-  const filtered = products.filter(p => {
-    if (catFilter !== 'all' && (p.cat || 'other') !== catFilter) return false;
-    if (brandFilter !== 'all' && detectBrand(p) !== brandFilter) return false;
-    if (q) {
-      const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    return true;
-  });
-
+  const filtered = getFiltered();
   const shown = filtered.slice(0, pageLimit);
   const rest = filtered.length - shown.length;
+  const activeFltCnt = (brandFilter !== 'all' ? 1 : 0) + (stockOnly ? 1 : 0);
 
-  let html = `<div class="search-bar">
-    <input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}">
-    ${usedBrands.length > 1 ? `<select id="bSel" aria-label="Brand"><option value="all">${esc(L.allBrands)} (${products.length})</option>${usedBrands.map(b => `<option value="${esc(b)}"${brandFilter === b ? ' selected' : ''}>${esc(b)}</option>`).join('')}</select>` : ''}
+  // 1. Compact search + filters toolbar
+  let html = `<div class="toolbar">
+    <div class="search-wrap">
+      <svg class="s-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}">
+      ${searchQ ? '<button type="button" class="s-clr" id="qClr" aria-label="Очистить">×</button>' : ''}
+    </div>
+    <button type="button" class="flt-btn${activeFltCnt ? ' on' : ''}" id="openFltBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+      <span>${esc(L.filtersBtn)}</span>
+      ${activeFltCnt ? `<span class="flt-cnt">${activeFltCnt}</span>` : ''}
+    </button>
   </div>`;
+
+  // 2. Single clean category strip
   if (usedCats.length > 1) {
     html += '<div class="chips">' + catTabs.map(c => {
       const lbl = c === 'all' ? L.allCats : (L.cats[c] || c);
@@ -453,72 +626,86 @@ function render() {
     }).join('') + '</div>';
   }
 
+  // Active extra filter badges (brand / stock)
+  if (activeFltCnt) {
+    html += '<div class="active-bar">';
+    if (brandFilter !== 'all') html += `<button type="button" class="apill" id="clrBrand">${esc(brandFilter)} ×</button>`;
+    if (stockOnly) html += `<button type="button" class="apill" id="clrStock">${esc(L.onlyInStock)} ×</button>`;
+    html += `<button type="button" class="apill-reset" id="clrAllFlt">${esc(L.resetFlt)}</button></div>`;
+  }
+
+  // 3. Clean storefront cards
   if (!products.length) {
-    html += `<div class="empty">${esc(L.emptyCatalog)}</div>`;
+    html += `<div class="empty">
+      <div>${esc(L.emptyCatalog)}</div>
+      <div class="row" style="justify-content:center;margin-top:14px"><button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button></div>
+    </div>`;
   } else if (!filtered.length) {
-    html += `<div class="empty">${esc(L.notFound)}</div>`;
+    html += `<div class="empty">
+      <div>${esc(L.notFound)}</div>
+      <div class="row" style="justify-content:center;margin-top:14px">
+        ${(catFilter !== 'all' || brandFilter !== 'all' || stockOnly || searchQ) ? `<button type="button" class="btn" id="emptyResetBtn">${esc(L.resetFlt)}</button>` : ''}
+        <button type="button" class="btn p" id="emptyCustomBtn">${esc(L.addOwnBtn)}</button>
+      </div>
+    </div>`;
   } else {
     html += '<div class="plist">' + shown.map(p => {
       const ci = cart.find(x => x.id === p.id);
-      const stockTag = p.inStock !== false
-        ? `<span class="tag ok">${esc(L.inStock)}</span>`
-        : `<span class="tag warn">${esc(L.byOrder)}</span>`;
+      const brand = detectBrand(p);
       const catLbl = L.cats[p.cat || 'other'] || '';
+      const subLbl = brand || catLbl;
+      const inStk = p.inStock !== false;
+      const stockHtml = `<span class="sdot ${inStk ? 'ok' : 'warn'}">${esc(inStk ? L.inStock : L.byOrder)}</span>`;
+      const hasPrice = Number(p.price) > 0;
+      const leftFoot = hasPrice
+        ? `<div class="price">${esc(fmtPrice(p.price))}${p.unit ? ` <small>/ ${esc(p.unit)}</small>` : ''}</div>`
+        : `<span class="more-hint">${esc(L.detailsHint)}</span>`;
       const ctrl = ci
         ? `<div class="qty"><button type="button" data-dec="${esc(p.id)}">−</button><span>${ci.qty}</span><button type="button" data-inc="${esc(p.id)}">+</button></div>`
-        : `<button type="button" class="btn p" data-inc="${esc(p.id)}">${esc(L.addCart)}</button>`;
-      return `<div class="pcard">
-        ${p.img ? `<img class="pimg" src="${esc(p.img)}" alt="" loading="lazy" onerror="this.hidden=true">` : ''}
+        : `<button type="button" class="btn p sm" data-inc="${esc(p.id)}">+ ${esc(L.addCart)}</button>`;
+      return `<article class="pcard" data-open="${esc(p.id)}">
+        ${thumbHtml(p)}
         <div class="pmain">
-          <div class="pname">${esc(p.name)}${stockTag}</div>
-          <div class="pmeta">${esc([catLbl, p.sku].filter(Boolean).join(' · '))}</div>
-          ${p.desc ? `<div class="pdesc">${esc(p.desc)}</div>` : ''}
-          <div class="pfoot">
-            <div class="price">${esc(fmtPrice(p.price))}${p.price > 0 && p.unit ? ` <span class="pmeta">/ ${esc(p.unit)}</span>` : ''}</div>
-            ${ctrl}
-          </div>
+          <div class="pname">${esc(p.name)}</div>
+          <div class="pmeta">${subLbl ? `<span>${esc(subLbl)}</span>` : ''}${stockHtml}</div>
+          <div class="pfoot">${leftFoot}${ctrl}</div>
         </div>
-      </div>`;
+      </article>`;
     }).join('') + '</div>';
     if (rest > 0) {
-      html += `<div class="row" style="justify-content:center;margin-top:12px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
+      html += `<div class="row" style="justify-content:center;margin-top:16px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
     }
   }
-
-  html += `<div class="custom-box">
-    <h3>${esc(L.customTitle)}</h3>
-    <div class="pmeta">${esc(L.customHint)}</div>
-    <div class="row">
-      <input id="custName" type="text" maxlength="120" placeholder="${esc(L.customPh)}" style="flex:1;min-width:180px">
-      <input id="custQty" type="number" min="1" max="999" value="1" style="width:74px;text-align:center">
-      <button type="button" class="btn" id="custAddBtn">${esc(L.customAdd)}</button>
-    </div>
-  </div>`;
 
   $('#app').innerHTML = html;
 
   const qInp = $('#qInp');
   qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
-  const bSel = $('#bSel');
-  if (bSel) bSel.onchange = () => { brandFilter = bSel.value; pageLimit = 30; render(); };
-  const moreBtn = $('#moreBtn');
-  if (moreBtn) moreBtn.onclick = () => { pageLimit += 30; render(); };
+  if ($('#qClr')) $('#qClr').onclick = () => { searchQ = ''; pageLimit = 30; render(); };
+  $('#openFltBtn').onclick = () => openFiltersModal(usedBrands, catTabs);
+  if ($('#clrBrand')) $('#clrBrand').onclick = () => { brandFilter = 'all'; pageLimit = 30; render(); };
+  if ($('#clrStock')) $('#clrStock').onclick = () => { stockOnly = false; pageLimit = 30; render(); };
+  if ($('#clrAllFlt')) $('#clrAllFlt').onclick = () => { brandFilter = 'all'; stockOnly = false; pageLimit = 30; render(); };
+  if ($('#emptyResetBtn')) $('#emptyResetBtn').onclick = () => { catFilter = 'all'; brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; render(); };
+  if ($('#emptyCustomBtn')) $('#emptyCustomBtn').onclick = openCustomModal;
+  if ($('#moreBtn')) $('#moreBtn').onclick = () => { pageLimit += 30; render(); };
+
   document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catFilter = b.dataset.cat; pageLimit = 30; render(); });
-  document.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-inc]').forEach(b => b.onclick = e => {
+    e.stopPropagation();
     const p = products.find(x => x.id === b.dataset.inc);
     if (p) addToCart(p, 1);
   });
-  document.querySelectorAll('[data-dec]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-dec]').forEach(b => b.onclick = e => {
+    e.stopPropagation();
     const p = products.find(x => x.id === b.dataset.dec);
     if (p) addToCart(p, -1);
   });
-  $('#custAddBtn').onclick = () => {
-    const nm = ($('#custName').value || '').trim();
-    const qv = Math.max(1, Math.round(Number($('#custQty').value) || 1));
-    if (nm.length < 2) { $('#custName').focus(); return; }
-    addToCart({ id: 'custom_' + uid(), name: nm, price: 0, unit: 'шт.' }, qv);
-    toast(L.customAdded);
-  };
+  document.querySelectorAll('[data-open]').forEach(card => card.onclick = e => {
+    if (e.target.closest('button')) return;
+    const p = products.find(x => x.id === card.dataset.open);
+    if (p) openProductModal(p);
+  });
 }
 
 function renderListOnly() {
@@ -528,7 +715,150 @@ function renderListOnly() {
   if (qInp) { qInp.focus(); if (pos !== null) qInp.setSelectionRange(pos, pos); }
 }
 
+function openProductModal(p) {
+  const L = I18N[lang];
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  const brand = detectBrand(p);
+  const catLbl = L.cats[p.cat || 'other'] || '';
+  const inStk = p.inStock !== false;
+
+  function draw() {
+    const ci = cart.find(x => x.id === p.id);
+    const ctrl = ci
+      ? `<div class="qty"><button type="button" id="dmDec">−</button><span>${ci.qty}</span><button type="button" id="dmInc">+</button></div>`
+      : `<button type="button" class="btn p" id="dmAdd">+ ${esc(L.addCart)}</button>`;
+    ov.innerHTML = `<div class="sheet">
+      <div class="sheet-hd">
+        <h2>${esc(catLbl || L.pageTitle)}</h2>
+        <button type="button" class="btn" id="dmClose" aria-label="${esc(L.close)}">×</button>
+      </div>
+      <div class="det-top">
+        ${thumbHtml(p, 'det-thumb')}
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:16px;line-height:1.3">${esc(p.name)}</div>
+          <div style="margin-top:5px"><span class="sdot ${inStk ? 'ok' : 'warn'}" style="font-size:12.5px">${esc(inStk ? L.inStock : L.byOrder)}</span></div>
+        </div>
+      </div>
+      ${p.desc ? `<div class="det-desc">${esc(p.desc)}</div>` : ''}
+      <div>
+        ${brand ? `<div class="det-kv"><span>${esc(L.kBrand)}</span><b>${esc(brand)}</b></div>` : ''}
+        ${p.sku ? `<div class="det-kv"><span>${esc(L.kSku)}</span><b>${esc(p.sku)}</b></div>` : ''}
+        <div class="det-kv"><span>${esc(L.kPrice)}</span><b>${esc(fmtPrice(p.price))}${p.price > 0 && p.unit ? ' / ' + esc(p.unit) : ''}</b></div>
+      </div>
+      <div class="row" style="justify-content:space-between;align-items:center;margin-top:16px">
+        <button type="button" class="btn" id="dmClose2">${esc(L.close)}</button>
+        ${ctrl}
+      </div>
+    </div>`;
+    ov.querySelector('#dmClose').onclick = () => ov.remove();
+    ov.querySelector('#dmClose2').onclick = () => ov.remove();
+    if (ov.querySelector('#dmAdd')) ov.querySelector('#dmAdd').onclick = () => { addToCart(p, 1); draw(); };
+    if (ov.querySelector('#dmInc')) ov.querySelector('#dmInc').onclick = () => { addToCart(p, 1); draw(); };
+    if (ov.querySelector('#dmDec')) ov.querySelector('#dmDec').onclick = () => { addToCart(p, -1); draw(); };
+  }
+
+  document.body.appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  draw();
+}
+
+function openFiltersModal(usedBrands, catTabs) {
+  const L = I18N[lang];
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  let tmpCat = catFilter, tmpBrand = brandFilter, tmpStock = stockOnly;
+
+  function draw() {
+    const cnt = getFiltered({ cat: tmpCat, brand: tmpBrand, stockOnly: tmpStock }).length;
+    ov.innerHTML = `<div class="sheet">
+      <div class="sheet-hd">
+        <h2>${esc(L.filtersTitle)}</h2>
+        <button type="button" class="btn" id="flClose" aria-label="${esc(L.close)}">×</button>
+      </div>
+      ${usedBrands.length > 1 ? `<div class="fsec">
+        <div class="fsec-t">${esc(L.fltBrand)}</div>
+        <div class="fpills">
+          <button type="button" class="fpill${tmpBrand === 'all' ? ' on' : ''}" data-fb="all">${esc(L.allBrands)}</button>
+          ${usedBrands.map(b => `<button type="button" class="fpill${tmpBrand === b ? ' on' : ''}" data-fb="${esc(b)}">${esc(b)}</button>`).join('')}
+        </div>
+      </div>` : ''}
+      ${catTabs.length > 2 ? `<div class="fsec">
+        <div class="fsec-t">${esc(L.fltCat)}</div>
+        <div class="fpills">
+          ${catTabs.map(c => `<button type="button" class="fpill${tmpCat === c ? ' on' : ''}" data-fc="${esc(c)}">${esc(c === 'all' ? L.allCats : (L.cats[c] || c))}</button>`).join('')}
+        </div>
+      </div>` : ''}
+      <div class="fsec">
+        <div class="fsec-t">${esc(L.fltStock)}</div>
+        <div class="fpills">
+          <button type="button" class="fpill${!tmpStock ? ' on' : ''}" data-fs="0">${esc(L.allStock)}</button>
+          <button type="button" class="fpill${tmpStock ? ' on' : ''}" data-fs="1">${esc(L.onlyInStock)}</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top:18px">
+        <button type="button" class="btn p" id="flApply" style="flex:1">${esc(L.applyFlt(cnt))}</button>
+        <button type="button" class="btn" id="flReset">${esc(L.resetFlt)}</button>
+      </div>
+    </div>`;
+
+    ov.querySelector('#flClose').onclick = () => ov.remove();
+    ov.querySelectorAll('[data-fb]').forEach(b => b.onclick = () => { tmpBrand = b.dataset.fb; draw(); });
+    ov.querySelectorAll('[data-fc]').forEach(b => b.onclick = () => { tmpCat = b.dataset.fc; draw(); });
+    ov.querySelectorAll('[data-fs]').forEach(b => b.onclick = () => { tmpStock = b.dataset.fs === '1'; draw(); });
+    ov.querySelector('#flReset').onclick = () => { tmpCat = 'all'; tmpBrand = 'all'; tmpStock = false; draw(); };
+    ov.querySelector('#flApply').onclick = () => {
+      catFilter = tmpCat; brandFilter = tmpBrand; stockOnly = tmpStock; pageLimit = 30;
+      ov.remove();
+      render();
+    };
+  }
+
+  document.body.appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  draw();
+}
+
+function openCustomModal() {
+  const L = I18N[lang];
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.innerHTML = `<div class="sheet">
+    <div class="sheet-hd">
+      <h2>${esc(L.customTitle)}</h2>
+      <button type="button" class="btn" id="cmClose" aria-label="${esc(L.close)}">×</button>
+    </div>
+    <div style="color:var(--muted);font-size:13.5px;margin-bottom:8px">${esc(L.customHint)}</div>
+    <form id="cmForm">
+      <label class="fld" for="cmName">${esc(L.customNameLbl)}</label>
+      <input id="cmName" type="text" maxlength="120" required placeholder="${esc(L.customPh)}" value="${esc(searchQ.trim())}">
+      <label class="fld" for="cmQty">${esc(L.customQtyLbl)}</label>
+      <input id="cmQty" type="number" min="1" max="999" value="1">
+      <div class="row" style="margin-top:16px">
+        <button type="submit" class="btn p" style="flex:1">${esc(L.customAdd)}</button>
+        <button type="button" class="btn" id="cmCancel">${esc(L.close)}</button>
+      </div>
+    </form>
+  </div>`;
+  document.body.appendChild(ov);
+  const close = () => ov.remove();
+  ov.querySelector('#cmClose').onclick = close;
+  ov.querySelector('#cmCancel').onclick = close;
+  ov.onclick = e => { if (e.target === ov) close(); };
+  ov.querySelector('#cmForm').onsubmit = e => {
+    e.preventDefault();
+    const nm = (ov.querySelector('#cmName').value || '').trim();
+    const qv = Math.max(1, Math.round(Number(ov.querySelector('#cmQty').value) || 1));
+    if (nm.length < 2) { ov.querySelector('#cmName').focus(); return; }
+    addToCart({ id: 'custom_' + uid(), name: nm, price: 0, unit: 'шт.' }, qv);
+    close();
+    toast(L.customAdded);
+  };
+  ov.querySelector('#cmName').focus();
+}
+
 function openCheckout() {
+  if (!cart.length) return;
   const L = I18N[lang];
   const ov = document.createElement('div');
   ov.className = 'ov';
@@ -537,14 +867,17 @@ function openCheckout() {
   function drawSheet() {
     const tot = cartTotal();
     ov.innerHTML = `<div class="sheet">
-      <h2>${esc(L.sheetTitle)}</h2>
+      <div class="sheet-hd">
+        <h2>${esc(L.sheetTitle)}</h2>
+        <button type="button" class="btn" data-x aria-label="${esc(L.close)}">×</button>
+      </div>
       <div style="border-top:1px solid var(--line)">
         ${cart.map(it => `<div class="citem">
           <div class="citem-n">${esc(it.name)}<div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price)) + ' × ' + it.qty + ' = ' + esc(fmtPrice(it.price * it.qty)) : esc(L.priceAsk)}</div></div>
           <div class="qty"><button type="button" data-cdec="${esc(it.id)}">−</button><span>${it.qty}</span><button type="button" data-cinc="${esc(it.id)}">+</button></div>
         </div>`).join('')}
       </div>
-      ${tot > 0 ? `<div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:600;font-size:16px"><span>${esc(L.totalLbl)}</span><span>${esc(fmtPrice(tot))}</span></div>` : ''}
+      ${tot > 0 ? `<div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:700;font-size:16px"><span>${esc(L.totalLbl)}</span><span>${esc(fmtPrice(tot))}</span></div>` : ''}
       <form id="ordForm">
         <label class="fld" for="o-name">${esc(L.nameLbl)}</label>
         <input id="o-name" name="name" type="text" autocomplete="name" maxlength="120" required placeholder="${esc(L.namePh)}" value="${esc(nameVal)}">
@@ -560,12 +893,13 @@ function openCheckout() {
         <div class="err" id="o-err"></div>
         <div class="row">
           <button type="submit" class="btn p" id="o-send" style="flex:1">${esc(L.sendOrder)}</button>
-          <button type="button" class="btn" data-x>${esc(L.close)}</button>
+          <button type="button" class="btn" data-x2>${esc(L.close)}</button>
         </div>
       </form>
     </div>`;
 
     ov.querySelector('[data-x]').onclick = () => ov.remove();
+    ov.querySelector('[data-x2]').onclick = () => ov.remove();
     ov.querySelector('#o-name').oninput = e => { nameVal = e.target.value; };
     ov.querySelector('#o-comm').oninput = e => { commentVal = e.target.value; };
     ov.querySelectorAll('[data-cinc]').forEach(b => b.onclick = () => {
@@ -642,6 +976,8 @@ function openCheckout() {
 }
 
 $('#openCartBtn').onclick = openCheckout;
+$('#hdrCartBtn').onclick = openCheckout;
+$('#hdrCustomBtn').onclick = openCustomModal;
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
   lang = b.dataset.lang;
   try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
