@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Магазин оборудования — Techmaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1e3a5f">
+<style>
+:root{--bg:#f2f4f7;--card:#fff;--text:#1a2330;--muted:#5a6675;--line:#d3d9e1;--accent:#1e3a5f;--on:#fff;--danger:#9e2a2b;--ok:#2f6b4f;--warn:#8a5a00;--soft:#e8eef6;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;--soft:#1f2a38;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;--soft:#1f2a38;color-scheme:dark}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "IBM Plex Sans",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 104px;max-width:720px;margin-inline:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 12px;border-bottom:2px solid var(--text)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{margin:0;line-height:0;color:var(--accent);flex:none}
+.logo svg{width:42px;height:42px;display:block}
+h1{font-size:19px;font-weight:600;margin:0;line-height:1.2}
+.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.lang{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card);flex:none}
+.lang button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--muted);padding:7px 10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.lang button+button{border-left:1px solid var(--line)}
+.lang button.on{background:var(--accent);color:var(--on)}
+.flag{width:18px;height:12px;display:block;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.top-links{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px}
+.top-links a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;font-weight:500}
+.search-bar{display:flex;gap:8px;margin:10px 0}
+input[type=text],input[type=search],input[type=tel],input[type=number],select,textarea{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--muted);border-radius:3px;padding:10px 12px}
+textarea{min-height:74px;resize:vertical}
+.chips{display:flex;gap:16px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:10px}
+.chip{flex:none;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);padding:10px 0;margin-bottom:-1px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.chip.on{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+.plist{border-top:2px solid var(--text)}
+.pcard{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-bottom:1px solid var(--line);padding:12px 10px}
+.pimg{width:76px;height:76px;object-fit:cover;border:1px solid var(--line);border-radius:3px;flex:none;background:var(--bg)}
+.pmain{flex:1;min-width:0}
+.pname{font-weight:600;font-size:15px;line-height:1.3}
+.pmeta{color:var(--muted);font-size:12px;margin-top:2px}
+.pdesc{font-size:13px;color:var(--muted);margin-top:4px;white-space:pre-wrap}
+.pfoot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px}
+.price{font-weight:600;font-size:16px}
+.tag{display:inline-block;padding:1px 6px;border-radius:2px;font-size:11px;font-weight:500;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:1px}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.btn{border:1px solid var(--muted);background:var(--card);color:var(--text);border-radius:3px;padding:8px 14px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn.d{color:var(--danger);border-color:var(--danger)}
+.btn:disabled{opacity:.6;cursor:default}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--accent);border-radius:3px;overflow:hidden}
+.qty button{border:0;background:var(--soft);color:var(--accent);width:32px;height:32px;font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.qty span{min-width:30px;text-align:center;font-weight:600;font-size:14px}
+.custom-box{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:12px;margin-top:14px}
+.custom-box h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.empty{color:var(--muted);text-align:center;padding:36px 10px}
+.cart-bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--text);padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));z-index:10}
+.cart-in{max-width:720px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cart-sum{font-size:14px;line-height:1.3}
+.cart-sum b{display:block;font-size:16px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:4px 4px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
+.ov h2{margin:0 0 8px;font-size:18px;font-weight:600}
+label.fld{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+.ph-row{display:flex;gap:8px;align-items:stretch}
+.ph-cc{flex:none;display:flex;align-items:center;padding:0 10px;border:1px solid var(--line);border-radius:3px;background:var(--bg);font-weight:600;font-size:15px}
+.ph-op{flex:none;width:78px;text-align:center;font-weight:500}
+.ph-op-c{flex:none;width:58px;text-align:center}
+.ph-num{flex:1;min-width:0}
+.citem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.citem-n{font-weight:500;font-size:14px;flex:1;min-width:0}
+.citem-p{font-size:12px;color:var(--muted)}
+.err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px}
+.ok-panel{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--ok);border-radius:3px;padding:18px 16px;margin-top:16px}
+.ok-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ok-badge{width:28px;height:28px;border-radius:3px;background:var(--ok);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:600;flex:none}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:3px;font-size:14px;z-index:30}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
+    <div>
+      <h1 id="htitle">Магазин оборудования</h1>
+      <div class="sub">Techmaster IT Solutions</div>
+    </div>
+  </div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="ru" id="btn-ru">
+      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#ffffff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>
+      <span>RU</span>
+    </button>
+    <button type="button" data-lang="az" id="btn-az">
+      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
+      <span>AZ</span>
+    </button>
+  </div>
+</header>
+
+<div class="top-links">
+  <a href="client.html" id="lnkCab">Личный кабинет</a>
+  <a href="register.html" id="lnkReg">Анкета клиента</a>
+</div>
+
+<main id="app"><div class="empty">Загрузка…</div></main>
+
+<div class="cart-bar" id="cartBar" hidden>
+  <div class="cart-in">
+    <div class="cart-sum" id="cartSum"></div>
+    <button type="button" class="btn p" id="openCartBtn">Оформить заказ</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-lite.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const OP_CODES = ['50', '51', '55', '70', '77', '99', '10'];
+
+const I18N = {
+  ru: {
+    pageTitle: 'Магазин оборудования',
+    lnkCab: 'Личный кабинет',
+    lnkReg: 'Анкета клиента',
+    loading: 'Загрузка каталога…',
+    emptyCatalog: 'Каталог пока пуст. Вы можете добавить нужный товар вручную ниже.',
+    notFound: 'По вашему запросу ничего не найдено.',
+    searchPh: 'Поиск по названию или модели…',
+    allCats: 'Все',
+    inStock: 'В наличии',
+    byOrder: 'Под заказ',
+    priceAsk: 'Цена по запросу',
+    addCart: 'В корзину',
+    customTitle: 'Не нашли нужный товар?',
+    customHint: 'Укажите название или модель — мы добавим его в ваш заказ на закупку.',
+    customPh: 'Например, Hikvision DS-2CD2043G2-I',
+    customAdd: 'Добавить в заказ',
+    customAdded: 'Товар добавлен в корзину',
+    cartCount: n => `В корзине: ${n}`,
+    checkout: 'Оформить заказ',
+    sheetTitle: 'Ваш заказ на покупку',
+    totalLbl: 'Итого ориентировочно',
+    nameLbl: 'Имя и фамилия',
+    namePh: 'Например, Эльчин Мамедов',
+    phoneLbl: 'Мобильный телефон',
+    otherOp: 'Другой',
+    commentLbl: 'Комментарий (желаемая дата, модель, уточнения)',
+    commentPh: 'Необязательно',
+    sendOrder: 'Отправить заказ',
+    sending: 'Отправляем…',
+    close: 'Закрыть',
+    errName: 'Введите имя и фамилию (минимум 2 символа).',
+    errOp: 'Укажите 2 цифры кода оператора.',
+    errPhone: 'Введите 7 цифр номера.',
+    errCart: 'Корзина пуста.',
+    errSend: 'Не удалось отправить заказ. Проверьте подключение и попробуйте снова.',
+    doneTitle: 'Заказ отправлен',
+    doneText: n => `Спасибо, ${n}! Список товаров передан мастеру. Статус закупки и дату получения вы сможете видеть в личном кабинете.`,
+    backShop: 'Вернуться в магазин',
+    goCab: 'Открыть личный кабинет',
+    cats: {
+      security: 'Видеонаблюдение',
+      network: 'Сеть и Wi-Fi',
+      access: 'Домофония и СКУД',
+      smarthome: 'Умный дом',
+      av: 'Аудио-видео',
+      cable: 'Кабель и расходники',
+      other: 'Другое'
+    }
+  },
+  az: {
+    pageTitle: 'Avadanlıq mağazası',
+    lnkCab: 'Şəxsi kabinet',
+    lnkReg: 'Müştəri anketi',
+    loading: 'Kataloq yüklənir…',
+    emptyCatalog: 'Kataloq hələ boşdur. Lazım olan məhsulu aşağıda əl ilə əlavə edə bilərsiniz.',
+    notFound: 'Sorğunuza uyğun məhsul tapılmadı.',
+    searchPh: 'Ad və ya model üzrə axtarış…',
+    allCats: 'Hamısı',
+    inStock: 'Anbarda var',
+    byOrder: 'Sifarişlə',
+    priceAsk: 'Qiymət sorğu ilə',
+    addCart: 'Səbətə at',
+    customTitle: 'Lazım olan məhsulu tapmadınız?',
+    customHint: 'Adını və ya modelini yazın — alış sifarişinizə əlavə edək.',
+    customPh: 'Məsələn, Hikvision DS-2CD2043G2-I',
+    customAdd: 'Sifarişə əlavə et',
+    customAdded: 'Məhsul səbətə əlavə olundu',
+    cartCount: n => `Səbətdə: ${n}`,
+    checkout: 'Sifarişi rəsmiləşdir',
+    sheetTitle: 'Alış sifarişiniz',
+    totalLbl: 'Təxmini cəmi',
+    nameLbl: 'Ad və soyad',
+    namePh: 'Məsələn, Elçin Məmmədov',
+    phoneLbl: 'Mobil nömrə',
+    otherOp: 'Digər',
+    commentLbl: 'Şərh (istənilən tarix, model, qeydlər)',
+    commentPh: 'Məcburi deyil',
+    sendOrder: 'Sifarişi göndər',
+    sending: 'Göndərilir…',
+    close: 'Bağla',
+    errName: 'Ad və soyadınızı daxil edin (ən azı 2 simvol).',
+    errOp: 'Operator kodunun 2 rəqəmini qeyd edin.',
+    errPhone: 'Nömrənin 7 rəqəmini tam daxil edin.',
+    errCart: 'Səbət boşdur.',
+    errSend: 'Sifarişi göndərmək mümkün olmadı. İnterneti yoxlayın və yenidən cəhd edin.',
+    doneTitle: 'Sifariş göndərildi',
+    doneText: n => `Təşəkkür edirik, ${n}! Məhsul siyahısı ustaya göndərildi. Alış statusunu və təhvil tarixini şəxsi kabinetdə izləyə biləcəksiniz.`,
+    backShop: 'Mağazaya qayıt',
+    goCab: 'Şəxsi kabineti aç',
+    cats: {
+      security: 'Videomüşahidə',
+      network: 'Şəbəkə və Wi-Fi',
+      access: 'Domofon və SKUD',
+      smarthome: 'Ağıllı ev',
+      av: 'Audio-video',
+      cable: 'Kabel və materiallar',
+      other: 'Digər'
+    }
+  }
+};
+
+let lang = (() => {
+  try {
+    const s = localStorage.getItem('tm-reg-lang');
+    if (s === 'ru' || s === 'az') return s;
+  } catch (e) {}
+  return (navigator.language || '').toLowerCase().startsWith('az') ? 'az' : 'ru';
+})();
+
+let products = [];
+let loaded = false;
+let catFilter = 'all';
+let searchQ = '';
+let cart = []; // { id, name, price, unit, qty }
+let orderDone = null;
+
+function toast(m) {
+  const old = $('#toast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.id = 'toast';
+  t.textContent = m;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+function fmtPrice(p) {
+  const n = Number(p);
+  if (!Number.isFinite(n) || n <= 0) return I18N[lang].priceAsk;
+  return (Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼';
+}
+
+function fmt7(d) {
+  const s = String(d || '').replace(/\D/g, '').slice(0, 7);
+  if (s.length <= 3) return s;
+  if (s.length <= 5) return s.slice(0, 3) + ' ' + s.slice(3);
+  return s.slice(0, 3) + ' ' + s.slice(3, 5) + ' ' + s.slice(5);
+}
+
+function cartTotal() {
+  return cart.reduce((acc, it) => acc + (Number(it.price) > 0 ? Number(it.price) * it.qty : 0), 0);
+}
+
+function cartCount() {
+  return cart.reduce((acc, it) => acc + it.qty, 0);
+}
+
+function addToCart(prod, delta) {
+  const i = cart.findIndex(x => x.id === prod.id);
+  if (i < 0) {
+    if (delta > 0) cart.push({ id: prod.id, name: prod.name, price: Number(prod.price) || 0, unit: prod.unit || 'шт.', qty: delta });
+  } else {
+    cart[i].qty += delta;
+    if (cart[i].qty <= 0) cart.splice(i, 1);
+  }
+  render();
+}
+
+function applyLangStatic() {
+  const L = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = L.pageTitle + ' — Techmaster';
+  $('#htitle').textContent = L.pageTitle;
+  $('#lnkCab').textContent = L.lnkCab;
+  $('#lnkReg').textContent = L.lnkReg;
+  $('#btn-ru').classList.toggle('on', lang === 'ru');
+  $('#btn-az').classList.toggle('on', lang === 'az');
+  $('#openCartBtn').textContent = L.checkout;
+}
+
+function renderCartBar() {
+  const bar = $('#cartBar');
+  const cnt = cartCount();
+  if (orderDone || cnt === 0) { bar.hidden = true; return; }
+  bar.hidden = false;
+  const tot = cartTotal();
+  const L = I18N[lang];
+  $('#cartSum').innerHTML = `<span>${esc(L.cartCount(cnt))}</span><b>${tot > 0 ? esc(fmtPrice(tot)) : esc(L.priceAsk)}</b>`;
+}
+
+function render() {
+  applyLangStatic();
+  const L = I18N[lang];
+  renderCartBar();
+
+  if (orderDone) {
+    $('#app').innerHTML = `<section class="ok-panel">
+      <div class="ok-head"><span class="ok-badge">✓</span><h2 style="margin:0;font-size:18px">${esc(L.doneTitle)}</h2></div>
+      <p style="margin:0 0 12px;color:var(--muted);font-size:14px">${esc(L.doneText(orderDone.name))}</p>
+      <div style="border-top:1px solid var(--line)">
+        ${orderDone.items.map(it => `<div class="citem"><div class="citem-n">${esc(it.name)} × ${it.qty}</div><div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price * it.qty)) : ''}</div></div>`).join('')}
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button type="button" class="btn" id="backShopBtn">${esc(L.backShop)}</button>
+        <a class="btn p" href="client.html">${esc(L.goCab)}</a>
+      </div>
+    </section>`;
+    $('#backShopBtn').onclick = () => { orderDone = null; render(); };
+    return;
+  }
+
+  if (!loaded) {
+    $('#app').innerHTML = `<div class="empty">${esc(L.loading)}</div>`;
+    return;
+  }
+
+  const usedCats = [...new Set(products.map(p => p.cat || 'other'))];
+  const catTabs = ['all', ...usedCats];
+  if (!catTabs.includes(catFilter)) catFilter = 'all';
+
+  const q = searchQ.trim().toLowerCase();
+  const filtered = products.filter(p => {
+    if (catFilter !== 'all' && (p.cat || 'other') !== catFilter) return false;
+    if (q) {
+      const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  let html = `<div class="search-bar"><input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}"></div>`;
+  if (usedCats.length > 1) {
+    html += '<div class="chips">' + catTabs.map(c => {
+      const lbl = c === 'all' ? L.allCats : (L.cats[c] || c);
+      return `<button type="button" class="chip${catFilter === c ? ' on' : ''}" data-cat="${esc(c)}">${esc(lbl)}</button>`;
+    }).join('') + '</div>';
+  }
+
+  if (!products.length) {
+    html += `<div class="empty">${esc(L.emptyCatalog)}</div>`;
+  } else if (!filtered.length) {
+    html += `<div class="empty">${esc(L.notFound)}</div>`;
+  } else {
+    html += '<div class="plist">' + filtered.map(p => {
+      const ci = cart.find(x => x.id === p.id);
+      const stockTag = p.inStock !== false
+        ? `<span class="tag ok">${esc(L.inStock)}</span>`
+        : `<span class="tag warn">${esc(L.byOrder)}</span>`;
+      const catLbl = L.cats[p.cat || 'other'] || '';
+      const ctrl = ci
+        ? `<div class="qty"><button type="button" data-dec="${esc(p.id)}">−</button><span>${ci.qty}</span><button type="button" data-inc="${esc(p.id)}">+</button></div>`
+        : `<button type="button" class="btn p" data-inc="${esc(p.id)}">${esc(L.addCart)}</button>`;
+      return `<div class="pcard">
+        ${p.img ? `<img class="pimg" src="${esc(p.img)}" alt="" loading="lazy" onerror="this.hidden=true">` : ''}
+        <div class="pmain">
+          <div class="pname">${esc(p.name)}${stockTag}</div>
+          <div class="pmeta">${esc([catLbl, p.sku].filter(Boolean).join(' · '))}</div>
+          ${p.desc ? `<div class="pdesc">${esc(p.desc)}</div>` : ''}
+          <div class="pfoot">
+            <div class="price">${esc(fmtPrice(p.price))}${p.price > 0 && p.unit ? ` <span class="pmeta">/ ${esc(p.unit)}</span>` : ''}</div>
+            ${ctrl}
+          </div>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  html += `<div class="custom-box">
+    <h3>${esc(L.customTitle)}</h3>
+    <div class="pmeta">${esc(L.customHint)}</div>
+    <div class="row">
+      <input id="custName" type="text" maxlength="120" placeholder="${esc(L.customPh)}" style="flex:1;min-width:180px">
+      <input id="custQty" type="number" min="1" max="999" value="1" style="width:74px;text-align:center">
+      <button type="button" class="btn" id="custAddBtn">${esc(L.customAdd)}</button>
+    </div>
+  </div>`;
+
+  $('#app').innerHTML = html;
+
+  const qInp = $('#qInp');
+  qInp.oninput = () => { searchQ = qInp.value; renderListOnly(); };
+  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catFilter = b.dataset.cat; render(); });
+  document.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => {
+    const p = products.find(x => x.id === b.dataset.inc);
+    if (p) addToCart(p, 1);
+  });
+  document.querySelectorAll('[data-dec]').forEach(b => b.onclick = () => {
+    const p = products.find(x => x.id === b.dataset.dec);
+    if (p) addToCart(p, -1);
+  });
+  $('#custAddBtn').onclick = () => {
+    const nm = ($('#custName').value || '').trim();
+    const qv = Math.max(1, Math.round(Number($('#custQty').value) || 1));
+    if (nm.length < 2) { $('#custName').focus(); return; }
+    addToCart({ id: 'custom_' + uid(), name: nm, price: 0, unit: 'шт.' }, qv);
+    toast(L.customAdded);
+  };
+}
+
+function renderListOnly() {
+  const pos = $('#qInp') ? $('#qInp').selectionStart : null;
+  render();
+  const qInp = $('#qInp');
+  if (qInp) { qInp.focus(); if (pos !== null) qInp.setSelectionRange(pos, pos); }
+}
+
+function openCheckout() {
+  const L = I18N[lang];
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  let nameVal = '', commentVal = '', opSel = '50', opCustom = '', num7 = '';
+
+  function drawSheet() {
+    const tot = cartTotal();
+    ov.innerHTML = `<div class="sheet">
+      <h2>${esc(L.sheetTitle)}</h2>
+      <div style="border-top:1px solid var(--line)">
+        ${cart.map(it => `<div class="citem">
+          <div class="citem-n">${esc(it.name)}<div class="citem-p">${it.price > 0 ? esc(fmtPrice(it.price)) + ' × ' + it.qty + ' = ' + esc(fmtPrice(it.price * it.qty)) : esc(L.priceAsk)}</div></div>
+          <div class="qty"><button type="button" data-cdec="${esc(it.id)}">−</button><span>${it.qty}</span><button type="button" data-cinc="${esc(it.id)}">+</button></div>
+        </div>`).join('')}
+      </div>
+      ${tot > 0 ? `<div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:600;font-size:16px"><span>${esc(L.totalLbl)}</span><span>${esc(fmtPrice(tot))}</span></div>` : ''}
+      <form id="ordForm">
+        <label class="fld" for="o-name">${esc(L.nameLbl)}</label>
+        <input id="o-name" name="name" type="text" autocomplete="name" maxlength="120" required placeholder="${esc(L.namePh)}" value="${esc(nameVal)}">
+        <label class="fld" for="o-num">${esc(L.phoneLbl)}</label>
+        <div class="ph-row">
+          <div class="ph-cc">+994</div>
+          <select id="o-op" class="ph-op">${OP_CODES.map(c => `<option value="${c}"${opSel === c ? ' selected' : ''}>${c}</option>`).join('')}<option value="__other"${opSel === '__other' ? ' selected' : ''}>${esc(L.otherOp)}</option></select>
+          <input id="o-opc" class="ph-op-c" type="tel" inputmode="numeric" maxlength="2" placeholder="XX" value="${esc(opCustom)}" ${opSel === '__other' ? '' : 'hidden'}>
+          <input id="o-num" class="ph-num" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="9" placeholder="123 45 67" value="${esc(fmt7(num7))}">
+        </div>
+        <label class="fld" for="o-comm">${esc(L.commentLbl)}</label>
+        <textarea id="o-comm" name="comment" maxlength="400" placeholder="${esc(L.commentPh)}">${esc(commentVal)}</textarea>
+        <div class="err" id="o-err"></div>
+        <div class="row">
+          <button type="submit" class="btn p" id="o-send" style="flex:1">${esc(L.sendOrder)}</button>
+          <button type="button" class="btn" data-x>${esc(L.close)}</button>
+        </div>
+      </form>
+    </div>`;
+
+    ov.querySelector('[data-x]').onclick = () => ov.remove();
+    ov.querySelector('#o-name').oninput = e => { nameVal = e.target.value; };
+    ov.querySelector('#o-comm').oninput = e => { commentVal = e.target.value; };
+    ov.querySelectorAll('[data-cinc]').forEach(b => b.onclick = () => {
+      const it = cart.find(x => x.id === b.dataset.cinc);
+      if (it) { it.qty++; renderCartBar(); drawSheet(); }
+    });
+    ov.querySelectorAll('[data-cdec]').forEach(b => b.onclick = () => {
+      const i = cart.findIndex(x => x.id === b.dataset.cdec);
+      if (i >= 0) {
+        cart[i].qty--;
+        if (cart[i].qty <= 0) cart.splice(i, 1);
+        render();
+        if (!cart.length) ov.remove(); else drawSheet();
+      }
+    });
+
+    const op = ov.querySelector('#o-op'), opc = ov.querySelector('#o-opc'), num = ov.querySelector('#o-num');
+    op.onchange = () => { opSel = op.value; opc.hidden = opSel !== '__other'; if (!opc.hidden) opc.focus(); };
+    opc.oninput = () => { opc.value = opc.value.replace(/\D/g, '').slice(0, 2); opCustom = opc.value; };
+    num.oninput = () => {
+      const digits = num.value.replace(/\D/g, '');
+      if (digits.length >= 9) {
+        const last9 = digits.slice(-9), p2 = last9.slice(0, 2), p7 = last9.slice(2);
+        if (OP_CODES.includes(p2)) { opSel = p2; op.value = p2; opc.hidden = true; }
+        else { opSel = '__other'; op.value = '__other'; opCustom = p2; opc.value = p2; opc.hidden = false; }
+        num7 = p7; num.value = fmt7(p7);
+      } else {
+        num7 = digits.slice(0, 7); num.value = fmt7(num7);
+      }
+    };
+
+    ov.querySelector('#ordForm').onsubmit = async e => {
+      e.preventDefault();
+      const errEl = ov.querySelector('#o-err');
+      const sendBtn = ov.querySelector('#o-send');
+      const name = ov.querySelector('#o-name').value.trim();
+      const opCode = opSel === '__other' ? opCustom.replace(/\D/g, '').slice(0, 2) : opSel;
+      const comment = ov.querySelector('#o-comm').value.trim();
+      if (!cart.length) { errEl.textContent = L.errCart; return; }
+      if (name.length < 2) { errEl.textContent = L.errName; return; }
+      if (opCode.length !== 2) { errEl.textContent = L.errOp; return; }
+      if (num7.length !== 7) { errEl.textContent = L.errPhone; return; }
+      errEl.textContent = '';
+      sendBtn.disabled = true;
+      sendBtn.textContent = L.sending;
+      const payload = {
+        name,
+        phone: `+994 ${opCode} ${fmt7(num7)}`,
+        lang,
+        items: cart.map(it => ({ name: it.name, qty: it.qty, price: Number(it.price) || 0, unit: it.unit || 'шт.' })),
+        total: cartTotal(),
+        comment,
+        status: 'new',
+        created: Date.now()
+      };
+      try {
+        await setDoc(doc(db, 'orders', uid()), payload);
+        orderDone = payload;
+        cart = [];
+        ov.remove();
+        render();
+        window.scrollTo(0, 0);
+      } catch (ex) {
+        errEl.textContent = L.errSend;
+        sendBtn.disabled = false;
+        sendBtn.textContent = L.sendOrder;
+      }
+    };
+  }
+
+  document.body.appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  drawSheet();
+}
+
+$('#openCartBtn').onclick = openCheckout;
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
+  render();
+});
+
+(async () => {
+  render();
+  try {
+    const snap = await getDoc(doc(db, 'pub', 'catalog'));
+    if (snap.exists() && Array.isArray(snap.data().items)) {
+      products = snap.data().items;
+    }
+  } catch (e) {}
+  loaded = true;
+  render();
+})();
+</script>
+</body>
+</html>

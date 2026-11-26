@@ -80,6 +80,14 @@ input[type=tel]{width:100%;font:inherit;font-size:17px;color:var(--text);backgro
 .tn{margin-top:6px;font-size:13px;padding:6px 8px;background:var(--bg);border-left:2px solid var(--accent);border-radius:2px;white-space:pre-wrap}
 .titem.act .tn{background:var(--card)}
 .badge{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:2px;font-size:11px;font-weight:600;vertical-align:1px;border:1px solid var(--accent);color:var(--accent)}
+.badge.ok{border-color:var(--ok);color:var(--ok)}
+.badge.warn{border-color:var(--warn);color:var(--warn)}
+.badge.info{border-color:var(--line);color:var(--muted)}
+.sub-its{margin-top:7px;border-top:1px dashed var(--line);padding-top:6px;display:flex;flex-direction:column;gap:5px}
+.sub-it{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;font-size:13px}
+.sub-it-l{flex:1;min-width:0}
+.sub-it-m{font-size:12px;color:var(--muted)}
+.shop-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px}
 .empty-s{color:var(--muted);font-size:14px;padding:6px 0}
 .leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
 .sw{display:inline-block;width:13px;height:13px;border-radius:2px;border:1.5px solid;vertical-align:-2px;margin-right:5px}
@@ -128,7 +136,7 @@ h3.dayh{font-size:14px;font-weight:600;margin:12px 0 6px;text-transform:capitali
     <div class="row"><button id="go" class="btn p full">Войти</button></div>
     <div class="reg-link">
       <span id="lNoAcc">Ещё не регистрировались?</span>
-      <a href="register.html" id="lRegLink">Заполнить анкету</a>
+      <span><a href="register.html" id="lRegLink">Заполнить анкету</a> · <a href="shop.html" id="lShopLink">Магазин</a></span>
     </div>
   </section>
 
@@ -199,7 +207,14 @@ const I18N = {
     wds: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
     dayPast: 'Этот день уже прошёл.',
     updText: u => `Обновлено: ${u || '—'}. График может меняться, уточняйте время у мастера.`,
-    logout: 'Выйти'
+    logout: 'Выйти',
+    shopLink: 'Магазин',
+    openShop: 'Открыть магазин',
+    itemsTitle: 'Товары и закупки',
+    itemsEmpty: 'К вашим задачам пока не добавлены товары.',
+    itemsTotal: 'Итого по товарам',
+    etaLbl: 'Получение',
+    ist: { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' }
   },
   az: {
     locale: 'az-AZ',
@@ -243,7 +258,14 @@ const I18N = {
     wds: ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'],
     dayPast: 'Bu gün artıq keçib.',
     updText: u => `Yenilənib: ${u || '—'}. Qrafik dəyişə bilər, vaxtı usta ilə dəqiqləşdirin.`,
-    logout: 'Çıxış'
+    logout: 'Çıxış',
+    shopLink: 'Mağaza',
+    openShop: 'Mağazanı aç',
+    itemsTitle: 'Avadanlıq və alışlar',
+    itemsEmpty: 'Tapşırıqlarınıza hələ məhsul əlavə olunmayıb.',
+    itemsTotal: 'Məhsullar üzrə cəmi',
+    etaLbl: 'Təhvil tarixi',
+    ist: { pending: 'Sifariş gözləyir', ordered: 'Sifariş edilib', bought: 'Alınıb', received: 'Təhvil alınıb' }
   }
 };
 
@@ -330,6 +352,7 @@ function applyLangStatic() {
   if (!$('#go').disabled) $('#go').textContent = L.enter;
   $('#lNoAcc').textContent = L.noAcc;
   $('#lRegLink').textContent = L.regLink;
+  $('#lShopLink').textContent = L.shopLink;
   $('#calTitle').textContent = L.calTitle;
   $('#calLeg').innerHTML = `<span><i class="sw free"></i>${esc(L.legFree)}</span><span><i class="sw busy"></i>${esc(L.legBusy)}</span><span><i class="sw part"></i>${esc(L.legPart)}</span><span><i class="sw" style="background:var(--accent);border-color:var(--accent);border-radius:50%"></i>${esc(L.legMine)}</span>`;
   $('#logoutBtn').textContent = L.logout;
@@ -352,6 +375,25 @@ function donutSvg(pct, doneShare, progShare) {
   </div>`;
 }
 
+const IST_CLS = { pending: 'info', ordered: 'warn', bought: '', received: 'ok' };
+const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
+function fmtShortDate(d) {
+  if (!d) return '';
+  return new Date(d + 'T12:00:00').toLocaleDateString(I18N[lang].locale, { day: 'numeric', month: 'short' });
+}
+function itemSubRowHtml(x) {
+  const L = I18N[lang];
+  const stLbl = (L.ist && L.ist[x.s]) || L.ist.pending;
+  const stCls = IST_CLS[x.s] !== undefined ? IST_CLS[x.s] : 'info';
+  const sum = x.p > 0 ? fmtAzn(x.p * (Number(x.q) || 1)) : '';
+  const eta = x.dt ? `${L.etaLbl}: ${fmtShortDate(x.dt)}` : '';
+  const meta = [sum, eta].filter(Boolean).join(' · ');
+  return `<div class="sub-it">
+    <div class="sub-it-l"><div><b>${esc(x.n)}</b> × ${Number(x.q) || 1}</div>${meta ? `<div class="sub-it-m">${esc(meta)}</div>` : ''}</div>
+    <span class="badge ${stCls}" style="margin-left:0;flex:none">${esc(stLbl)}</span>
+  </div>`;
+}
+
 function taskRowHtml(t, kind) {
   const L = I18N[lang];
   const meta = [fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w, t.e].filter(Boolean).join(' · ');
@@ -362,10 +404,12 @@ function taskRowHtml(t, kind) {
       : '<span class="tic td"></span>';
   const cls = kind === 'in_progress' ? ' act' : (kind === 'done' ? ' dn' : '');
   const badge = kind === 'in_progress' ? `<span class="badge">${esc(L.inProgBadge)}</span>` : '';
+  const its = Array.isArray(t.it) && t.it.length ? `<div class="sub-its">${t.it.map(itemSubRowHtml).join('')}</div>` : '';
   return `<div class="titem${cls}">${ic}<div class="tmain">
     <div class="tt">${esc(t.t)}${badge}</div>
     ${meta ? `<div class="tm">${esc(meta)}</div>` : ''}
     ${t.n ? `<div class="tn">${esc(t.n)}</div>` : ''}
+    ${its}
   </div></div>`;
 }
 
@@ -457,6 +501,25 @@ function renderCabinet() {
     ${done.length
       ? `<div class="tlist">${done.map(t => taskRowHtml(t, 'done')).join('')}</div>`
       : `<div class="empty-s">${esc(L.doneEmpty)}</div>`}
+  </section>`;
+
+  // 6. Equipment & purchases summary + link to shop
+  const allItems = [];
+  for (const t of allTasks) {
+    if (Array.isArray(t.it)) {
+      for (const x of t.it) allItems.push(Object.assign({ taskTitle: t.t }, x));
+    }
+  }
+  const itemsSum = allItems.reduce((acc, x) => acc + (Number(x.p) > 0 ? Number(x.p) * (Number(x.q) || 1) : 0), 0);
+  html += `<section class="panel">
+    <h2>${esc(L.itemsTitle)}<span>${allItems.length}</span></h2>
+    ${allItems.length
+      ? `<div class="sub-its" style="border-top:1px solid var(--line);margin-top:0;padding-top:8px">${allItems.map(itemSubRowHtml).join('')}</div>`
+      : `<div class="empty-s">${esc(L.itemsEmpty)}</div>`}
+    <div class="shop-foot">
+      <span>${itemsSum > 0 ? `${esc(L.itemsTotal)}: <b>${esc(fmtAzn(itemsSum))}</b>` : ''}</span>
+      <a class="btn p" href="shop.html">${esc(L.openShop)}</a>
+    </div>
   </section>`;
 
   $('#cabinet').innerHTML = html;

@@ -51,7 +51,19 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .tag{margin-left:8px;padding:1px 6px;border:1px solid var(--danger);color:var(--danger);border-radius:2px;font-size:12px;font-weight:500;vertical-align:1px}
 .tag.ok{border-color:var(--ok);color:var(--ok)}
 .tag.prog{border-color:var(--accent);color:var(--accent)}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
 .tag.info{border-color:var(--line);color:var(--muted)}
+.it-list{margin:8px 0;border-top:1px solid var(--line)}
+.it-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.it-box{border:1px solid var(--line);border-radius:3px;padding:8px;margin-top:8px;background:var(--bg)}
+.it-top{display:flex;gap:6px;align-items:center}
+.it-top input{flex:1;padding:7px 8px;font-size:14px}
+.it-top .btn{padding:6px 10px;font-size:13px}
+.it-g{display:grid;grid-template-columns:64px 86px 1fr;gap:6px;margin-top:6px}
+.it-g2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.it-box input,.it-box select{padding:7px 8px;font-size:14px}
+.it-add{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.it-add select{flex:1;min-width:160px;padding:8px;font-size:14px}
 .nbadge{display:inline-block;margin-left:5px;padding:0 5px;min-width:18px;border-radius:2px;background:var(--danger);color:#fff;font-size:11px;font-weight:600;line-height:17px;vertical-align:1px}
 .kv{margin-top:6px;font-size:13px;line-height:1.45}
 .kv div{margin-top:2px}
@@ -73,7 +85,7 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .empty{color:var(--muted);text-align:center;padding:40px 10px}
 .bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:6px 6px 6px 12px;font-size:14px;margin:8px 0}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:14px 0;font:inherit;font-weight:500;cursor:pointer}
+nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:14px 2px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
 nav button.on{color:var(--text);border-top-color:var(--accent);font-weight:600}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .ov form,.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:4px 4px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
@@ -115,7 +127,7 @@ textarea{min-height:90px;resize:vertical}
 </header>
 <div id="note" hidden></div>
 <main id="app"><div class="empty">Загрузка…</div></main>
-<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button></nav>
+<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button><button data-act="tab" data-v="shop">Магазин<span id="ordb" class="nbadge" hidden></span></button></nav>
 <input type="file" id="impfile" accept=".json,application/json" hidden>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -151,9 +163,66 @@ const today = () => iso(new Date());
 const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d); };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
-let clients = [], tasks = [], requests = [], reqErr = false, view = 'tasks', filter = 'today', clientFilter = '';
-let user = null, authReady = false, ready = 0, armed = null, unsubs = [];
+let clients = [], tasks = [], requests = [], products = [], orders = [];
+let reqErr = false, prodErr = false, ordErr = false, view = 'tasks', filter = 'today', shopTab = 'orders', clientFilter = '';
+let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null;
 const opened = new Set();
+
+const SHOP_CATS = { security: 'Видеонаблюдение', network: 'Сеть и Wi-Fi', access: 'Домофония и СКУД', smarthome: 'Умный дом', av: 'Аудио-видео', cable: 'Кабель и расходники', other: 'Другое' };
+const ITEM_ST = { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' };
+const ITEM_CLS = { pending: 'info', ordered: 'warn', bought: 'prog', received: 'ok' };
+const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
+
+function scheduleCatalog(delayMs = 1500) {
+  if (!user) return;
+  if (catTimer) clearTimeout(catTimer);
+  catTimer = setTimeout(() => { catTimer = null; syncCatalog(false); }, delayMs);
+}
+async function syncCatalog(notify = false) {
+  if (!user || !navigator.onLine) return;
+  const active = [...products]
+    .filter(p => p.active !== false)
+    .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'))
+    .map(p => ({
+      id: p.id,
+      name: p.name || '',
+      cat: p.cat || 'other',
+      sku: p.sku || '',
+      price: Number(p.price) || 0,
+      unit: p.unit || 'шт.',
+      desc: p.desc || '',
+      img: p.img || '',
+      inStock: p.inStock !== false
+    }));
+  const upd = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  try {
+    await setDoc(doc(db, 'pub', 'catalog'), { items: active, upd });
+    if (notify) toast('Каталог магазина обновлён');
+  } catch (e) {
+    if (notify) toast('Не удалось обновить каталог');
+  }
+}
+async function seedSampleProducts() {
+  if (!user) return;
+  const samples = [
+    { name: 'IP-камера 4MP уличная (PoE, ИК 30м)', cat: 'security', sku: 'DS-2CD2043G2-I', price: 145, unit: 'шт.', desc: 'Металлический корпус IP67, детекция человека и авто.', inStock: true, active: true },
+    { name: 'Сетевой видеорегистратор NVR 8 кан. PoE', cat: 'security', sku: 'DS-7608NXI-K1/8P', price: 320, unit: 'шт.', desc: 'Поддержка камер до 8MP, 1 слот HDD до 10 ТБ.', inStock: true, active: true },
+    { name: 'Точка доступа Wi-Fi 6 (PoE)', cat: 'network', sku: 'U6-Plus', price: 240, unit: 'шт.', desc: 'Двухдиапазонная потолочная точка доступа Ubiquiti.', inStock: true, active: true },
+    { name: 'PoE-коммутатор 8 портов Gigabit', cat: 'network', sku: 'SG108PE', price: 135, unit: 'шт.', desc: 'Управляемый коммутатор с питанием PoE+.', inStock: true, active: true },
+    { name: 'IP-видеодомофон (комплект с вызывной панелью)', cat: 'access', sku: 'DS-KIS603-P', price: 380, unit: 'компл.', desc: 'Экран 7", управление со смартфона, открытие замка.', inStock: false, active: true },
+    { name: 'Кабель витая пара Cat6 (медь, уличный)', cat: 'cable', sku: 'UTP Cat6 PE', price: 1.5, unit: 'м', desc: '100% медь, устойчив к УФ-излучению.', inStock: true, active: true }
+  ];
+  try {
+    const batch = writeBatch(db);
+    const now = Date.now();
+    samples.forEach((s, i) => batch.set(doc(db, 'products', uid()), Object.assign({ img: '', created: now + i }, s)));
+    await batch.commit();
+    scheduleCatalog(400);
+    toast('Добавлено 6 примеров товаров');
+  } catch (e) {
+    toast('Ошибка: проверьте правила Firestore (products)');
+  }
+}
 
 const REQ_OBJ = { flat: 'Квартира', house: 'Частный дом', office: 'Офис', enterprise: 'Предприятие', other: 'Другое' };
 const REQ_ROLE = { owner: 'Собственник', foreman: 'Прораб', master: 'Мастер', builder: 'Представитель строительной организации', other: 'Другое' };
@@ -305,7 +374,14 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
         tm: t.time || '',
         x: Boolean(t.done),
         st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
-        n: t.pubNote || ''
+        n: t.pubNote || '',
+        it: Array.isArray(t.items) ? t.items.map(x => ({
+          n: x.name || '',
+          q: Number(x.qty) || 1,
+          p: Number(x.price) || 0,
+          s: x.status || 'pending',
+          dt: x.eta || ''
+        })) : []
       }));
     const pctRaw = c.pubPct;
     const pct = (pctRaw !== undefined && pctRaw !== '' && pctRaw !== null && Number.isFinite(Number(pctRaw)))
@@ -452,7 +528,8 @@ function exportJson() {
     exported: today(),
     note: 'Личные данные. НЕ загружать в публичный репозиторий.',
     clients,
-    tasks
+    tasks,
+    products
   };
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
   const a = document.createElement('a');
@@ -513,9 +590,36 @@ async function importJsonFile(file) {
       status: st,
       pub: t.pub !== false,
       pubNote: String(t.pubNote || '').trim(),
+      items: Array.isArray(t.items) ? t.items.map(x => ({
+        name: String(x.name || '').trim(),
+        qty: Math.max(1, Number(x.qty) || 1),
+        price: Number(x.price) || 0,
+        status: ITEM_ST[x.status] ? x.status : 'pending',
+        eta: String(x.eta || '')
+      })).filter(x => x.name) : [],
       created: Number(t.created) || Date.now()
     };
     ops.push({ col: 'tasks', id, doc: docData });
+  }
+  const impProds = Array.isArray(data.products) ? data.products : [];
+  for (const p of impProds) {
+    const id = String(p.id || uid());
+    ops.push({
+      col: 'products',
+      id,
+      doc: {
+        name: String(p.name || '').trim(),
+        cat: SHOP_CATS[p.cat] ? p.cat : 'other',
+        sku: String(p.sku || '').trim(),
+        price: Number(p.price) || 0,
+        unit: String(p.unit || 'шт.').trim(),
+        desc: String(p.desc || '').trim(),
+        img: String(p.img || '').trim(),
+        inStock: p.inStock !== false,
+        active: p.active !== false,
+        created: Number(p.created) || Date.now()
+      }
+    });
   }
   try {
     for (let i = 0; i < ops.length; i += 400) {
@@ -630,21 +734,30 @@ function cardHtml(t) {
   const late = t.date && t.date < today() && !t.done;
   const inProg = !t.done && t.status === 'in_progress';
   const hiddenPub = t.pub === false;
+  const items = Array.isArray(t.items) ? t.items : [];
   const wt = [t.work, t.equip].filter(Boolean).map(esc).join(', ');
+  const itemSummary = items.length ? `Товары: ${items.length} (получено ${items.filter(x => x.status === 'received').length})` : '';
   const tm = late ? esc(shortDate(t.date)) + '<small>' + esc(t.time || '') + '</small>' : (t.time ? esc(t.time) : '—');
   let more = '';
   if (o) {
     const links = [];
     if (c && c.phone) links.push(`<a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a>`);
     if (c && c.address) links.push(`<a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a>`);
-    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}<div class="links">${links.join('')}</div>
+    const itemsHtml = items.length ? `<div class="it-list">${items.map(x => {
+      const stLbl = ITEM_ST[x.status] || ITEM_ST.pending;
+      const stCls = ITEM_CLS[x.status] || 'info';
+      const pr = x.price > 0 ? ' · ' + fmtAzn(x.price * (x.qty || 1)) : '';
+      const eta = x.eta ? ' · получение ' + shortDate(x.eta) : '';
+      return `<div class="it-row"><div><b>${esc(x.name)}</b> × ${Number(x.qty) || 1}${esc(pr)}${esc(eta)}</div><span class="tag ${stCls}" style="margin-left:0;flex:none">${esc(stLbl)}</span></div>`;
+    }).join('')}</div>` : '';
+    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}${itemsHtml}<div class="links">${links.join('')}</div>
     <div class="row">${!t.done ? `<button class="btn${inProg ? '' : ' p'}" data-act="inprog" data-id="${t.id}">${inProg ? 'Снять «В работе»' : 'В работу'}</button>` : ''}<button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
   }
   const tags = (t.high ? '<span class="tag">Срочно</span>' : '')
     + (inProg ? '<span class="tag prog">В работе</span>' : '')
     + (hiddenPub ? '<span class="tag info">Скрыто</span>' : '');
   return `<div class="tr${t.done ? ' done' : ''}${t.high ? ' hi' : ''}"><button class="chk" data-act="toggle" data-id="${t.id}" aria-label="Отметить выполненной">✓</button><div class="tm">${tm}</div>
-  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${tags}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}</div>${more}</div></div>`;
+  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${tags}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}${itemSummary ? `<div class="meta">${esc(itemSummary)}</div>` : ''}</div>${more}</div></div>`;
 }
 
 function clientsHtml() {
@@ -692,6 +805,60 @@ function requestsHtml() {
   }).join('');
 }
 
+function shopHtml() {
+  const newOrds = orders.filter(o => o.status !== 'linked').length;
+  let h = `<div class="chips">
+    <button class="chip ${shopTab === 'orders' ? 'on' : ''}" data-act="shoptab" data-st="orders">Заказы<b>${newOrds || orders.length}</b></button>
+    <button class="chip ${shopTab === 'catalog' ? 'on' : ''}" data-act="shoptab" data-st="catalog">Каталог<b>${products.length}</b></button>
+  </div>`;
+
+  if (shopTab === 'orders') {
+    if (ordErr) return h + '<div class="empty">Нет доступа к заказам. Обновите правила Firestore (разделы <code>products</code> и <code>orders</code>) и обновите страницу.</div>';
+    if (!orders.length) return h + '<div class="empty">Заказов из магазина пока нет. Отправьте клиенту ссылку на магазин.</div>';
+    const list = [...orders].sort((a, b) => (Number(b.created) || 0) - (Number(a.created) || 0));
+    return h + list.map(o => {
+      const dt = o.created ? new Date(o.created).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+      const linked = o.status === 'linked';
+      const badge = linked ? '<span class="tag ok">В задаче</span>' : '<span class="tag">Новый</span>';
+      const langTag = o.lang ? `<span class="tag info">${esc(String(o.lang).toUpperCase())}</span>` : '';
+      const its = Array.isArray(o.items) ? o.items : [];
+      const tot = Number(o.total) > 0 ? fmtAzn(o.total) : '';
+      return `<div class="cl"><div class="main">
+        <div class="ttl">${esc(o.name || 'Без имени')}${badge}${langTag}</div>
+        ${dt ? `<div class="meta">${esc(dt)}${tot ? ' · Итого: ' + esc(tot) : ''}</div>` : ''}
+        ${o.phone ? `<div class="links meta"><a href="tel:${esc(tel(o.phone))}">${esc(o.phone)}</a></div>` : ''}
+        <div class="it-list">${its.map(x => `<div class="it-row"><div><b>${esc(x.name)}</b> × ${Number(x.qty) || 1}</div><div>${x.price > 0 ? esc(fmtAzn(x.price * (x.qty || 1))) : ''}</div></div>`).join('')}</div>
+        ${o.comment ? `<div class="meta" style="white-space:pre-wrap;margin-top:4px">Комментарий: ${esc(o.comment)}</div>` : ''}
+        <div class="row">
+          <button class="btn p" data-act="linkord" data-id="${o.id}">${linked ? 'Добавить ещё раз' : 'Привязать к задаче'}</button>
+          <button class="btn d" data-act="delord" data-id="${o.id}">Удалить</button>
+        </div>
+      </div></div>`;
+    }).join('');
+  }
+
+  if (prodErr) return h + '<div class="empty">Нет доступа к каталогу. Обновите правила Firestore (раздел <code>products</code>) и обновите страницу.</div>';
+  if (!products.length) {
+    return h + `<div class="empty">В каталоге пока нет товаров.<div class="row" style="justify-content:center;margin-top:14px"><button class="btn p" data-act="newprod">Добавить товар</button><button class="btn" data-act="seedprod">Добавить 6 примеров</button></div></div>`;
+  }
+  const list = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'));
+  return h + list.map(p => {
+    const catLbl = SHOP_CATS[p.cat] || 'Другое';
+    const pr = fmtAzn(p.price) || 'По запросу';
+    const tags = (p.inStock !== false ? '<span class="tag ok">В наличии</span>' : '<span class="tag warn">Под заказ</span>')
+      + (p.active === false ? '<span class="tag info">Скрыт</span>' : '');
+    return `<div class="cl"><div class="main">
+      <div class="ttl">${esc(p.name)}${tags}</div>
+      <div class="meta">${esc([catLbl, p.sku, pr + (p.price > 0 && p.unit ? ' / ' + p.unit : '')].filter(Boolean).join(' · '))}</div>
+      ${p.desc ? `<div class="meta">${esc(p.desc)}</div>` : ''}
+      <div class="row">
+        <button class="btn" data-act="editprod" data-id="${p.id}">Изменить</button>
+        <button class="btn d" data-act="delprod" data-id="${p.id}">Удалить</button>
+      </div>
+    </div></div>`;
+  }).join('');
+}
+
 function render() {
   armed = null;
   $('#date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -711,9 +878,12 @@ function render() {
   const newReqs = requests.filter(r => r.status !== 'accepted').length;
   const rb = $('#reqb');
   if (rb) { rb.textContent = newReqs; rb.hidden = newReqs === 0; }
-  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : 'Заявки';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : 'Ссылка на анкету';
-  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : requestsHtml());
+  const newOrds = orders.filter(o => o.status !== 'linked').length;
+  const ob = $('#ordb');
+  if (ob) { ob.textContent = newOrds; ob.hidden = newOrds === 0; }
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'requests' ? 'Заявки' : 'Магазин';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'requests' ? requestsHtml() : shopHtml());
 }
 
 // --- Modals ---
@@ -759,6 +929,14 @@ function openMenu() {
       </div>
     </div>
     <div class="sec">
+      <div class="sec-t">Магазин оборудования</div>
+      <div class="meta">Отправьте ссылку клиенту для выбора и заказа товаров.</div>
+      <div class="row">
+        <button class="btn" type="button" data-copy-shop>Скопировать ссылку</button>
+        <button class="btn" type="button" data-sync-cat>Обновить каталог</button>
+      </div>
+    </div>
+    <div class="sec">
       <div class="sec-t">Страница клиента (график и задачи)</div>
       <div class="meta" id="pstat"></div>
       <div class="row">
@@ -788,6 +966,8 @@ function openMenu() {
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
   ov.querySelector('[data-x]').onclick = () => ov.remove();
   ov.querySelector('[data-copy-reg]').onclick = () => copyUrl('register.html', 'Ссылка на анкету');
+  ov.querySelector('[data-copy-shop]').onclick = () => copyUrl('shop.html', 'Ссылка на магазин');
+  ov.querySelector('[data-sync-cat]').onclick = () => syncCatalog(true);
   ov.querySelector('[data-copy]').onclick = () => copyUrl('client.html', 'Ссылка для клиента');
   ov.querySelector('[data-sync]').onclick = () => rebuildPortal(true);
   ov.querySelector('[data-exp]').onclick = () => exportJson();
@@ -845,9 +1025,18 @@ function pick(name, label, list, v) {
 
 function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
-  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '' }, prefill || {});
+  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '', items: [] }, prefill || {});
   const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
   const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  const prodOpts = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(p => `<option value="${p.id}">${esc(p.name)}${p.price > 0 ? ' (' + fmtAzn(p.price) + ')' : ''}</option>`).join('');
+  let draftItems = (Array.isArray(t.items) ? t.items : []).map(x => ({
+    name: x.name || '',
+    qty: Number(x.qty) || 1,
+    price: Number(x.price) || 0,
+    status: ITEM_ST[x.status] ? x.status : 'pending',
+    eta: x.eta || ''
+  }));
+
   const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
   <label>Статус выполнения</label><select name="status">
@@ -862,6 +1051,14 @@ function openTask(id, clientId, prefill) {
   <div class="qk">${['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '16:00', '18:00'].map(x => `<button type="button" class="btn" data-t="${x}">${x}</button>`).join('')}<button type="button" class="btn" data-t="">Без времени</button></div>
   <label>Детали мастера (личные, клиенту не видны)</label><textarea name="details">${esc(t.details)}</textarea>
   <div class="sec">
+    <div class="sec-t">Товары и закупка (видны клиенту в кабинете)</div>
+    <div id="itWrap"></div>
+    <div class="it-add">
+      ${prodOpts ? `<select id="itCatSel"><option value="">Выбрать из каталога…</option>${prodOpts}</select><button type="button" class="btn" id="itAddCat">+ Из каталога</button>` : ''}
+      <button type="button" class="btn" id="itAddCust">+ Свой товар</button>
+    </div>
+  </div>
+  <div class="sec">
     <div class="sec-t">Отображение в кабинете клиента</div>
     <label class="inl" style="margin-top:4px"><input type="checkbox" name="pub" ${t.pub !== false ? 'checked' : ''}> Показывать эту задачу клиенту</label>
     <label>Комментарий для клиента (виден в кабинете)</label><textarea name="pubNote" placeholder="Например, Кабели проложены, настраиваем регистратор" style="min-height:64px">${esc(t.pubNote || '')}</textarea>
@@ -869,6 +1066,9 @@ function openTask(id, clientId, prefill) {
   <label class="inl"><input type="checkbox" name="high" ${t.high ? 'checked' : ''}> Срочно</label>`,
   f => {
     const st = f.status === 'done' ? 'done' : (f.status === 'in_progress' ? 'in_progress' : 'todo');
+    const cleanItems = draftItems
+      .map(x => ({ name: String(x.name || '').trim(), qty: Math.max(1, Number(x.qty) || 1), price: Number(x.price) || 0, status: ITEM_ST[x.status] ? x.status : 'pending', eta: String(x.eta || '') }))
+      .filter(x => x.name);
     return save('tasks', id || uid(), {
       clientId: f.clientId,
       title: f.title.trim(),
@@ -882,13 +1082,190 @@ function openTask(id, clientId, prefill) {
       status: st,
       pub: !!f.pub,
       pubNote: (f.pubNote || '').trim(),
+      items: cleanItems,
       created: t.created || Date.now()
     });
   }, id ? { confirm: 'Точно удалить?', run: () => del('tasks', id) } : null);
+
+  function drawItems() {
+    const wrap = ov.querySelector('#itWrap');
+    if (!draftItems.length) {
+      wrap.innerHTML = '<div class="meta">Товары к задаче не добавлены.</div>';
+      return;
+    }
+    wrap.innerHTML = draftItems.map((it, idx) => `<div class="it-box" data-idx="${idx}">
+      <div class="it-top">
+        <input type="text" data-if="name" placeholder="Название товара / модели" value="${esc(it.name)}">
+        <button type="button" class="btn d" data-irem="${idx}" aria-label="Удалить товар">×</button>
+      </div>
+      <div class="it-g">
+        <input type="number" data-if="qty" min="1" step="1" title="Кол-во" placeholder="Шт" value="${esc(it.qty)}">
+        <input type="number" data-if="price" min="0" step="0.5" title="Цена, ₼" placeholder="Цена ₼" value="${it.price > 0 ? esc(it.price) : ''}">
+        <select data-if="status">${Object.entries(ITEM_ST).map(([k, l]) => `<option value="${k}"${it.status === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>
+      </div>
+      <div class="it-g2">
+        <div class="meta" style="align-self:center">Дата получения:</div>
+        <input type="date" data-if="eta" value="${esc(it.eta || '')}">
+      </div>
+    </div>`).join('');
+    wrap.querySelectorAll('.it-box').forEach(box => {
+      const idx = Number(box.dataset.idx);
+      box.querySelectorAll('[data-if]').forEach(inp => {
+        inp.oninput = inp.onchange = () => {
+          const fld = inp.dataset.if;
+          draftItems[idx][fld] = (fld === 'qty' || fld === 'price') ? Number(inp.value) : inp.value;
+        };
+      });
+    });
+    wrap.querySelectorAll('[data-irem]').forEach(b => b.onclick = () => {
+      draftItems.splice(Number(b.dataset.irem), 1);
+      drawItems();
+    });
+  }
+  drawItems();
+  const addCatBtn = ov.querySelector('#itAddCat');
+  if (addCatBtn) {
+    addCatBtn.onclick = () => {
+      const pid = ov.querySelector('#itCatSel').value;
+      const p = products.find(x => x.id === pid);
+      if (!p) return;
+      draftItems.push({ name: p.name, qty: 1, price: Number(p.price) || 0, status: 'pending', eta: '' });
+      ov.querySelector('#itCatSel').value = '';
+      drawItems();
+    };
+  }
+  ov.querySelector('#itAddCust').onclick = () => {
+    draftItems.push({ name: '', qty: 1, price: 0, status: 'pending', eta: '' });
+    drawItems();
+    const last = ov.querySelector('#itWrap .it-box:last-child input[data-if="name"]');
+    if (last) last.focus();
+  };
+
   initCal(ov);
   ['work', 'equip'].forEach(n => {
     const s = ov.querySelector('[name=' + n + ']'), o = ov.querySelector('[name=' + n + 'Other]');
     s.onchange = () => { o.hidden = s.value !== '__other'; if (!o.hidden) o.focus(); };
+  });
+}
+
+function openProduct(id) {
+  const p = products.find(x => x.id === id) || { name: '', cat: 'security', sku: '', price: '', unit: 'шт.', desc: '', img: '', inStock: true, active: true };
+  const catOpts = Object.entries(SHOP_CATS).map(([k, l]) => `<option value="${k}"${p.cat === k ? ' selected' : ''}>${esc(l)}</option>`).join('');
+  modal(id ? 'Товар' : 'Новый товар', `
+    <label>Название товара</label><input type="text" name="name" required value="${esc(p.name)}">
+    <label>Категория</label><select name="cat">${catOpts}</select>
+    <label>Модель / бренд (необязательно)</label><input type="text" name="sku" placeholder="Например, Hikvision DS-2CD2043G2-I" value="${esc(p.sku || '')}">
+    <div class="two">
+      <div><label>Цена, ₼ (пусто = по запросу)</label><input type="number" name="price" min="0" step="0.5" value="${p.price > 0 ? esc(p.price) : ''}"></div>
+      <div><label>Единица</label><input type="text" name="unit" value="${esc(p.unit || 'шт.')}"></div>
+    </div>
+    <label>Краткое описание</label><textarea name="desc" style="min-height:64px">${esc(p.desc || '')}</textarea>
+    <label>Ссылка на фото (необязательно)</label><input type="text" name="img" placeholder="https://..." value="${esc(p.img || '')}">
+    <label class="inl"><input type="checkbox" name="inStock" ${p.inStock !== false ? 'checked' : ''}> В наличии</label>
+    <label class="inl"><input type="checkbox" name="active" ${p.active !== false ? 'checked' : ''}> Показывать в магазине</label>`,
+  async f => {
+    try {
+      await setDoc(doc(db, 'products', id || uid()), {
+        name: f.name.trim(),
+        cat: SHOP_CATS[f.cat] ? f.cat : 'other',
+        sku: (f.sku || '').trim(),
+        price: Number(f.price) > 0 ? Number(f.price) : 0,
+        unit: (f.unit || 'шт.').trim() || 'шт.',
+        desc: (f.desc || '').trim(),
+        img: (f.img || '').trim(),
+        inStock: !!f.inStock,
+        active: !!f.active,
+        created: p.created || Date.now()
+      });
+      scheduleCatalog(800);
+      toast('Товар сохранён');
+    } catch (e) {
+      toast('Не удалось сохранить товар');
+    }
+  }, id ? {
+    confirm: 'Точно удалить?',
+    run: async () => {
+      try { await deleteDoc(doc(db, 'products', id)); scheduleCatalog(800); toast('Товар удалён'); }
+      catch (e) { toast('Не удалось удалить товар'); }
+    }
+  } : null);
+}
+
+function openLinkOrder(ordId) {
+  const o = orders.find(x => x.id === ordId);
+  if (!o) return;
+  const p9 = normPhone(o.phone);
+  const matchedClient = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
+  const openTasks = [...tasks].filter(t => !t.done).sort((a, b) => {
+    const am = matchedClient && a.clientId === matchedClient.id ? 0 : 1;
+    const bm = matchedClient && b.clientId === matchedClient.id ? 0 : 1;
+    return am - bm || (a.date || '9999').localeCompare(b.date || '9999');
+  });
+  const taskOpts = openTasks.map(t => `<option value="${t.id}">${esc(cname(t.clientId))} — ${esc(t.title)}</option>`).join('');
+  modal('Привязать заказ к задаче', `
+    <div class="meta">Клиент: <b>${esc(o.name)}</b> (${esc(o.phone)}) · позиций: ${(o.items || []).length}</div>
+    <label>Куда добавить товары</label>
+    <select name="targetTask">
+      <option value="__new">+ Создать новую задачу${matchedClient ? ' для ' + esc(matchedClient.name) : ' и клиента'}</option>
+      ${taskOpts}
+    </select>
+    <div class="two">
+      <div><label>Статус закупки</label><select name="ist">${Object.entries(ITEM_ST).map(([k, l]) => `<option value="${k}"${k === 'ordered' ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+      <div><label>Дата получения</label><input type="date" name="eta"></div>
+    </div>`,
+  async f => {
+    const newItems = (o.items || []).map(x => ({
+      name: String(x.name || '').trim(),
+      qty: Math.max(1, Number(x.qty) || 1),
+      price: Number(x.price) || 0,
+      status: ITEM_ST[f.ist] ? f.ist : 'ordered',
+      eta: f.eta || ''
+    })).filter(x => x.name);
+
+    if (f.targetTask === '__new') {
+      let cid = matchedClient ? matchedClient.id : null;
+      if (!cid) {
+        cid = uid();
+        await save('clients', cid, {
+          name: String(o.name || '').trim(),
+          phone: String(o.phone || '').trim(),
+          address: '',
+          note: o.comment ? 'Из заказа магазина: ' + o.comment : '',
+          showAddress: true,
+          showCal: true,
+          created: Date.now()
+        });
+      }
+      await save('tasks', uid(), {
+        clientId: cid,
+        title: 'Закупка оборудования (заказ)',
+        work: 'Монтаж',
+        equip: '',
+        date: f.eta || today(),
+        time: '',
+        details: o.comment || '',
+        high: false,
+        done: false,
+        status: 'todo',
+        pub: true,
+        pubNote: '',
+        items: newItems,
+        created: Date.now()
+      });
+      toast('Создана задача с товарами заказа');
+    } else {
+      const t = tasks.find(x => x.id === f.targetTask);
+      if (t) {
+        const merged = [...(Array.isArray(t.items) ? t.items : []), ...newItems];
+        const updTask = Object.assign({}, t, { items: merged });
+        delete updTask.id;
+        await save('tasks', t.id, updTask);
+        toast('Товары добавлены в задачу');
+      }
+    }
+    const updOrd = Object.assign({}, o, { status: 'linked' });
+    delete updOrd.id;
+    try { await setDoc(doc(db, 'orders', ordId), updOrd); } catch (e) {}
   });
 }
 
@@ -1005,7 +1382,25 @@ document.addEventListener('click', async e => {
   else if (a === 'fab') {
     if (view === 'tasks') openTask();
     else if (view === 'clients') openClient();
-    else copyUrl('register.html', 'Ссылка на анкету');
+    else if (view === 'requests') copyUrl('register.html', 'Ссылка на анкету');
+    else if (shopTab === 'catalog') openProduct();
+    else copyUrl('shop.html', 'Ссылка на магазин');
+  }
+  else if (a === 'shoptab') { shopTab = el.dataset.st; render(); }
+  else if (a === 'newprod') { openProduct(); }
+  else if (a === 'editprod') { openProduct(id); }
+  else if (a === 'seedprod') { await seedSampleProducts(); }
+  else if (a === 'linkord') { openLinkOrder(id); }
+  else if (a === 'delprod') {
+    if (armed !== 'p:' + id) { armed = 'p:' + id; el.textContent = 'Точно удалить?'; return; }
+    armed = null;
+    try { await deleteDoc(doc(db, 'products', id)); scheduleCatalog(800); toast('Товар удалён'); }
+    catch (ex) { toast('Не удалось удалить товар'); }
+  }
+  else if (a === 'delord') {
+    if (armed !== 'o:' + id) { armed = 'o:' + id; el.textContent = 'Точно удалить?'; return; }
+    armed = null;
+    try { await deleteDoc(doc(db, 'orders', id)); } catch (ex) { toast('Не удалось удалить заказ'); }
   }
   else if (a === 'menu') { openMenu(); }
   else if (a === 'filter') { filter = el.dataset.f; render(); }
@@ -1065,12 +1460,17 @@ onAuthStateChanged(auth, u => {
   unsubs.forEach(fn => { try { fn(); } catch (e) {} });
   unsubs = [];
   if (portalTimer) { clearTimeout(portalTimer); portalTimer = null; }
+  if (catTimer) { clearTimeout(catTimer); catTimer = null; }
   user = u;
   authReady = true;
   clients = [];
   tasks = [];
   requests = [];
+  products = [];
+  orders = [];
   reqErr = false;
+  prodErr = false;
+  ordErr = false;
   ready = 0;
   portalSalt = null;
   portalExists = false;
@@ -1115,6 +1515,22 @@ onAuthStateChanged(auth, u => {
     render();
   }, () => {
     reqErr = true;
+    render();
+  }));
+  unsubs.push(onSnapshot(collection(db, 'products'), s => {
+    prodErr = false;
+    products = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    render();
+  }, () => {
+    prodErr = true;
+    render();
+  }));
+  unsubs.push(onSnapshot(collection(db, 'orders'), s => {
+    ordErr = false;
+    orders = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    render();
+  }, () => {
+    ordErr = true;
     render();
   }));
 });
