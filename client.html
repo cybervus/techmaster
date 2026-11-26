@@ -88,6 +88,16 @@ input[type=tel]{width:100%;font:inherit;font-size:17px;color:var(--text);backgro
 .sub-it-l{flex:1;min-width:0}
 .sub-it-m{font-size:12px;color:var(--muted)}
 .shop-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:14px}
+.fin-bal{margin:12px 0 6px;padding:10px 12px;border-radius:3px;border-left:4px solid var(--accent);background:var(--soft);font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fin-bal.debt{border-left-color:var(--danger);background:var(--rbg);color:var(--text)}
+.fin-bal.ok{border-left-color:var(--ok);background:var(--gbg);color:var(--text)}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+.ptbl th{text-align:left;font-weight:600;color:var(--muted);padding:7px 5px;border-bottom:2px solid var(--text);font-size:12px}
+.ptbl td{padding:8px 5px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptbl th.r,.ptbl td.r{text-align:right;white-space:nowrap}
+.ptbl tfoot td{font-weight:600;border-top:2px solid var(--text);border-bottom:0;padding-top:9px}
+.pnote{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.subh{font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 4px;text-transform:uppercase;letter-spacing:.03em}
 .chat-btn-row{margin-top:12px;display:flex;gap:8px;align-items:center}
 .cbadge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:600;margin-left:8px}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:30}
@@ -243,7 +253,27 @@ const I18N = {
     chatSend: 'Отправить',
     chatEmpty: 'Напишите мастеру — вся переписка сохранится в вашем кабинете.',
     chatMaster: 'Мастер',
-    chatErr: 'Не удалось отправить сообщение. Проверьте подключение.'
+    chatErr: 'Не удалось отправить сообщение. Проверьте подключение.',
+    finTitle: 'Стоимость услуг и расчёты',
+    svcSub: 'Стоимость услуг',
+    paySub: 'График и история выплат',
+    thSvc: 'Услуга',
+    thQty: 'Кол-во',
+    thSum: 'Сумма',
+    thDate: 'Дата',
+    thType: 'Тип оплаты',
+    totSvc: 'Итого по услугам',
+    totPaid: 'Итого оплачено',
+    noPays: 'Оплат пока нет.',
+    balDebt: 'Остаток к оплате (ваш долг)',
+    balOver: 'Переплата (остаток на счёте)',
+    balZero: 'Оплачено полностью (долга нет)',
+    ptypes: {
+      advance: 'Аванс / предоплата',
+      materials: 'На оборудование и материалы',
+      stage: 'Промежуточная оплата',
+      final: 'Оплата за выполненные работы'
+    }
   },
   az: {
     locale: 'az-AZ',
@@ -302,7 +332,27 @@ const I18N = {
     chatSend: 'Göndər',
     chatEmpty: 'Ustaya yazın — bütün yazışma şəxsi kabinetinizdə saxlanılacaq.',
     chatMaster: 'Usta',
-    chatErr: 'Mesajı göndərmək mümkün olmadı. İnternet bağlantısını yoxlayın.'
+    chatErr: 'Mesajı göndərmək mümkün olmadı. İnternet bağlantısını yoxlayın.',
+    finTitle: 'Xidmət qiymətləri və hesablaşma',
+    svcSub: 'Xidmətlərin dəyəri',
+    paySub: 'Ödəniş qrafiki və tarixçəsi',
+    thSvc: 'Xidmət',
+    thQty: 'Say',
+    thSum: 'Məbləğ',
+    thDate: 'Tarix',
+    thType: 'Ödəniş növü',
+    totSvc: 'Xidmətlər üzrə cəmi',
+    totPaid: 'Cəmi ödənilib',
+    noPays: 'Hələ ödəniş yoxdur.',
+    balDebt: 'Ödəniləcək qalıq (borcunuz)',
+    balOver: 'Artıq ödəniş (balansınız)',
+    balZero: 'Tam ödənilib (borc yoxdur)',
+    ptypes: {
+      advance: 'Avans / ilkin ödəniş',
+      materials: 'Avadanlıq və materiallar üçün',
+      stage: 'Mərhələli ödəniş',
+      final: 'Görülən işlərə görə ödəniş'
+    }
   }
 };
 
@@ -422,6 +472,7 @@ function donutSvg(pct, doneShare, progShare) {
 
 const IST_CLS = { pending: 'info', ordered: 'warn', bought: '', received: 'ok' };
 const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
+const fmtAzn0 = p => { const n = Number(p) || 0; return (Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼'; };
 function fmtShortDate(d) {
   if (!d) return '';
   return new Date(d + 'T12:00:00').toLocaleDateString(I18N[lang].locale, { day: 'numeric', month: 'short' });
@@ -557,7 +608,39 @@ function renderCabinet() {
       : `<div class="empty-s">${esc(L.doneEmpty)}</div>`}
   </section>`;
 
-  // 6. Equipment & purchases summary + link to shop
+  // 6. Services cost, payment schedule & balance
+  const svcs = Array.isArray(c.svcs) ? c.svcs : [];
+  const pays = Array.isArray(c.pays) ? [...c.pays].sort((a, b) => (b.d || '').localeCompare(a.d || '')) : [];
+  if (svcs.length || pays.length) {
+    const svcTotal = Math.round(svcs.reduce((acc, s) => acc + (Number(s.q) || 1) * (Number(s.p) || 0), 0) * 100) / 100;
+    const paidTotal = Math.round(pays.reduce((acc, p) => acc + (Number(p.a) || 0), 0) * 100) / 100;
+    const bal = Math.round((svcTotal - paidTotal) * 100) / 100;
+    const balCls = bal > 0 ? ' debt' : ' ok';
+    const balLbl = bal > 0 ? L.balDebt : (bal < 0 ? L.balOver : L.balZero);
+
+    let finHtml = `<section class="panel"><h2>${esc(L.finTitle)}</h2>`;
+    if (svcs.length) {
+      finHtml += `<div class="subh">${esc(L.svcSub)}</div>
+        <table class="ptbl"><thead><tr><th>${esc(L.thSvc)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>`
+        + svcs.map(s => {
+          const q = Number(s.q) || 1, p = Number(s.p) || 0;
+          return `<tr><td>${esc(s.n)}${s.cm ? `<span class="pnote">${esc(s.cm)}</span>` : ''}</td><td class="r">${q} × ${esc(fmtAzn0(p))}</td><td class="r">${esc(fmtAzn0(q * p))}</td></tr>`;
+        }).join('')
+        + `</tbody><tfoot><tr><td colspan="2">${esc(L.totSvc)}</td><td class="r">${esc(fmtAzn0(svcTotal))}</td></tr></tfoot></table>`;
+    }
+    finHtml += `<div class="subh">${esc(L.paySub)}</div>`;
+    if (pays.length) {
+      finHtml += `<table class="ptbl"><thead><tr><th>${esc(L.thDate)}</th><th>${esc(L.thType)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>`
+        + pays.map(p => `<tr><td>${esc(p.d ? fmtShortDate(p.d) : '—')}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.cm ? `<span class="pnote">${esc(p.cm)}</span>` : ''}</td><td class="r">${esc(fmtAzn0(p.a))}</td></tr>`).join('')
+        + `</tbody><tfoot><tr><td colspan="2">${esc(L.totPaid)}</td><td class="r">${esc(fmtAzn0(paidTotal))}</td></tr></tfoot></table>`;
+    } else {
+      finHtml += `<div class="empty-s">${esc(L.noPays)}</div>`;
+    }
+    finHtml += `<div class="fin-bal${balCls}"><span>${esc(balLbl)}</span><span>${esc(fmtAzn0(Math.abs(bal)))}</span></div></section>`;
+    html += finHtml;
+  }
+
+  // 7. Equipment & purchases summary + link to shop
   const allItems = [];
   for (const t of allTasks) {
     if (Array.isArray(t.it)) {

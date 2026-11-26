@@ -215,8 +215,36 @@ const SHOP_CATS = { security: 'Видеонаблюдение', network: 'Сет
 const ITEM_ST = { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' };
 const ITEM_CLS = { pending: 'info', ordered: 'warn', bought: 'prog', received: 'ok' };
 const PAY_TYPES = { advance: 'Аванс', expense: 'На расходы', materials: 'На покупку товара и материалов', work: 'Оплата за выполненную работу' };
+const CLI_PAY_TYPES = { advance: 'Аванс / предоплата', materials: 'На оборудование и материалы', stage: 'Промежуточная оплата', final: 'Оплата за выполненные работы' };
+const CLIENT_SERVICES = [
+  'Осмотр и консультация',
+  'Прокладка кабеля (UTP / питание)',
+  'Монтаж IP-камеры',
+  'Монтаж аналоговой камеры',
+  'Монтаж и настройка NVR / DVR',
+  'Настройка удалённого доступа (Hik-Connect / DMSS)',
+  'Монтаж и настройка Wi-Fi / сети',
+  'Сборка и монтаж шкафа / стойки (Rack)',
+  'Монтаж и настройка видеодомофона',
+  'Монтаж СКУД / электрозамка',
+  'Монтаж и настройка сигнализации',
+  'Настройка умного дома',
+  'Монтаж ТВ / аудио-видео системы',
+  'Диагностика и ремонт',
+  'Обслуживание (сервис)',
+  'Оборудование и материалы'
+];
 const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
 const fmtAzn0 = p => { const n = Number(p) || 0; return (Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼'; };
+
+function clientFinSummary(c) {
+  const svcs = Array.isArray(c.services) ? c.services : [];
+  const pays = Array.isArray(c.payments) ? [...c.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')) : [];
+  const svcTotal = Math.round(svcs.reduce((acc, s) => acc + (Number(s.qty) || 1) * (Number(s.price) || 0), 0) * 100) / 100;
+  const paidTotal = Math.round(pays.reduce((acc, p) => acc + (Number(p.amount) || 0), 0) * 100) / 100;
+  const bal = Math.round((svcTotal - paidTotal) * 100) / 100;
+  return { svcs, pays, svcTotal, paidTotal, bal };
+}
 
 function staffFinSummary(s) {
   const pays = Array.isArray(s.payments) ? [...s.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')) : [];
@@ -444,6 +472,19 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
     const pct = (pctRaw !== undefined && pctRaw !== '' && pctRaw !== null && Number.isFinite(Number(pctRaw)))
       ? Math.max(0, Math.min(100, Math.round(Number(pctRaw))))
       : null;
+    const showFin = c.showFin !== false;
+    const svcs = showFin && Array.isArray(c.services) ? c.services.map(s => ({
+      n: s.name || '',
+      q: Number(s.qty) || 1,
+      p: Number(s.price) || 0,
+      cm: s.note || ''
+    })) : [];
+    const pays = showFin && Array.isArray(c.payments) ? c.payments.map(p => ({
+      d: p.date || '',
+      a: Number(p.amount) || 0,
+      tp: CLI_PAY_TYPES[p.type] ? p.type : 'final',
+      cm: p.note || ''
+    })) : [];
     if (!groups.has(n)) groups.set(n, []);
     groups.get(n).push({
       name: c.name || '',
@@ -453,7 +494,9 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
       msg: c.pubMsg || '',
       pct,
       cal: c.showCal !== false,
-      tasks: ts
+      tasks: ts,
+      svcs,
+      pays
     });
   }
 
@@ -773,9 +816,12 @@ async function importJsonFile(file) {
     };
     if (c.showAddress !== undefined) docData.showAddress = Boolean(c.showAddress);
     if (c.showCal !== undefined) docData.showCal = Boolean(c.showCal);
+    if (c.showFin !== undefined) docData.showFin = Boolean(c.showFin);
     if (c.pubProject) docData.pubProject = String(c.pubProject).trim();
     if (c.pubMsg) docData.pubMsg = String(c.pubMsg).trim();
     if (c.pubPct !== undefined && c.pubPct !== '' && c.pubPct !== null && Number.isFinite(Number(c.pubPct))) docData.pubPct = Number(c.pubPct);
+    if (Array.isArray(c.services)) docData.services = c.services.map(s => ({ id: String(s.id || uid()), name: String(s.name || '').trim(), qty: Math.max(1, Number(s.qty) || 1), price: Number(s.price) || 0, note: String(s.note || '').trim() })).filter(s => s.name);
+    if (Array.isArray(c.payments)) docData.payments = c.payments.map(p => ({ id: String(p.id || uid()), date: String(p.date || ''), amount: Number(p.amount) || 0, type: CLI_PAY_TYPES[p.type] ? p.type : 'final', note: String(p.note || '').trim() })).filter(p => p.amount > 0);
     ops.push({ col: 'clients', id, doc: docData });
   }
   for (const t of impTasks) {
@@ -1006,12 +1052,21 @@ function clientsHtml() {
   if (!clients.length) return '<div class="empty">Клиентов пока нет. Нажмите «Новый клиент» или импортируйте данные в меню (⋯).</div>';
   return [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => {
     const n = tasks.filter(t => t.clientId === c.id && !t.done).length;
-    return `<div class="cl"><div class="main"><div class="ttl">${esc(c.name)}</div>
+    const fin = clientFinSummary(c);
+    const hasFin = fin.svcs.length || fin.pays.length;
+    const balTag = hasFin
+      ? (fin.bal > 0 ? `<span class="tag">Долг: ${esc(fmtAzn0(fin.bal))}</span>`
+        : fin.bal < 0 ? `<span class="tag ok">Переплата: ${esc(fmtAzn0(Math.abs(fin.bal)))}</span>`
+        : '<span class="tag ok">Оплачено</span>')
+      : '';
+    const finLine = hasFin ? `<div class="meta">Услуги: ${esc(fmtAzn0(fin.svcTotal))} · Оплачено: ${esc(fmtAzn0(fin.paidTotal))}</div>` : '';
+    return `<div class="cl"><div class="main"><div class="ttl">${esc(c.name)}${balTag}</div>
     <div class="meta">Открытых задач: ${n}</div>
+    ${finLine}
     ${c.phone ? `<div class="links meta"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
     ${c.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a></div>` : ''}
     ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
-    <div class="row"><button class="btn p" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
+    <div class="row"><button class="btn p" data-act="cfin" data-id="${c.id}">Расчёты</button><button class="btn" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
   }).join('');
 }
 
@@ -1320,6 +1375,7 @@ function openClient(id) {
     <label>Прогресс вручную, % (оставьте пустым для авторасчёта)</label><input type="number" name="pubPct" min="0" max="100" step="1" placeholder="Авто по задачам" value="${esc(pctVal)}">
     <label class="inl"><input type="checkbox" name="showAddress" ${c.showAddress !== false ? 'checked' : ''}> Показывать адрес в кабинете</label>
     <label class="inl"><input type="checkbox" name="showCal" ${c.showCal !== false ? 'checked' : ''}> Показывать график занятости</label>
+    <label class="inl"><input type="checkbox" name="showFin" ${c.showFin !== false ? 'checked' : ''}> Показывать расчёты и оплаты в кабинете</label>
   </div>`,
   f => {
     const pRaw = String(f.pubPct || '').trim();
@@ -1333,6 +1389,9 @@ function openClient(id) {
       pubPct: pRaw === '' ? null : Math.max(0, Math.min(100, Math.round(Number(pRaw)))),
       showAddress: !!f.showAddress,
       showCal: !!f.showCal,
+      showFin: !!f.showFin,
+      services: Array.isArray(c.services) ? c.services : [],
+      payments: Array.isArray(c.payments) ? c.payments : [],
       created: c.created || Date.now()
     };
     return save('clients', id || uid(), docData);
@@ -1753,6 +1812,167 @@ function openStaff(id) {
   } : null);
 }
 
+function openClientFinance(clientId) {
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.id = 'cfinOv';
+
+  function draw() {
+    const c = clients.find(x => x.id === clientId);
+    if (!c) { ov.remove(); return; }
+    const fin = clientFinSummary(c);
+    const balCls = fin.bal > 0 ? ' owe-staff' : (fin.bal < 0 ? ' owe-master' : '');
+    const balLbl = fin.bal > 0
+      ? 'Долг клиента вам (к оплате)'
+      : (fin.bal < 0 ? 'Переплата клиента (ваш долг клиенту)' : 'Оплачено полностью (долга нет)');
+
+    const svcOpts = CLIENT_SERVICES.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('') + '<option value="__other">Другое…</option>';
+    const payTypeOpts = Object.entries(CLI_PAY_TYPES).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
+
+    const svcTbl = fin.svcs.length
+      ? `<table class="ptbl"><thead><tr><th>Услуга</th><th class="r">Кол-во</th><th class="r">Сумма</th><th></th></tr></thead><tbody>`
+        + fin.svcs.map(s => {
+          const lineSum = (Number(s.qty) || 1) * (Number(s.price) || 0);
+          return `<tr>
+            <td>${esc(s.name)}${s.note ? `<span class="pnote">${esc(s.note)}</span>` : ''}</td>
+            <td class="r">${Number(s.qty) || 1} × ${esc(fmtAzn0(s.price))}</td>
+            <td class="r">${esc(fmtAzn0(lineSum))}</td>
+            <td class="r"><button type="button" class="btn d" data-sdel="${esc(s.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
+          </tr>`;
+        }).join('')
+        + `</tbody><tfoot><tr><td colspan="2">Итого по услугам</td><td class="r">${esc(fmtAzn0(fin.svcTotal))}</td><td></td></tr></tfoot></table>`
+      : '<div class="meta" style="text-align:center;padding:8px 0">Услуги пока не добавлены.</div>';
+
+    const payTbl = fin.pays.length
+      ? `<table class="ptbl"><thead><tr><th>Дата</th><th>Тип оплаты</th><th class="r">Сумма</th><th></th></tr></thead><tbody>`
+        + fin.pays.map(p => `<tr>
+            <td>${esc(p.date ? shortDate(p.date) : '—')}</td>
+            <td>${esc(CLI_PAY_TYPES[p.type] || p.type)}${p.note ? `<span class="pnote">${esc(p.note)}</span>` : ''}</td>
+            <td class="r">${esc(fmtAzn0(p.amount))}</td>
+            <td class="r"><button type="button" class="btn d" data-cpdel="${esc(p.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
+          </tr>`).join('')
+        + `</tbody><tfoot><tr><td colspan="2">Итого оплачено</td><td class="r">${esc(fmtAzn0(fin.paidTotal))}</td><td></td></tr></tfoot></table>`
+      : '<div class="meta" style="text-align:center;padding:8px 0">Оплат от клиента пока нет.</div>';
+
+    ov.innerHTML = `<div class="sheet">
+      <h3>Расчёты — ${esc(c.name)}</h3>
+      <div>
+        <div class="irow"><span>Итого по услугам</span><b>${esc(fmtAzn0(fin.svcTotal))}</b></div>
+        <div class="irow"><span>Всего оплачено клиентом</span><b>${esc(fmtAzn0(fin.paidTotal))}</b></div>
+      </div>
+      <div class="fin-bal${balCls}"><span>${esc(balLbl)}</span><span>${esc(fmtAzn0(Math.abs(fin.bal)))}</span></div>
+
+      <form id="addSvcForm" class="sec">
+        <div class="sec-t">Добавить услугу в смету</div>
+        <label>Услуга</label>
+        <select name="svcSel" id="svcSel">${svcOpts}</select>
+        <input type="text" name="svcOther" id="svcOther" placeholder="Укажите название услуги" style="margin-top:6px" hidden>
+        <div class="two">
+          <div><label>Стоимость за ед., ₼</label><input type="number" name="price" min="0" step="0.5" required placeholder="100"></div>
+          <div><label>Количество</label><input type="number" name="qty" min="1" step="1" value="1"></div>
+        </div>
+        <label>Комментарий (необязательно)</label>
+        <input type="text" name="note" maxlength="160" placeholder="Например, 4 камеры на фасаде">
+        <div class="row"><button type="submit" class="btn p">+ Добавить услугу</button></div>
+      </form>
+
+      <div class="sec">
+        <div class="sec-t">Таблица услуг</div>
+        ${svcTbl}
+      </div>
+
+      <form id="addCliPayForm" class="sec">
+        <div class="sec-t">Добавить оплату от клиента</div>
+        <div class="two">
+          <div><label>Сумма, ₼</label><input type="number" name="amount" min="0.5" step="0.5" required placeholder="150"></div>
+          <div><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+        </div>
+        <label>Тип оплаты</label>
+        <select name="type">${payTypeOpts}</select>
+        <label>Комментарий (необязательно)</label>
+        <input type="text" name="note" maxlength="160" placeholder="Например, наличными / перевод на карту">
+        <div class="row">
+          <button type="submit" class="btn p">+ Добавить оплату</button>
+          <button type="button" class="btn" data-x>Закрыть</button>
+        </div>
+      </form>
+
+      <div class="sec">
+        <div class="sec-t">График и история выплат</div>
+        ${payTbl}
+      </div>
+    </div>`;
+
+    ov.querySelector('[data-x]').onclick = () => ov.remove();
+    const sel = ov.querySelector('#svcSel'), oth = ov.querySelector('#svcOther');
+    sel.onchange = () => { oth.hidden = sel.value !== '__other'; if (!oth.hidden) oth.focus(); };
+
+    ov.querySelector('#addSvcForm').onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const name = fd.get('svcSel') === '__other' ? String(fd.get('svcOther') || '').trim() : String(fd.get('svcSel') || '').trim();
+      const price = Number(fd.get('price'));
+      const qty = Math.max(1, Math.round(Number(fd.get('qty')) || 1));
+      if (!name || !Number.isFinite(price) || price < 0) return;
+      const cur = clients.find(x => x.id === clientId);
+      if (!cur) return;
+      const rec = { id: uid(), name, qty, price: Math.round(price * 100) / 100, note: String(fd.get('note') || '').trim() };
+      const upd = Object.assign({}, cur, { services: [...(Array.isArray(cur.services) ? cur.services : []), rec] });
+      delete upd.id;
+      await save('clients', clientId, upd);
+      toast('Услуга добавлена');
+      draw();
+    };
+
+    ov.querySelectorAll('[data-sdel]').forEach(b => b.onclick = async () => {
+      const sid = b.dataset.sdel;
+      const cur = clients.find(x => x.id === clientId);
+      if (!cur) return;
+      const upd = Object.assign({}, cur, { services: (Array.isArray(cur.services) ? cur.services : []).filter(s => s.id !== sid) });
+      delete upd.id;
+      await save('clients', clientId, upd);
+      toast('Услуга удалена');
+      draw();
+    });
+
+    ov.querySelector('#addCliPayForm').onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const amount = Number(fd.get('amount'));
+      if (!Number.isFinite(amount) || amount <= 0) return;
+      const cur = clients.find(x => x.id === clientId);
+      if (!cur) return;
+      const rec = {
+        id: uid(),
+        date: String(fd.get('date') || today()),
+        amount: Math.round(amount * 100) / 100,
+        type: CLI_PAY_TYPES[fd.get('type')] ? String(fd.get('type')) : 'final',
+        note: String(fd.get('note') || '').trim()
+      };
+      const upd = Object.assign({}, cur, { payments: [...(Array.isArray(cur.payments) ? cur.payments : []), rec] });
+      delete upd.id;
+      await save('clients', clientId, upd);
+      toast('Оплата добавлена');
+      draw();
+    };
+
+    ov.querySelectorAll('[data-cpdel]').forEach(b => b.onclick = async () => {
+      const pid = b.dataset.cpdel;
+      const cur = clients.find(x => x.id === clientId);
+      if (!cur) return;
+      const upd = Object.assign({}, cur, { payments: (Array.isArray(cur.payments) ? cur.payments : []).filter(p => p.id !== pid) });
+      delete upd.id;
+      await save('clients', clientId, upd);
+      toast('Оплата удалена');
+      draw();
+    });
+  }
+
+  document.body.appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  draw();
+}
+
 function openStaffPayments(staffId) {
   const ov = document.createElement('div');
   ov.className = 'ov';
@@ -2130,6 +2350,7 @@ document.addEventListener('click', async e => {
   else if (a === 'edittask') openTask(id);
   else if (a === 'newtask') openTask(null, id);
   else if (a === 'editclient') openClient(id);
+  else if (a === 'cfin') openClientFinance(id);
   else if (a === 'ctasks') { clientFilter = id; filter = 'all'; view = 'tasks'; render(); }
   else if (a === 'accreq') { await acceptRequest(id); }
   else if (a === 'reqtask') {
