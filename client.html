@@ -17,9 +17,9 @@
 :root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--warn:#fb923c;--warn-bg:#2e2212;--soft:#331819;--blue:#60a5fa;--blue-bg:#17253d;--gbg:#112e24;--gbd:#10c988;--rbg:#331819;--rbd:#f03e38;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 48px;max-width:640px;margin-inline:auto}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 48px;max-width:640px;margin-inline:auto;overflow-x:clip}
 header{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px 12px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .logo{margin:0;line-height:0;flex:none;width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(229,37,32,.25)}
@@ -131,6 +131,67 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 .foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:12px;font-size:13px;color:var(--muted)}
 .reg-link{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .reg-link a{color:var(--accent);font-weight:600;text-decoration:none}
+/* Responsive: small phones */
+@media (max-width:420px){
+  body{padding:0 10px 44px;font-size:14.5px}
+  header{margin:0 -10px 10px;padding:10px;gap:8px}
+  .logo{width:36px;height:36px}
+  h1{font-size:16px}
+  .panel{padding:13px 12px}
+  .ptbl{font-size:12px}
+  .ptbl th,.ptbl td{padding:6px 4px}
+  .fin-bal{flex-wrap:wrap;font-size:13.5px}
+  .d{height:36px;font-size:13px}
+}
+/* Responsive: hover feedback on desktop/mouse */
+@media (hover:hover){
+  .btn:not(:disabled):hover{filter:brightness(.96)}
+  .btn.p:not(:disabled):hover{filter:brightness(1.05)}
+  .tab:hover{border-color:var(--accent);color:var(--accent)}
+  .d:not(.past):hover{border-color:var(--accent)}
+}
+/* Responsive: wider mobile / small tablet */
+@media (min-width:600px){
+  .hs{grid-template-columns:repeat(5,1fr)}
+}
+/* Responsive: tablets (768px - 1023px) */
+@media (min-width:768px){
+  body{max-width:980px;padding:12px 24px 56px}
+  header{margin:0 0 16px;padding:14px 20px;border-radius:16px;border:1px solid var(--line);top:12px}
+  #login,#loading{max-width:480px;margin:36px auto 0}
+  #cabinet{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+  #cabinet>.panel{margin-top:0}
+  #calSec{margin-top:16px}
+  .tabs{flex-wrap:wrap;overflow-x:visible;margin-bottom:10px}
+  .ov{align-items:center;padding:24px}
+  .chat-sheet{border-radius:18px;max-width:720px;height:82dvh;max-height:820px;padding-bottom:0;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+}
+/* Responsive: laptops & desktops (1024px+) */
+@media (min-width:1024px){
+  body{max-width:1280px;padding:16px 32px 60px}
+  .panel{padding:20px 22px}
+  #calSec{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);column-gap:28px;align-items:start}
+  #calSec>h2,#calSec>.leg{grid-column:1 / -1}
+  #calSec h3.dayh{margin-top:4px}
+}
+/* Responsive: wide desktop monitors (1520px+) */
+@media (min-width:1520px){
+  body{max-width:1540px}
+  #cabinet{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+}
+/* Responsive: Full HD+ / large monitors & TVs (1920px+) */
+@media (min-width:1920px){
+  body{max-width:1840px;font-size:16.5px;padding:20px 40px 64px}
+  .logo{width:46px;height:46px}
+  h1{font-size:21px}
+  .panel h2{font-size:18px}
+  .d{height:46px;font-size:15.5px}
+  .chat-sheet{max-width:800px}
+}
+/* Responsive: 4K monitors & large TVs (2400px+) */
+@media (min-width:2400px){
+  body{max-width:2200px;font-size:18px}
+}
 </style>
 </head>
 <body>

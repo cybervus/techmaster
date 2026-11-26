@@ -21,9 +21,9 @@
 :root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--accent-h:#d92d27;--soft:#331819;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--ok-bg:#112e24;--warn:#fb923c;--warn-bg:#332211;--blue:#60a5fa;--blue-bg:#17253d;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 96px;max-width:640px;margin-inline:auto}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 96px;max-width:640px;margin-inline:auto;overflow-x:clip}
 header{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px 10px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
 h1{font-size:19px;font-weight:700;margin:0;line-height:1.2}
 #date{color:var(--muted);font-size:13px;font-weight:500;line-height:1.3;text-transform:capitalize}
@@ -147,7 +147,95 @@ textarea{min-height:84px;resize:vertical}
 .err{color:var(--danger);font-size:13px;margin-top:8px;min-height:18px}
 .sec{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .sec-t{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}
-#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1e242b;color:#fff;padding:10px 16px;border-radius:20px;font-size:13.5px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.22);z-index:30}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1e242b;color:#fff;padding:10px 16px;border-radius:20px;font-size:13.5px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.22);z-index:30;max-width:calc(100vw - 24px);text-align:center}
+/* Responsive: small phones */
+@media (max-width:420px){
+  body{padding:0 10px 92px;font-size:14.5px}
+  header{margin:0 -10px 10px;padding:10px;gap:8px}
+  .logo{width:36px;height:36px}
+  .hact .btn{padding:7px 10px;font-size:12.5px}
+  .tr{grid-template-columns:20px 3rem 1fr;gap:9px;padding:11px 10px}
+  .two{flex-direction:column;gap:0}
+  .it-g{grid-template-columns:1fr 1fr}
+  .it-g>:last-child{grid-column:1 / -1}
+  .ptbl{font-size:12px}
+  .ptbl th,.ptbl td{padding:6px 4px}
+  .bar{flex-wrap:wrap;padding:8px 10px}
+}
+/* Responsive: hover feedback on desktop/mouse */
+@media (hover:hover){
+  .btn:not(:disabled):hover{filter:brightness(.96)}
+  .btn.p:not(:disabled):hover{filter:brightness(1.05)}
+  .chip:hover{border-color:var(--accent);color:var(--accent)}
+  nav button:hover{color:var(--accent)}
+  .tr:hover,.cl:hover{border-color:rgba(229,37,32,.28)}
+}
+/* Responsive: tablets (768px - 1023px) */
+@media (min-width:768px){
+  body{max-width:960px;padding:12px 24px 108px}
+  header{margin:0 0 16px;padding:14px 20px;border-radius:16px;border:1px solid var(--line);top:12px}
+  main#app{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+  #app>.chips,#app>.bar,#app>h2,#app>.empty,#app>.auth{grid-column:1 / -1}
+  #app>.tr,#app>.cl{margin-bottom:0}
+  #app>.cl{height:100%;display:flex;flex-direction:column}
+  #app>.cl>.main{display:flex;flex-direction:column;flex:1}
+  #app>.cl>.main>.row{margin-top:auto;padding-top:10px}
+  #app>.auth{max-width:440px;width:100%;margin:40px auto}
+  .chips{flex-wrap:wrap;overflow-x:visible;padding:2px 0 4px;margin-bottom:0}
+  h2{margin:10px 4px 2px}
+  nav{left:50%;right:auto;bottom:14px;transform:translateX(-50%);width:min(740px,calc(100vw - 32px));border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px rgba(15,23,42,.14);padding:4px 8px}
+  nav button{padding:9px 8px;border-radius:12px;font-size:12px}
+  .ov{align-items:center;padding:24px}
+  .ov form,.ov .sheet{border-radius:18px;max-width:660px;max-height:88dvh;padding:22px 24px;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+  .chat-sheet{border-radius:18px;max-width:700px;height:82dvh;max-height:820px;padding-bottom:0;box-shadow:0 20px 56px rgba(0,0,0,.28)}
+  #toast{bottom:96px}
+}
+/* Responsive: laptops & desktops (1024px+) */
+@media (min-width:1024px){
+  body{max-width:1280px;padding:16px 28px 40px}
+  body:has(#nav:not([hidden])){max-width:none;padding:16px 28px 44px 264px}
+  body:has(#nav:not([hidden])) header,
+  body:has(#nav:not([hidden])) #note,
+  body:has(#nav:not([hidden])) main#app{max-width:1440px;margin-inline:auto}
+  nav{left:0;top:0;bottom:0;right:auto;transform:none;width:236px;border-radius:0;border:0;border-right:1px solid var(--line);box-shadow:none;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:4px;padding:20px 12px;overflow-y:auto}
+  nav button{flex:0 0 auto;min-width:0;width:100%;flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 14px;border-radius:12px;font-size:14px;font-weight:600;text-align:left}
+  nav button svg{width:20px;height:20px}
+  nav button.on{background:var(--soft);color:var(--accent)}
+  nav button.on::before{top:8px;bottom:8px;left:0;width:3.5px;height:auto;border-radius:0 4px 4px 0}
+  nav button .nbadge{position:static;margin-left:auto;min-width:20px;height:20px;line-height:20px;font-size:11px}
+  main#app{gap:14px}
+  #toast{bottom:28px}
+}
+/* Responsive: wide desktop monitors (1480px+) */
+@media (min-width:1480px){
+  main#app{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  body:has(#nav:not([hidden])) header,
+  body:has(#nav:not([hidden])) #note,
+  body:has(#nav:not([hidden])) main#app{max-width:1620px}
+}
+/* Responsive: Full HD+ / large monitors & TVs (1920px+) */
+@media (min-width:1920px){
+  body{font-size:16.5px}
+  body:has(#nav:not([hidden])){padding:20px 36px 52px 300px}
+  body:has(#nav:not([hidden])) header,
+  body:has(#nav:not([hidden])) #note,
+  body:has(#nav:not([hidden])) main#app{max-width:1920px}
+  nav{width:264px;padding:24px 14px;gap:6px}
+  nav button{padding:13px 16px;font-size:15.5px}
+  .logo{width:46px;height:46px}
+  .ttl{font-size:16.5px}
+  .meta{font-size:14px}
+  .btn{font-size:14.5px;padding:10px 16px}
+  .ov form,.ov .sheet,.chat-sheet{max-width:780px}
+}
+/* Responsive: 4K monitors & large TVs (2400px+) */
+@media (min-width:2400px){
+  body{font-size:18px}
+  body:has(#nav:not([hidden])) header,
+  body:has(#nav:not([hidden])) #note,
+  body:has(#nav:not([hidden])) main#app{max-width:2360px}
+  main#app{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+}
 </style>
 </head>
 <body>
