@@ -656,7 +656,7 @@ function clientsHtml() {
     ${c.phone ? `<div class="links meta"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
     ${c.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a></div>` : ''}
     ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
-    <div class="row"><button class="btn p" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button></div></div></div>`;
+    <div class="row"><button class="btn p" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
   }).join('');
 }
 
@@ -717,13 +717,23 @@ function render() {
 }
 
 // --- Modals ---
-function modal(title, body, onSave) {
+function modal(title, body, onSave, delOpts) {
   const ov = document.createElement('div');
   ov.className = 'ov';
-  ov.innerHTML = `<form><h3>${title}</h3>${body}<div class="row"><button class="btn p" type="submit">Сохранить</button><button class="btn" type="button" data-x>Отмена</button></div></form>`;
+  const delBtn = delOpts ? `<button class="btn d" type="button" data-del style="margin-left:auto">Удалить</button>` : '';
+  ov.innerHTML = `<form><h3>${title}</h3>${body}<div class="row"><button class="btn p" type="submit">Сохранить</button><button class="btn" type="button" data-x>Отмена</button>${delBtn}</div></form>`;
   document.body.appendChild(ov);
   ov.querySelector('[data-x]').onclick = () => ov.remove();
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  if (delOpts) {
+    let sure = false;
+    const dbBtn = ov.querySelector('[data-del]');
+    dbBtn.onclick = async () => {
+      if (!sure) { sure = true; dbBtn.textContent = delOpts.confirm || 'Точно удалить?'; return; }
+      ov.remove();
+      await delOpts.run();
+    };
+  }
   ov.querySelector('form').onsubmit = async e => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.target));
@@ -817,7 +827,10 @@ function openClient(id) {
       created: c.created || Date.now()
     };
     return save('clients', id || uid(), docData);
-  });
+  }, id ? (() => {
+    const cnt = tasks.filter(x => x.clientId === id).length;
+    return { confirm: cnt ? `Удалить (+${cnt} зад.)?` : 'Точно удалить?', run: () => deleteClientWithTasks(id) };
+  })() : null);
   wireContacts(ov);
 }
 
@@ -871,7 +884,7 @@ function openTask(id, clientId, prefill) {
       pubNote: (f.pubNote || '').trim(),
       created: t.created || Date.now()
     });
-  });
+  }, id ? { confirm: 'Точно удалить?', run: () => del('tasks', id) } : null);
   initCal(ov);
   ['work', 'equip'].forEach(n => {
     const s = ov.querySelector('[name=' + n + ']'), o = ov.querySelector('[name=' + n + 'Other]');
@@ -926,6 +939,25 @@ function wireContacts(ov) {
     const m = s.match(/\+?\d[\d\s().-]{6,}\d/);
     if (m) ph.value = m[0].trim(); else toast('В буфере нет номера');
   };
+}
+
+async function deleteClientWithTasks(cid) {
+  if (!user || !cid) return;
+  const cTasks = tasks.filter(t => t.clientId === cid);
+  if (clientFilter === cid) clientFilter = '';
+  portalDirty = true;
+  schedulePortal(3000);
+  try {
+    const refs = [doc(db, 'clients', cid), ...cTasks.map(t => doc(db, 'tasks', t.id))];
+    for (let i = 0; i < refs.length; i += 400) {
+      const batch = writeBatch(db);
+      for (const r of refs.slice(i, i + 400)) batch.delete(r);
+      await batch.commit();
+    }
+    toast(cTasks.length ? `Клиент и ${cTasks.length} зад. удалены` : 'Клиент удалён');
+  } catch (e) {
+    toast('Не удалось удалить клиента');
+  }
 }
 
 async function acceptRequest(reqId) {
@@ -1010,6 +1042,15 @@ document.addEventListener('click', async e => {
   else if (a === 'deltask') {
     if (armed !== 't:' + id) { armed = 't:' + id; el.textContent = 'Точно удалить?'; return; }
     armed = null; await del('tasks', id);
+  }
+  else if (a === 'delclient') {
+    if (armed !== 'c:' + id) {
+      const cnt = tasks.filter(x => x.clientId === id).length;
+      armed = 'c:' + id;
+      el.textContent = cnt ? `Удалить (+${cnt} зад.)?` : 'Точно удалить?';
+      return;
+    }
+    armed = null; await deleteClientWithTasks(id);
   }
   else if (a === 'delreq') {
     if (armed !== 'r:' + id) { armed = 'r:' + id; el.textContent = 'Точно удалить?'; return; }
