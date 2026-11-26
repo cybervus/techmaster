@@ -104,6 +104,18 @@ nav button.on{color:var(--text);border-top-color:var(--accent);font-weight:600}
 .chat-bar textarea{flex:1;font:inherit;font-size:15px;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:3px;padding:9px 10px;min-height:42px;max-height:110px;resize:none}
 .chat-bar .btn{padding:10px 16px;flex:none}
 .mprev{margin-top:5px;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fin-bal{margin:10px 0;padding:10px 12px;border-radius:3px;border-left:4px solid var(--accent);background:var(--bg);font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fin-bal.owe-staff{border-left-color:var(--danger);color:var(--danger)}
+.fin-bal.owe-master{border-left-color:var(--ok);color:var(--ok)}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.ptbl th{text-align:left;font-weight:600;color:var(--muted);padding:6px 5px;border-bottom:2px solid var(--text);font-size:12px}
+.ptbl td{padding:7px 5px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptbl th.r,.ptbl td.r{text-align:right;white-space:nowrap}
+.ptbl tfoot td{font-weight:600;border-top:2px solid var(--text);border-bottom:0;padding-top:8px}
+.pnote{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.irow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.irow span:first-child{color:var(--muted)}
+.irow b{font-weight:600}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .ov form,.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:4px 4px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto}
 .ov h3{margin:0 0 6px;font-size:18px;font-weight:600}
@@ -202,7 +214,21 @@ const opened = new Set();
 const SHOP_CATS = { security: 'Видеонаблюдение', network: 'Сеть и Wi-Fi', access: 'Домофония и СКУД', smarthome: 'Умный дом', av: 'Аудио-видео', cable: 'Кабель и расходники', other: 'Другое' };
 const ITEM_ST = { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' };
 const ITEM_CLS = { pending: 'info', ordered: 'warn', bought: 'prog', received: 'ok' };
+const PAY_TYPES = { advance: 'Аванс', expense: 'На расходы', materials: 'На покупку товара и материалов', work: 'Оплата за выполненную работу' };
 const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
+const fmtAzn0 = p => { const n = Number(p) || 0; return (Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼'; };
+
+function staffFinSummary(s) {
+  const pays = Array.isArray(s.payments) ? [...s.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')) : [];
+  const myTasks = tasks.filter(t => t.assigneeId === s.id);
+  const earnedDone = myTasks.filter(t => t.done).reduce((acc, t) => acc + (Number(t.staffPay) || 0), 0);
+  const plannedPay = myTasks.filter(t => !t.done).reduce((acc, t) => acc + (Number(t.staffPay) || 0), 0);
+  const paidWork = pays.filter(p => p.type === 'work' || p.type === 'advance').reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+  const paidExp = pays.filter(p => p.type === 'expense' || p.type === 'materials').reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+  const totalPaid = paidWork + paidExp;
+  const bal = Math.round((earnedDone - paidWork) * 100) / 100;
+  return { pays, earnedDone, plannedPay, paidWork, paidExp, totalPaid, bal };
+}
 
 function scheduleCatalog(delayMs = 1500) {
   if (!user) return;
@@ -594,14 +620,23 @@ async function rebuildStaffPortal(notify = false) {
             chk: Array.isArray(t.checklist) ? t.checklist.map(c => ({ id: c.id, t: c.text || '', x: Boolean(c.done) })) : [],
             sn: t.staffNote || '',
             ut: Number(t.staffSyncTs) || 0,
+            pay: Number(t.staffPay) || 0,
             it: Array.isArray(t.items) ? t.items.map(x => ({ n: x.name || '', q: Number(x.qty) || 1 })) : []
           };
         });
+      const myPays = (Array.isArray(s.payments) ? s.payments : []).map(p => ({
+        id: p.id || '',
+        d: p.date || '',
+        a: Number(p.amount) || 0,
+        tp: PAY_TYPES[p.type] ? p.type : 'work',
+        n: p.note || ''
+      }));
       const { id, key } = await deriveForStaffPhone(n, saltB64);
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const payloadObj = {
         staff: { id: s.id, name: s.name || '', role: s.role || '', phone: s.phone || '' },
-        tasks: myTasks
+        tasks: myTasks,
+        payments: myPays
       };
       const ctBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(payloadObj)));
       recs.push({ id, iv: toB64(iv), ct: toB64(new Uint8Array(ctBuf)) });
@@ -761,6 +796,7 @@ async function importJsonFile(file) {
       pub: t.pub !== false,
       pubNote: String(t.pubNote || '').trim(),
       assigneeId: String(t.assigneeId || ''),
+      staffPay: Number(t.staffPay) > 0 ? Number(t.staffPay) : 0,
       checklist: Array.isArray(t.checklist) ? t.checklist.map(c => ({ id: String(c.id || uid()), text: String(c.text || '').trim(), done: Boolean(c.done) })).filter(c => c.text) : [],
       staffNote: String(t.staffNote || '').trim(),
       staffSyncTs: Number(t.staffSyncTs) || 0,
@@ -805,6 +841,7 @@ async function importJsonFile(file) {
         role: String(s.role || '').trim(),
         note: String(s.note || '').trim(),
         active: s.active !== false,
+        payments: Array.isArray(s.payments) ? s.payments.map(p => ({ id: String(p.id || uid()), date: String(p.date || ''), amount: Number(p.amount) || 0, type: PAY_TYPES[p.type] ? p.type : 'work', note: String(p.note || '').trim() })).filter(p => p.amount > 0) : [],
         created: Number(s.created) || Date.now()
       }
     });
@@ -934,9 +971,10 @@ function cardHtml(t) {
   const items = Array.isArray(t.items) ? t.items : [];
   const chk = Array.isArray(t.checklist) ? t.checklist : [];
   const asgName = t.assigneeId ? sname(t.assigneeId) : '';
+  const payStr = Number(t.staffPay) > 0 ? ` (${fmtAzn(t.staffPay)})` : '';
   const wt = [t.work, t.equip].filter(Boolean).map(esc).join(', ');
   const itemSummary = [
-    asgName ? 'Исполнитель: ' + asgName : '',
+    asgName ? 'Исполнитель: ' + asgName + payStr : (payStr ? 'Оплата: ' + fmtAzn(t.staffPay) : ''),
     chk.length ? `Пункты: ${chk.filter(x => x.done).length}/${chk.length}` : '',
     items.length ? `Товары: ${items.length} (получено ${items.filter(x => x.status === 'received').length})` : ''
   ].filter(Boolean).join(' · ');
@@ -954,7 +992,7 @@ function cardHtml(t) {
       const eta = x.eta ? ' · получение ' + shortDate(x.eta) : '';
       return `<div class="it-row"><div><b>${esc(x.name)}</b> × ${Number(x.qty) || 1}${esc(pr)}${esc(eta)}</div><span class="tag ${stCls}" style="margin-left:0;flex:none">${esc(stLbl)}</span></div>`;
     }).join('')}</div>` : '';
-    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.staffNote ? `<p><b>Отчёт исполнителя:</b> ${esc(t.staffNote)}</p>` : ''}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}${chkHtml}${itemsHtml}<div class="links">${links.join('')}</div>
+    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.staffNote ? `<p><b>Заметка исполнителя:</b> ${esc(t.staffNote)}</p>` : ''}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}${chkHtml}${itemsHtml}<div class="links">${links.join('')}</div>
     <div class="row">${!t.done ? `<button class="btn${inProg ? '' : ' p'}" data-act="inprog" data-id="${t.id}">${inProg ? 'Снять «В работе»' : 'В работу'}</button>` : ''}<button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
   }
   const tags = (t.high ? '<span class="tag">Срочно</span>' : '')
@@ -1073,13 +1111,22 @@ function staffHtml() {
   return topBar + [...staff].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(s => {
     const openCnt = tasks.filter(t => t.assigneeId === s.id && !t.done).length;
     const statusTag = s.active === false ? '<span class="tag info">Отключён</span>' : '';
+    const fin = staffFinSummary(s);
+    const balTag = fin.bal > 0
+      ? `<span class="tag">Ваш долг: ${esc(fmtAzn0(fin.bal))}</span>`
+      : (fin.bal < 0 ? `<span class="tag ok">Долг вам: ${esc(fmtAzn0(Math.abs(fin.bal)))}</span>` : '');
+    const finLine = (fin.earnedDone || fin.plannedPay || fin.totalPaid)
+      ? `<div class="meta">Начислено: ${esc(fmtAzn0(fin.earnedDone))}${fin.plannedPay ? ' · Ожидается: ' + esc(fmtAzn0(fin.plannedPay)) : ''} · Выплачено: ${esc(fmtAzn0(fin.totalPaid))}</div>`
+      : '';
     return `<div class="cl"><div class="main">
-      <div class="ttl">${esc(s.name)}${statusTag}</div>
+      <div class="ttl">${esc(s.name)}${statusTag}${balTag}</div>
       <div class="meta">${esc([s.role, 'Открытых задач: ' + openCnt].filter(Boolean).join(' · '))}</div>
+      ${finLine}
       ${s.phone ? `<div class="links meta"><a href="tel:${esc(tel(s.phone))}">${esc(s.phone)}</a></div>` : '<div class="meta" style="color:var(--warn)">Укажите номер телефона для входа</div>'}
       ${s.note ? `<div class="meta" style="white-space:pre-wrap">${esc(s.note)}</div>` : ''}
       <div class="row">
-        <button class="btn p" data-act="stasks" data-id="${s.id}">Задачи</button>
+        <button class="btn p" data-act="spays" data-id="${s.id}">Выплаты</button>
+        <button class="btn" data-act="stasks" data-id="${s.id}">Задачи</button>
         ${normPhone(s.phone).length >= 7 ? `<button class="btn" data-act="schat" data-id="${s.id}">Чат</button>` : ''}
         <button class="btn" data-act="editstaff" data-id="${s.id}">Изменить</button>
         <button class="btn d" data-act="delstaff" data-id="${s.id}">Удалить</button>
@@ -1324,6 +1371,7 @@ function openTask(id, clientId, prefill) {
 
   const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
   <label>Исполнитель (делегирование)</label><select name="assigneeId"><option value="">Я сам (не делегировано)</option>${staffOpts}</select>
+  <label>Оплата исполнителю за работу, ₼ (видна исполнителю)</label><input type="number" name="staffPay" min="0" step="0.5" placeholder="Например, 150" value="${Number(t.staffPay) > 0 ? esc(t.staffPay) : ''}">
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
   <label>Статус выполнения</label><select name="status">
     <option value="todo"${curSt === 'todo' ? ' selected' : ''}>Запланировано</option>
@@ -1367,6 +1415,7 @@ function openTask(id, clientId, prefill) {
     return save('tasks', id || uid(), {
       clientId: f.clientId,
       assigneeId: f.assigneeId || '',
+      staffPay: Number(f.staffPay) > 0 ? Number(f.staffPay) : 0,
       title: f.title.trim(),
       work: val(f, 'work'),
       equip: val(f, 'equip'),
@@ -1683,6 +1732,7 @@ function openStaff(id) {
         role: (f.role || '').trim(),
         note: (f.note || '').trim(),
         active: !!f.active,
+        payments: Array.isArray(s.payments) ? s.payments : [],
         created: s.created || Date.now()
       });
       scheduleStaffPortal(600);
@@ -1701,6 +1751,109 @@ function openStaff(id) {
       } catch (e) { toast('Не удалось удалить'); }
     }
   } : null);
+}
+
+function openStaffPayments(staffId) {
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.id = 'spayOv';
+
+  function draw() {
+    const s = staff.find(x => x.id === staffId);
+    if (!s) { ov.remove(); return; }
+    const fin = staffFinSummary(s);
+    const balCls = fin.bal > 0 ? ' owe-staff' : (fin.bal < 0 ? ' owe-master' : '');
+    const balLbl = fin.bal > 0
+      ? 'Ваш долг исполнителю'
+      : (fin.bal < 0 ? 'Долг исполнителя вам (аванс / переплата)' : 'Расчёт закрыт (долга нет)');
+    const typeOpts = Object.entries(PAY_TYPES).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
+    const tbl = fin.pays.length
+      ? `<table class="ptbl"><thead><tr><th>Дата</th><th>Тип оплаты</th><th class="r">Сумма</th><th></th></tr></thead><tbody>`
+        + fin.pays.map(p => `<tr>
+            <td>${esc(p.date ? shortDate(p.date) : '—')}</td>
+            <td>${esc(PAY_TYPES[p.type] || p.type)}${p.note ? `<span class="pnote">${esc(p.note)}</span>` : ''}</td>
+            <td class="r">${esc(fmtAzn0(p.amount))}</td>
+            <td class="r"><button type="button" class="btn d" data-pdel="${esc(p.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
+          </tr>`).join('')
+        + `</tbody><tfoot><tr><td colspan="2">Итого выплачено</td><td class="r">${esc(fmtAzn0(fin.totalPaid))}</td><td></td></tr></tfoot></table>`
+      : '<div class="meta" style="text-align:center;padding:10px 0">Выплат пока нет.</div>';
+
+    ov.innerHTML = `<div class="sheet">
+      <h3>Выплаты — ${esc(s.name)}</h3>
+      <div>
+        <div class="irow"><span>Начислено за выполненные работы</span><b>${esc(fmtAzn0(fin.earnedDone))}</b></div>
+        <div class="irow"><span>Ожидается по активным задачам</span><b>${esc(fmtAzn0(fin.plannedPay))}</b></div>
+        <div class="irow"><span>Выплачено (работа и аванс)</span><b>${esc(fmtAzn0(fin.paidWork))}</b></div>
+        <div class="irow"><span>Выплачено на расходы и материалы</span><b>${esc(fmtAzn0(fin.paidExp))}</b></div>
+      </div>
+      <div class="fin-bal${balCls}"><span>${esc(balLbl)}</span><span>${esc(fmtAzn0(Math.abs(fin.bal)))}</span></div>
+
+      <form id="addPayForm" class="sec">
+        <div class="sec-t">Добавить выплату</div>
+        <div class="two">
+          <div><label>Сумма, ₼</label><input type="number" name="amount" min="0.5" step="0.5" required placeholder="100"></div>
+          <div><label>Дата</label><input type="date" name="date" value="${today()}"></div>
+        </div>
+        <label>Тип оплаты</label>
+        <select name="type">${typeOpts}</select>
+        <label>Комментарий (необязательно)</label>
+        <input type="text" name="note" maxlength="160" placeholder="Например, за объект Bilgəh / на кабель">
+        <div class="row">
+          <button type="submit" class="btn p">+ Добавить выплату</button>
+          <button type="button" class="btn" data-x>Закрыть</button>
+        </div>
+      </form>
+
+      <div class="sec">
+        <div class="sec-t">История выплат</div>
+        ${tbl}
+      </div>
+    </div>`;
+
+    ov.querySelector('[data-x]').onclick = () => ov.remove();
+    ov.querySelector('#addPayForm').onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const amount = Number(fd.get('amount'));
+      if (!Number.isFinite(amount) || amount <= 0) return;
+      const rec = {
+        id: uid(),
+        date: String(fd.get('date') || today()),
+        amount: Math.round(amount * 100) / 100,
+        type: PAY_TYPES[fd.get('type')] ? String(fd.get('type')) : 'work',
+        note: String(fd.get('note') || '').trim()
+      };
+      const cur = staff.find(x => x.id === staffId);
+      if (!cur) return;
+      const nextPays = [...(Array.isArray(cur.payments) ? cur.payments : []), rec];
+      const upd = Object.assign({}, cur, { payments: nextPays });
+      delete upd.id;
+      try {
+        await setDoc(doc(db, 'staff', staffId), upd);
+        scheduleStaffPortal(600);
+        toast('Выплата добавлена');
+        draw();
+      } catch (ex) { toast('Не удалось сохранить выплату'); }
+    };
+    ov.querySelectorAll('[data-pdel]').forEach(b => b.onclick = async () => {
+      const pid = b.dataset.pdel;
+      const cur = staff.find(x => x.id === staffId);
+      if (!cur) return;
+      const nextPays = (Array.isArray(cur.payments) ? cur.payments : []).filter(p => p.id !== pid);
+      const upd = Object.assign({}, cur, { payments: nextPays });
+      delete upd.id;
+      try {
+        await setDoc(doc(db, 'staff', staffId), upd);
+        scheduleStaffPortal(600);
+        toast('Запись удалена');
+        draw();
+      } catch (ex) { toast('Не удалось удалить'); }
+    });
+  }
+
+  document.body.appendChild(ov);
+  ov.onclick = e => { if (e.target === ov) ov.remove(); };
+  draw();
 }
 
 async function openStaffChatById(staffId) {
@@ -1902,6 +2055,7 @@ document.addEventListener('click', async e => {
   else if (a === 'clears') { staffFilter = ''; render(); }
   else if (a === 'copystaff') { copyUrl('staff.html', 'Ссылка для исполнителей'); }
   else if (a === 'syncstaff') { await rebuildStaffPortal(true); }
+  else if (a === 'spays') { openStaffPayments(id); }
   else if (a === 'stasks') { staffFilter = id; clientFilter = ''; filter = 'all'; view = 'tasks'; render(); }
   else if (a === 'schat') { await openStaffChatById(id); }
   else if (a === 'editstaff') { openStaff(id); }

@@ -75,6 +75,15 @@ input[type=tel],input[type=text]{width:100%;font:inherit;font-size:16px;color:va
 .sub-it{display:flex;justify-content:space-between;gap:8px}
 .snote-row{display:flex;gap:6px;margin-top:8px}
 .snote-row input{padding:7px 9px;font-size:14px}
+.fin-bal{margin:10px 0 12px;padding:10px 12px;border-radius:3px;border-left:4px solid var(--accent);background:var(--soft);font-size:14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fin-bal.owe-staff{border-left-color:var(--ok);background:var(--gbg);color:var(--text)}
+.fin-bal.owe-master{border-left-color:var(--danger);background:var(--rbg);color:var(--text)}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.ptbl th{text-align:left;font-weight:600;color:var(--muted);padding:7px 6px;border-bottom:2px solid var(--text);font-size:12px}
+.ptbl td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptbl th.r,.ptbl td.r{text-align:right;white-space:nowrap}
+.ptbl tfoot td{font-weight:600;border-top:2px solid var(--text);border-bottom:0;padding-top:9px}
+.pnote{display:block;font-size:12px;color:var(--muted);margin-top:2px}
 .leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
 .sw{display:inline-block;width:13px;height:13px;border-radius:2px;border:1.5px solid;vertical-align:-2px;margin-right:5px}
 .free{background:var(--gbg);border-color:var(--gbd)}.busy{background:var(--rbg);border-color:var(--rbd)}.part{background:linear-gradient(135deg,var(--rbg) 50%,var(--gbg) 50%);border-color:var(--rbd)}
@@ -132,7 +141,7 @@ h3.dayh{font-size:14px;font-weight:600;margin:12px 0 6px;text-transform:capitali
 
   <section id="login" class="panel">
     <h2 id="lTitle">Вход для сотрудников</h2>
-    <div class="muted" id="lHint">Введите ваш номер телефона, добавленный руководителем.</div>
+    <div class="muted" id="lHint">Введите ваш номер телефона, добавленный мастером.</div>
     <label class="fld" for="ph" id="lPhLbl">Номер телефона</label>
     <input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+994 50 123 45 67">
     <div id="err" class="err"></div>
@@ -144,6 +153,10 @@ h3.dayh{font-size:14px;font-weight:600;margin:12px 0 6px;text-transform:capitali
     <section class="panel">
       <h2 id="tasksTitle">Мои задачи</h2>
       <div id="tasksBox"></div>
+    </section>
+    <section class="panel">
+      <h2 id="finTitle">Оплаты и расчёт</h2>
+      <div id="finBox"></div>
     </section>
     <section class="panel">
       <h2 id="calTitle">Мой график загруженности</h2>
@@ -171,7 +184,7 @@ const I18N = {
     locale: 'ru-RU',
     pageTitle: 'Кабинет исполнителя',
     loginTitle: 'Вход для сотрудников',
-    loginHint: 'Введите ваш номер телефона, добавленный руководителем.',
+    loginHint: 'Введите ваш номер телефона, добавленный мастером.',
     phoneLabel: 'Номер телефона',
     enter: 'Войти',
     checking: 'Проверяем…',
@@ -179,18 +192,18 @@ const I18N = {
     errShort: 'Введите номер телефона полностью.',
     errCrypto: 'Этот браузер не поддерживает безопасную проверку номера.',
     errNoData: 'Данные для сотрудников пока не опубликованы.',
-    errNotFound: 'Сотрудник с таким номером не найден. Обратитесь к руководителю.',
+    errNotFound: 'Сотрудник с таким номером не найден. Обратитесь к мастеру.',
     errNet: 'Не удалось загрузить данные. Проверьте подключение к интернету.',
     profileTitle: 'Сотрудник',
     kName: 'Имя',
     kRole: 'Роль',
     kPhone: 'Телефон',
-    chatBtn: 'Чат с руководителем',
-    chatTitle: 'Чат с руководителем',
-    chatMaster: 'Руководитель',
-    chatPh: 'Напишите руководителю…',
+    chatBtn: 'Чат с мастером',
+    chatTitle: 'Чат с мастером',
+    chatMaster: 'Мастер',
+    chatPh: 'Напишите мастеру…',
     chatSend: 'Отправить',
-    chatEmpty: 'Прямой чат с руководителем. Вся переписка сохраняется.',
+    chatEmpty: 'Прямой чат с мастером. Вся переписка сохраняется.',
     chatErr: 'Не удалось отправить сообщение.',
     tasksTitle: 'Мои задачи',
     fToday: 'Сегодня',
@@ -202,15 +215,35 @@ const I18N = {
     urgent: 'Срочно',
     stProg: 'В работе',
     stDone: 'Выполнено',
+    payLbl: 'Оплата',
     btnStart: 'В работу',
     btnStop: 'Пауза',
     btnDone: 'Выполнено',
     btnReopen: 'Вернуть в работу',
-    notePh: 'Короткий отчёт для руководителя…',
+    notePh: 'Короткая заметка для мастера…',
     noteSave: 'Сохранить',
     saved: 'Отметка сохранена',
     saveErr: 'Не удалось сохранить отметку',
     itemsLbl: 'Оборудование',
+    finTitle: 'Оплаты и расчёт',
+    finEarned: 'Начислено за выполненные работы',
+    finPlanned: 'Ожидается по активным задачам',
+    finPaidWork: 'Выплачено (работа и аванс)',
+    finPaidExp: 'На расходы и материалы',
+    balOweStaff: 'К получению (долг мастера)',
+    balOweMaster: 'Ваш долг мастеру (аванс / переплата)',
+    balZero: 'Расчёт закрыт (долга нет)',
+    tblDate: 'Дата',
+    tblType: 'Тип оплаты',
+    tblSum: 'Сумма',
+    tblTotal: 'Итого выплачено',
+    noPays: 'Выплат пока нет.',
+    ptypes: {
+      advance: 'Аванс',
+      expense: 'На расходы',
+      materials: 'На покупку товара и материалов',
+      work: 'Оплата за выполненную работу'
+    },
     calTitle: 'Мой график загруженности',
     legFree: 'свободно',
     legBusy: 'занято',
@@ -224,7 +257,7 @@ const I18N = {
     locale: 'az-AZ',
     pageTitle: 'İcraçı kabineti',
     loginTitle: 'Əməkdaşlar üçün giriş',
-    loginHint: 'Rəhbər tərəfindən əlavə edilmiş telefon nömrənizi daxil edin.',
+    loginHint: 'Usta tərəfindən əlavə edilmiş telefon nömrənizi daxil edin.',
     phoneLabel: 'Telefon nömrəsi',
     enter: 'Daxil ol',
     checking: 'Yoxlanılır…',
@@ -232,38 +265,58 @@ const I18N = {
     errShort: 'Telefon nömrəsini tam daxil edin.',
     errCrypto: 'Bu brauzer təhlükəsiz nömrə yoxlanışını dəstəkləmir.',
     errNoData: 'Əməkdaş məlumatları hələ dərc olunmayıb.',
-    errNotFound: 'Bu nömrə ilə əməkdaş tapılmadı. Rəhbərlə əlaqə saxlayın.',
+    errNotFound: 'Bu nömrə ilə əməkdaş tapılmadı. Usta ilə əlaqə saxlayın.',
     errNet: 'Məlumatları yükləmək mümkün olmadı. İnternet bağlantısını yoxlayın.',
     profileTitle: 'Əməkdaş',
     kName: 'Ad',
     kRole: 'Vəzifə',
     kPhone: 'Telefon',
-    chatBtn: 'Rəhbər ilə çat',
-    chatTitle: 'Rəhbər ilə çat',
-    chatMaster: 'Rəhbər',
-    chatPh: 'Rəhbərə mesaj yazın…',
+    chatBtn: 'Usta ilə çat',
+    chatTitle: 'Usta ilə çat',
+    chatMaster: 'Usta',
+    chatPh: 'Ustaya mesaj yazın…',
     chatSend: 'Göndər',
-    chatEmpty: 'Rəhbərlə birbaşa çat. Bütün yazışma saxlanılır.',
+    chatEmpty: 'Usta ilə birbaşa çat. Bütün yazışma saxlanılır.',
     chatErr: 'Mesajı göndərmək mümkün olmadı.',
-    tasksTitle: 'Tapşırıqlarım',
+    tasksTitle: 'Görüləcək işlər',
     fToday: 'Bu gün',
     fLater: 'Sonra',
     fAll: 'Hamısı',
     fDone: 'Hazırdır',
-    noTasks: 'Bu bölmədə tapşırıq yoxdur.',
+    noTasks: 'Bu bölmədə iş yoxdur.',
     dateTbd: 'Tarix dəqiqləşdirilir',
     urgent: 'Təcili',
     stProg: 'İcrada',
     stDone: 'İcra edilib',
+    payLbl: 'Ödəniş',
     btnStart: 'İşə başla',
     btnStop: 'Dayandır',
     btnDone: 'İcra edildi',
     btnReopen: 'Yenidən aç',
-    notePh: 'Rəhbər üçün qısa hesabat…',
+    notePh: 'Usta üçün qısa qeyd…',
     noteSave: 'Yadda saxla',
     saved: 'Qeyd yadda saxlandı',
     saveErr: 'Yadda saxlamaq mümkün olmadı',
     itemsLbl: 'Avadanlıq',
+    finTitle: 'Ödənişlər və hesablaşma',
+    finEarned: 'İcra edilmiş işlərə görə',
+    finPlanned: 'Aktiv işlər üzrə gözlənilən',
+    finPaidWork: 'Ödənilib (iş və avans)',
+    finPaidExp: 'Xərclər və materiallar üçün',
+    balOweStaff: 'Alınacaq məbləğ (ustanın borcu)',
+    balOweMaster: 'Ustaya borcunuz (avans / artıq ödəniş)',
+    balZero: 'Hesablaşma tamdır (borc yoxdur)',
+    tblDate: 'Tarix',
+    tblType: 'Ödəniş növü',
+    tblSum: 'Məbləğ',
+    tblTotal: 'Cəmi ödənilib',
+    noPays: 'Hələ ödəniş yoxdur.',
+    ptypes: {
+      advance: 'Avans',
+      expense: 'Xərclər üçün',
+      materials: 'Mal və materialların alınması üçün',
+      work: 'Görülən işə görə ödəniş'
+    },
     calTitle: 'Məşğulluq qrafikim',
     legFree: 'boşdur',
     legBusy: 'məşğul',
@@ -440,6 +493,7 @@ function applyLangStatic() {
   $('#loadTxt').textContent = L.loadingCab;
   if (!$('#go').disabled) $('#go').textContent = L.enter;
   $('#tasksTitle').textContent = L.tasksTitle;
+  $('#finTitle').textContent = L.finTitle;
   $('#calTitle').textContent = L.calTitle;
   $('#calLeg').innerHTML = `<span><i class="sw free"></i>${esc(L.legFree)}</span><span><i class="sw busy"></i>${esc(L.legBusy)}</span><span><i class="sw part"></i>${esc(L.legPart)}</span>`;
   $('#logoutBtn').textContent = L.logout;
@@ -451,6 +505,41 @@ function fmtD(d) {
   return new Date(d + 'T12:00:00').toLocaleDateString(L.locale, { weekday: 'short', day: 'numeric', month: 'long' });
 }
 const cmp = (a, b) => ((a.d || '9999') + (a.tm || '99:99')).localeCompare((b.d || '9999') + (b.tm || '99:99'));
+
+const fmtAzn = n => { const v = Number(n) || 0; return (Number.isInteger(v) ? v : v.toFixed(2)) + ' ₼'; };
+const fmtShortD = d => d ? new Date(d + 'T12:00:00').toLocaleDateString(I18N[lang].locale, { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
+
+function renderFinance(effTasks) {
+  const L = I18N[lang];
+  const pays = Array.isArray(unlocked.payments) ? [...unlocked.payments].sort((a, b) => (b.d || '').localeCompare(a.d || '')) : [];
+  const earnedDone = effTasks.filter(t => t.x).reduce((s, t) => s + (Number(t.pay) || 0), 0);
+  const plannedPay = effTasks.filter(t => !t.x).reduce((s, t) => s + (Number(t.pay) || 0), 0);
+  const paidWork = pays.filter(p => p.tp === 'work' || p.tp === 'advance').reduce((s, p) => s + (Number(p.a) || 0), 0);
+  const paidExp = pays.filter(p => p.tp === 'expense' || p.tp === 'materials').reduce((s, p) => s + (Number(p.a) || 0), 0);
+  const totalPaid = paidWork + paidExp;
+  const bal = Math.round((earnedDone - paidWork) * 100) / 100;
+
+  const balCls = bal > 0 ? ' owe-staff' : (bal < 0 ? ' owe-master' : '');
+  const balText = bal > 0 ? L.balOweStaff : (bal < 0 ? L.balOweMaster : L.balZero);
+  const balVal = fmtAzn(Math.abs(bal));
+
+  let h = `<div>
+    <div class="info-row"><span class="info-k">${esc(L.finEarned)}</span><span class="info-v">${esc(fmtAzn(earnedDone))}</span></div>
+    ${plannedPay > 0 ? `<div class="info-row"><span class="info-k">${esc(L.finPlanned)}</span><span class="info-v">${esc(fmtAzn(plannedPay))}</span></div>` : ''}
+    <div class="info-row"><span class="info-k">${esc(L.finPaidWork)}</span><span class="info-v">${esc(fmtAzn(paidWork))}</span></div>
+    ${paidExp > 0 ? `<div class="info-row"><span class="info-k">${esc(L.finPaidExp)}</span><span class="info-v">${esc(fmtAzn(paidExp))}</span></div>` : ''}
+  </div>
+  <div class="fin-bal${balCls}"><span>${esc(balText)}</span><span>${esc(balVal)}</span></div>`;
+
+  if (!pays.length) {
+    h += `<div class="muted" style="text-align:center;padding:8px 0">${esc(L.noPays)}</div>`;
+  } else {
+    h += `<table class="ptbl"><thead><tr><th>${esc(L.tblDate)}</th><th>${esc(L.tblType)}</th><th class="r">${esc(L.tblSum)}</th></tr></thead><tbody>`
+      + pays.map(p => `<tr><td>${esc(fmtShortD(p.d))}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.n ? `<span class="pnote">${esc(p.n)}</span>` : ''}</td><td class="r">${esc(fmtAzn(p.a))}</td></tr>`).join('')
+      + `</tbody><tfoot><tr><td colspan="2">${esc(L.tblTotal)}</td><td class="r">${esc(fmtAzn(totalPaid))}</td></tr></tfoot></table>`;
+  }
+  $('#finBox').innerHTML = h;
+}
 
 function computeMySchedule(effTasks) {
   const busyMap = new Map(), fullSet = new Set();
@@ -520,7 +609,8 @@ function renderAll() {
       const cls = t.x ? ' dn' : (t.st === 'in_progress' ? ' act' : (t.hi ? ' hi' : ''));
       const tags = (t.hi && !t.x ? `<span class="tag hi">${esc(L.urgent)}</span>` : '')
         + (t.st === 'in_progress' ? `<span class="tag">${esc(L.stProg)}</span>` : '')
-        + (t.x ? `<span class="tag ok">${esc(L.stDone)}</span>` : '');
+        + (t.x ? `<span class="tag ok">${esc(L.stDone)}</span>` : '')
+        + (Number(t.pay) > 0 ? `<span class="tag ok">${esc(L.payLbl)}: ${esc(fmtAzn(t.pay))}</span>` : '');
       const meta = [fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w, t.e].filter(Boolean).join(' · ');
       const addrHtml = t.addr ? `<div class="tm"><a href="https://maps.apple.com/?q=${encodeURIComponent(t.addr)}" target="_blank" rel="noopener">${esc(t.addr)}</a></div>` : '';
       const chkHtml = t.chk.length ? `<div class="chk-list">${t.chk.map(c =>
@@ -559,6 +649,7 @@ function renderAll() {
     if (inp) pushTaskUpdate(b.dataset.snsave, { note: inp.value.trim() });
   });
 
+  renderFinance(effTasks);
   drawCal();
   drawHours();
   $('#upd').textContent = L.updText(D && D.upd);
