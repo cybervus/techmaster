@@ -49,6 +49,12 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .chk::after{content:'';position:absolute;inset:-12px}
 .tr.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
 .tag{margin-left:8px;padding:1px 6px;border:1px solid var(--danger);color:var(--danger);border-radius:2px;font-size:12px;font-weight:500;vertical-align:1px}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.tag.info{border-color:var(--line);color:var(--muted)}
+.nbadge{display:inline-block;margin-left:5px;padding:0 5px;min-width:18px;border-radius:2px;background:var(--danger);color:#fff;font-size:11px;font-weight:600;line-height:17px;vertical-align:1px}
+.kv{margin-top:6px;font-size:13px;line-height:1.45}
+.kv div{margin-top:2px}
+.kv b{color:var(--muted);font-weight:500}
 .cl{background:var(--card);border-bottom:1px solid var(--line);padding:12px 8px}
 .cl:first-child{border-top:2px solid var(--text)}
 .main{flex:1;min-width:0}
@@ -108,7 +114,7 @@ textarea{min-height:90px;resize:vertical}
 </header>
 <div id="note" hidden></div>
 <main id="app"><div class="empty">Загрузка…</div></main>
-<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button></nav>
+<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button></nav>
 <input type="file" id="impfile" accept=".json,application/json" hidden>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -144,9 +150,41 @@ const today = () => iso(new Date());
 const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d); };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
-let clients = [], tasks = [], view = 'tasks', filter = 'today', clientFilter = '';
+let clients = [], tasks = [], requests = [], reqErr = false, view = 'tasks', filter = 'today', clientFilter = '';
 let user = null, authReady = false, ready = 0, armed = null, unsubs = [];
 const opened = new Set();
+
+const REQ_OBJ = { flat: 'Квартира', house: 'Частный дом', office: 'Офис', enterprise: 'Предприятие', other: 'Другое' };
+const REQ_ROLE = { owner: 'Собственник', foreman: 'Прораб', master: 'Мастер', builder: 'Представитель строительной организации', other: 'Другое' };
+const REQ_SVC = { inspect: 'Осмотр / консультация', buy: 'Покупка оборудования', install: 'Установка оборудования', setup: 'Настройка оборудования', other: 'Другое' };
+const REQ_CAT = { security: 'Системы безопасности', network: 'Сетевые решения', smarthome: 'Умный дом', av: 'Аудио-видео системы', other: 'Другое' };
+
+function fmtReqList(ids, dict, otherText) {
+  const arr = Array.isArray(ids) ? ids : (ids ? [ids] : []);
+  return arr.map(id => id === 'other' ? (otherText ? `Другое: ${otherText}` : 'Другое') : (dict[id] || id)).join(', ');
+}
+function reqNoteText(r) {
+  const lines = [];
+  const role = fmtReqList(r.role, REQ_ROLE, r.roleOther);
+  const objs = fmtReqList(r.objects, REQ_OBJ, r.objectsOther);
+  const svcs = fmtReqList(r.services, REQ_SVC, r.servicesOther);
+  const cats = fmtReqList(r.categories, REQ_CAT, r.categoriesOther);
+  if (role) lines.push('Статус: ' + role);
+  if (objs) lines.push('Объект: ' + objs);
+  if (svcs) lines.push('Услуги: ' + svcs);
+  if (cats) lines.push('Задачи: ' + cats);
+  if (r.lang) lines.push('Язык анкеты: ' + String(r.lang).toUpperCase());
+  return lines.join('\n');
+}
+async function copyUrl(rel, label) {
+  const url = new URL(rel, location.href).href;
+  try {
+    await navigator.clipboard.writeText(url);
+    toast(label + ' скопирована');
+  } catch (e) {
+    prompt(label + ':', url);
+  }
+}
 
 // --- Portal (pub/portal) sync state & crypto ---
 const PORTAL_ITER = 600000;
@@ -597,6 +635,38 @@ function clientsHtml() {
   }).join('');
 }
 
+function requestsHtml() {
+  if (reqErr) return '<div class="empty">Нет доступа к разделу заявок. Обновите правила Firestore (раздел <code>requests</code>) и обновите страницу.</div>';
+  if (!requests.length) return '<div class="empty">Новых заявок пока нет. Нажмите «Ссылка на анкету», чтобы отправить форму клиенту.</div>';
+  const list = [...requests].sort((a, b) => (Number(b.created) || 0) - (Number(a.created) || 0));
+  return list.map(r => {
+    const dt = r.created ? new Date(r.created).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+    const objs = fmtReqList(r.objects, REQ_OBJ, r.objectsOther);
+    const role = fmtReqList(r.role, REQ_ROLE, r.roleOther);
+    const svcs = fmtReqList(r.services, REQ_SVC, r.servicesOther);
+    const cats = fmtReqList(r.categories, REQ_CAT, r.categoriesOther);
+    const accepted = r.status === 'accepted';
+    const existing = r.clientId ? clients.find(c => c.id === r.clientId) : null;
+    const badge = accepted ? '<span class="tag ok">Принята</span>' : '<span class="tag">Новая</span>';
+    const langTag = r.lang ? `<span class="tag info">${esc(String(r.lang).toUpperCase())}</span>` : '';
+    const acts = accepted && existing
+      ? `<button class="btn p" data-act="reqtask" data-id="${r.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${existing.id}">Клиент</button><button class="btn d" data-act="delreq" data-id="${r.id}">Удалить</button>`
+      : `<button class="btn p" data-act="accreq" data-id="${r.id}">Принять в клиенты</button><button class="btn d" data-act="delreq" data-id="${r.id}">Удалить</button>`;
+    return `<div class="cl"><div class="main">
+      <div class="ttl">${esc(r.name || 'Без имени')}${badge}${langTag}</div>
+      ${dt ? `<div class="meta">${esc(dt)}</div>` : ''}
+      ${r.phone ? `<div class="links meta"><a href="tel:${esc(tel(r.phone))}">${esc(r.phone)}</a></div>` : ''}
+      <div class="kv">
+        ${objs ? `<div><b>Объект:</b> ${esc(objs)}</div>` : ''}
+        ${role ? `<div><b>Статус:</b> ${esc(role)}</div>` : ''}
+        ${svcs ? `<div><b>Услуги:</b> ${esc(svcs)}</div>` : ''}
+        ${cats ? `<div><b>Задачи:</b> ${esc(cats)}</div>` : ''}
+      </div>
+      <div class="row">${acts}</div>
+    </div></div>`;
+  }).join('');
+}
+
 function render() {
   armed = null;
   $('#date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -613,9 +683,12 @@ function render() {
     return;
   }
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.v === view));
-  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : 'Клиенты';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : 'Новый клиент';
-  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : clientsHtml());
+  const newReqs = requests.filter(r => r.status !== 'accepted').length;
+  const rb = $('#reqb');
+  if (rb) { rb.textContent = newReqs; rb.hidden = newReqs === 0; }
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : 'Заявки';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : 'Ссылка на анкету';
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : requestsHtml());
 }
 
 // --- Modals ---
@@ -639,16 +712,22 @@ function modal(title, body, onSave) {
 }
 
 function openMenu() {
-  const clientUrl = new URL('client.html', location.href).href;
   const ov = document.createElement('div');
   ov.className = 'ov';
   ov.innerHTML = `<div class="sheet">
     <h3>Данные и настройки</h3>
     <div class="sec">
-      <div class="sec-t">Страница клиента</div>
+      <div class="sec-t">Анкета регистрации клиента</div>
+      <div class="meta">Отправьте ссылку новому клиенту для пошаговой регистрации.</div>
+      <div class="row">
+        <button class="btn p" type="button" data-copy-reg>Скопировать ссылку</button>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-t">Страница клиента (график и задачи)</div>
       <div class="meta" id="pstat"></div>
       <div class="row">
-        <button class="btn p" type="button" data-copy>Скопировать ссылку</button>
+        <button class="btn" type="button" data-copy>Скопировать ссылку</button>
         <button class="btn" type="button" data-sync>Обновить сейчас</button>
       </div>
     </div>
@@ -673,14 +752,8 @@ function openMenu() {
   updatePortalStatusEl();
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
   ov.querySelector('[data-x]').onclick = () => ov.remove();
-  ov.querySelector('[data-copy]').onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(clientUrl);
-      toast('Ссылка для клиента скопирована');
-    } catch (e) {
-      prompt('Ссылка для клиента:', clientUrl);
-    }
-  };
+  ov.querySelector('[data-copy-reg]').onclick = () => copyUrl('register.html', 'Ссылка на анкету');
+  ov.querySelector('[data-copy]').onclick = () => copyUrl('client.html', 'Ссылка для клиента');
   ov.querySelector('[data-sync]').onclick = () => rebuildPortal(true);
   ov.querySelector('[data-exp]').onclick = () => exportJson();
   ov.querySelector('[data-imp]').onclick = () => { ov.remove(); $('#impfile').click(); };
@@ -708,9 +781,9 @@ function pick(name, label, list, v) {
   return `<label>${label}</label><select name="${name}"><option value="">Не выбрано</option>${list.map(x => `<option${x === v ? ' selected' : ''}>${esc(x)}</option>`).join('')}<option value="__other"${other ? ' selected' : ''}>Другое…</option></select><input type="text" name="${name}Other" placeholder="Укажите вручную" value="${other ? esc(v) : ''}"${other ? '' : ' hidden'}>`;
 }
 
-function openTask(id, clientId) {
+function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
-  const t = tasks.find(x => x.id === id) || { clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false };
+  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false }, prefill || {});
   const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
   const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
@@ -778,11 +851,49 @@ function wireContacts(ov) {
   };
 }
 
+async function acceptRequest(reqId) {
+  const r = requests.find(x => x.id === reqId);
+  if (!r || !user) return;
+  const p9 = normPhone(r.phone);
+  const existing = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
+  const noteBlock = reqNoteText(r);
+  let cid;
+  if (existing) {
+    cid = existing.id;
+    const mergedNote = [existing.note, noteBlock].filter(Boolean).join('\n---\n');
+    await save('clients', cid, {
+      name: existing.name || r.name || '',
+      phone: existing.phone || r.phone || '',
+      address: existing.address || '',
+      note: mergedNote,
+      created: existing.created || Date.now()
+    });
+    toast('Данные добавлены к существующему клиенту');
+  } else {
+    cid = uid();
+    await save('clients', cid, {
+      name: String(r.name || '').trim(),
+      phone: String(r.phone || '').trim(),
+      address: '',
+      note: noteBlock,
+      created: Date.now()
+    });
+    toast('Клиент создан из заявки');
+  }
+  const upd = Object.assign({}, r, { status: 'accepted', clientId: cid });
+  delete upd.id;
+  try { await setDoc(doc(db, 'requests', reqId), upd); } catch (e) {}
+}
+
 document.addEventListener('click', async e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
   const a = el.dataset.act, id = el.dataset.id;
   if (a === 'tab') { view = el.dataset.v; render(); }
-  else if (a === 'fab') { view === 'tasks' ? openTask() : openClient(); }
+  else if (a === 'fab') {
+    if (view === 'tasks') openTask();
+    else if (view === 'clients') openClient();
+    else copyUrl('register.html', 'Ссылка на анкету');
+  }
   else if (a === 'menu') { openMenu(); }
   else if (a === 'filter') { filter = el.dataset.f; render(); }
   else if (a === 'clearc') { clientFilter = ''; render(); }
@@ -795,9 +906,19 @@ document.addEventListener('click', async e => {
   else if (a === 'newtask') openTask(null, id);
   else if (a === 'editclient') openClient(id);
   else if (a === 'ctasks') { clientFilter = id; filter = 'all'; view = 'tasks'; render(); }
+  else if (a === 'accreq') { await acceptRequest(id); }
+  else if (a === 'reqtask') {
+    const r = requests.find(x => x.id === id);
+    if (r && r.clientId) openTask(null, r.clientId, { title: fmtReqList(r.categories, REQ_CAT, r.categoriesOther) || 'Заявка с сайта', details: reqNoteText(r) });
+  }
   else if (a === 'deltask') {
-    if (armed !== id) { armed = id; el.textContent = 'Точно удалить?'; return; }
+    if (armed !== 't:' + id) { armed = 't:' + id; el.textContent = 'Точно удалить?'; return; }
     armed = null; await del('tasks', id);
+  }
+  else if (a === 'delreq') {
+    if (armed !== 'r:' + id) { armed = 'r:' + id; el.textContent = 'Точно удалить?'; return; }
+    armed = null;
+    try { await deleteDoc(doc(db, 'requests', id)); } catch (ex) { toast('Не удалось удалить'); }
   }
 });
 
@@ -811,6 +932,8 @@ onAuthStateChanged(auth, u => {
   authReady = true;
   clients = [];
   tasks = [];
+  requests = [];
+  reqErr = false;
   ready = 0;
   portalSalt = null;
   portalExists = false;
@@ -849,6 +972,14 @@ onAuthStateChanged(auth, u => {
   };
   sub('clients', v => clients = v);
   sub('tasks', v => tasks = v);
+  unsubs.push(onSnapshot(collection(db, 'requests'), s => {
+    reqErr = false;
+    requests = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    render();
+  }, () => {
+    reqErr = true;
+    render();
+  }));
 });
 </script>
 </body>
