@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Кабинет исполнителя — Techmaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Исполнитель">
+<meta name="theme-color" content="#1e3a5f">
+<style>
+:root{--bg:#f2f4f7;--card:#fff;--text:#1a2330;--muted:#5a6675;--line:#d3d9e1;--accent:#1e3a5f;--on:#fff;--danger:#9e2a2b;--ok:#2f6b4f;--warn:#8a5a00;--soft:#e8eef6;--gbg:#d8efe2;--gbd:#2f6b4f;--rbg:#f7d8d8;--rbd:#9e2a2b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;--soft:#1f2a38;--gbg:#153526;--gbd:#6fbf94;--rbg:#3b1c1d;--rbd:#e27d7e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161b;--card:#181d24;--text:#e4e8ee;--muted:#9aa5b4;--line:#2b333d;--accent:#8db1dc;--on:#10151b;--danger:#e27d7e;--ok:#6fbf94;--warn:#e0b05a;--soft:#1f2a38;--gbg:#153526;--gbd:#6fbf94;--rbg:#3b1c1d;--rbd:#e27d7e;color-scheme:dark}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "IBM Plex Sans",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 48px;max-width:640px;margin-inline:auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 12px;border-bottom:2px solid var(--text)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{margin:0;line-height:0;color:var(--accent);flex:none}
+.logo svg{width:42px;height:42px;display:block}
+h1{font-size:19px;font-weight:600;margin:0;line-height:1.2}
+.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.lang{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--card);flex:none}
+.lang button{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--muted);padding:7px 10px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.lang button+button{border-left:1px solid var(--line)}
+.lang button.on{background:var(--accent);color:var(--on)}
+.flag{width:18px;height:12px;display:block;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.panel{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--text);border-radius:3px;padding:16px;margin-top:16px}
+.panel h2{margin:0 0 10px;font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.panel h2 span{font-weight:400;font-size:13px;color:var(--muted)}
+.muted{color:var(--muted);font-size:13px}
+.err{color:var(--danger);font-size:13px;margin-top:10px;min-height:18px}
+label.fld{display:block;font-size:13px;font-weight:500;color:var(--muted);margin:12px 0 5px}
+input[type=tel],input[type=text]{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--muted);border-radius:3px;padding:11px 12px}
+.btn{border:1px solid var(--muted);background:var(--card);color:var(--text);border-radius:3px;padding:9px 14px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.6;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chips{display:flex;gap:18px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:10px}
+.chip{flex:none;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);padding:10px 0;margin-bottom:-1px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.chip.on{color:var(--text);border-bottom-color:var(--accent);font-weight:600}
+.chip b{font-weight:400;margin-left:5px}
+.info-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.info-row:first-child{border-top:1px solid var(--line)}
+.info-k{color:var(--muted)}.info-v{font-weight:500;text-align:right}
+.cbadge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--danger);color:#fff;font-size:12px;font-weight:600;margin-left:8px}
+.tcard{border-top:1px solid var(--line);padding:12px 6px}
+.tcard.act{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.tcard.hi{box-shadow:inset 3px 0 0 var(--danger)}
+.tcard.dn .tt{text-decoration:line-through;color:var(--muted)}
+.tt{font-weight:600;font-size:15px}
+.tm{color:var(--muted);font-size:13px;margin-top:2px}
+.tm a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.tdtls{margin-top:6px;font-size:13px;padding:7px 9px;background:var(--bg);border-left:2px solid var(--line);white-space:pre-wrap}
+.tcard.act .tdtls{background:var(--card)}
+.tag{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:2px;font-size:11px;font-weight:600;vertical-align:1px;border:1px solid var(--accent);color:var(--accent)}
+.tag.hi{border-color:var(--danger);color:var(--danger)}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.chk-list{margin-top:8px;border-top:1px dashed var(--line);padding-top:6px;display:flex;flex-direction:column;gap:4px}
+.chk-item{display:flex;align-items:flex-start;gap:9px;padding:5px 4px;cursor:pointer;font-size:14px;user-select:none}
+.chk-item input{width:18px;height:18px;margin-top:1px;accent-color:var(--ok);flex:none;cursor:pointer}
+.chk-item.x span{text-decoration:line-through;color:var(--muted)}
+.sub-its{margin-top:7px;border-top:1px dashed var(--line);padding-top:6px;font-size:13px;display:flex;flex-direction:column;gap:4px}
+.sub-it{display:flex;justify-content:space-between;gap:8px}
+.snote-row{display:flex;gap:6px;margin-top:8px}
+.snote-row input{padding:7px 9px;font-size:14px}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:10px}
+.sw{display:inline-block;width:13px;height:13px;border-radius:2px;border:1.5px solid;vertical-align:-2px;margin-right:5px}
+.free{background:var(--gbg);border-color:var(--gbd)}.busy{background:var(--rbg);border-color:var(--rbd)}.part{background:linear-gradient(135deg,var(--rbg) 50%,var(--gbg) 50%);border-color:var(--rbd)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin:4px 0 8px;text-transform:capitalize;font-weight:600}
+.ch button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:3px;padding:5px 12px;font-size:16px;cursor:pointer}.ch button:disabled{opacity:.3;cursor:default}
+.g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.wd{text-align:center;font-size:12px;color:var(--muted);padding:2px 0}
+.d{position:relative;height:40px;border-radius:3px;border:1.5px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:14px;padding:0;cursor:pointer}
+.d.past{opacity:.35}.d.sel{outline:2px solid var(--accent);outline-offset:1px;font-weight:600}
+.hs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.h{text-align:center;padding:8px 0;border-radius:3px;border:1.5px solid;font-size:14px;font-weight:500}
+h3.dayh{font-size:14px;font-weight:600;margin:12px 0 6px;text-transform:capitalize}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.chat-sheet{background:var(--card);width:100%;max-width:640px;height:86dvh;max-height:760px;border-radius:4px 4px 0 0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
+.chat-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:none}
+.chat-hd h3{margin:0;font-size:16px;font-weight:600}
+.chat-hd .btn{padding:5px 10px;font-size:16px;line-height:1}
+.chat-log{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.chat-day{align-self:center;font-size:11px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:2px;padding:2px 8px;margin:6px 0 2px}
+.mbub{max-width:82%;padding:9px 12px;border-radius:4px;font-size:14px;line-height:1.4;white-space:pre-wrap;word-break:break-word}
+.mbub.me{align-self:flex-end;background:var(--accent);color:var(--on)}
+.mbub.them{align-self:flex-start;background:var(--card);color:var(--text);border:1px solid var(--line)}
+.mbub .mw{font-size:11px;font-weight:600;opacity:.8;margin-bottom:2px}
+.mbub .mt{font-size:11px;opacity:.7;margin-top:4px;text-align:right}
+.chat-bar{display:flex;gap:8px;align-items:flex-end;padding:10px 12px;border-top:1px solid var(--line);background:var(--card);flex:none}
+.chat-bar textarea{flex:1;font:inherit;font-size:15px;color:var(--text);background:var(--bg);border:1px solid var(--muted);border-radius:3px;padding:9px 10px;min-height:42px;max-height:110px;resize:none}
+.chat-bar .btn{padding:10px 16px;flex:none}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:3px;font-size:14px;z-index:40}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
+    <div>
+      <h1 id="htitle">Кабинет исполнителя</h1>
+      <div class="sub">Techmaster IT Solutions</div>
+    </div>
+  </div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="ru" id="btn-ru">
+      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#ffffff"/><rect y="4" width="18" height="4" fill="#0039a6"/><rect y="8" width="18" height="4" fill="#d52b1e"/></svg>
+      <span>RU</span>
+    </button>
+    <button type="button" data-lang="az" id="btn-az">
+      <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
+      <span>AZ</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section id="loading" class="panel" hidden>
+    <div class="muted" id="loadTxt" style="text-align:center;padding:18px 0">Загрузка кабинета…</div>
+  </section>
+
+  <section id="login" class="panel">
+    <h2 id="lTitle">Вход для сотрудников</h2>
+    <div class="muted" id="lHint">Введите ваш номер телефона, добавленный руководителем.</div>
+    <label class="fld" for="ph" id="lPhLbl">Номер телефона</label>
+    <input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+994 50 123 45 67">
+    <div id="err" class="err"></div>
+    <div class="row"><button id="go" class="btn p full">Войти</button></div>
+  </section>
+
+  <section id="view" hidden>
+    <div id="staffTop"></div>
+    <section class="panel">
+      <h2 id="tasksTitle">Мои задачи</h2>
+      <div id="tasksBox"></div>
+    </section>
+    <section class="panel">
+      <h2 id="calTitle">Мой график загруженности</h2>
+      <div class="leg" id="calLeg"></div>
+      <div id="cal"></div>
+      <div id="hrs"></div>
+    </section>
+    <div class="foot">
+      <span id="upd"></span>
+      <button type="button" class="btn" id="logoutBtn">Выйти</button>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, arrayUnion, increment } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { firebaseConfig } from './firebase-config.js';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const I18N = {
+  ru: {
+    locale: 'ru-RU',
+    pageTitle: 'Кабинет исполнителя',
+    loginTitle: 'Вход для сотрудников',
+    loginHint: 'Введите ваш номер телефона, добавленный руководителем.',
+    phoneLabel: 'Номер телефона',
+    enter: 'Войти',
+    checking: 'Проверяем…',
+    loadingCab: 'Загрузка кабинета…',
+    errShort: 'Введите номер телефона полностью.',
+    errCrypto: 'Этот браузер не поддерживает безопасную проверку номера.',
+    errNoData: 'Данные для сотрудников пока не опубликованы.',
+    errNotFound: 'Сотрудник с таким номером не найден. Обратитесь к руководителю.',
+    errNet: 'Не удалось загрузить данные. Проверьте подключение к интернету.',
+    profileTitle: 'Сотрудник',
+    kName: 'Имя',
+    kRole: 'Роль',
+    kPhone: 'Телефон',
+    chatBtn: 'Чат с руководителем',
+    chatTitle: 'Чат с руководителем',
+    chatMaster: 'Руководитель',
+    chatPh: 'Напишите руководителю…',
+    chatSend: 'Отправить',
+    chatEmpty: 'Прямой чат с руководителем. Вся переписка сохраняется.',
+    chatErr: 'Не удалось отправить сообщение.',
+    tasksTitle: 'Мои задачи',
+    fToday: 'Сегодня',
+    fLater: 'Позже',
+    fAll: 'Все',
+    fDone: 'Готово',
+    noTasks: 'В этом разделе задач пока нет.',
+    dateTbd: 'Дата уточняется',
+    urgent: 'Срочно',
+    stProg: 'В работе',
+    stDone: 'Выполнено',
+    btnStart: 'В работу',
+    btnStop: 'Пауза',
+    btnDone: 'Выполнено',
+    btnReopen: 'Вернуть в работу',
+    notePh: 'Короткий отчёт для руководителя…',
+    noteSave: 'Сохранить',
+    saved: 'Отметка сохранена',
+    saveErr: 'Не удалось сохранить отметку',
+    itemsLbl: 'Оборудование',
+    calTitle: 'Мой график загруженности',
+    legFree: 'свободно',
+    legBusy: 'занято',
+    legPart: 'частично',
+    wds: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+    dayPast: 'Этот день уже прошёл.',
+    updText: u => `Обновлено: ${u || '—'}`,
+    logout: 'Выйти'
+  },
+  az: {
+    locale: 'az-AZ',
+    pageTitle: 'İcraçı kabineti',
+    loginTitle: 'Əməkdaşlar üçün giriş',
+    loginHint: 'Rəhbər tərəfindən əlavə edilmiş telefon nömrənizi daxil edin.',
+    phoneLabel: 'Telefon nömrəsi',
+    enter: 'Daxil ol',
+    checking: 'Yoxlanılır…',
+    loadingCab: 'Kabinet yüklənir…',
+    errShort: 'Telefon nömrəsini tam daxil edin.',
+    errCrypto: 'Bu brauzer təhlükəsiz nömrə yoxlanışını dəstəkləmir.',
+    errNoData: 'Əməkdaş məlumatları hələ dərc olunmayıb.',
+    errNotFound: 'Bu nömrə ilə əməkdaş tapılmadı. Rəhbərlə əlaqə saxlayın.',
+    errNet: 'Məlumatları yükləmək mümkün olmadı. İnternet bağlantısını yoxlayın.',
+    profileTitle: 'Əməkdaş',
+    kName: 'Ad',
+    kRole: 'Vəzifə',
+    kPhone: 'Telefon',
+    chatBtn: 'Rəhbər ilə çat',
+    chatTitle: 'Rəhbər ilə çat',
+    chatMaster: 'Rəhbər',
+    chatPh: 'Rəhbərə mesaj yazın…',
+    chatSend: 'Göndər',
+    chatEmpty: 'Rəhbərlə birbaşa çat. Bütün yazışma saxlanılır.',
+    chatErr: 'Mesajı göndərmək mümkün olmadı.',
+    tasksTitle: 'Tapşırıqlarım',
+    fToday: 'Bu gün',
+    fLater: 'Sonra',
+    fAll: 'Hamısı',
+    fDone: 'Hazırdır',
+    noTasks: 'Bu bölmədə tapşırıq yoxdur.',
+    dateTbd: 'Tarix dəqiqləşdirilir',
+    urgent: 'Təcili',
+    stProg: 'İcrada',
+    stDone: 'İcra edilib',
+    btnStart: 'İşə başla',
+    btnStop: 'Dayandır',
+    btnDone: 'İcra edildi',
+    btnReopen: 'Yenidən aç',
+    notePh: 'Rəhbər üçün qısa hesabat…',
+    noteSave: 'Yadda saxla',
+    saved: 'Qeyd yadda saxlandı',
+    saveErr: 'Yadda saxlamaq mümkün olmadı',
+    itemsLbl: 'Avadanlıq',
+    calTitle: 'Məşğulluq qrafikim',
+    legFree: 'boşdur',
+    legBusy: 'məşğul',
+    legPart: 'qismən',
+    wds: ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'],
+    dayPast: 'Bu gün artıq keçib.',
+    updText: u => `Yenilənib: ${u || '—'}`,
+    logout: 'Çıxış'
+  }
+};
+
+let lang = (() => {
+  try {
+    const s = localStorage.getItem('tm-reg-lang');
+    if (s === 'ru' || s === 'az') return s;
+  } catch (e) {}
+  return (navigator.language || '').toLowerCase().startsWith('az') ? 'az' : 'ru';
+})();
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const T0 = iso(new Date());
+
+let D = null;
+let wh = [9, 18];
+let N = 9;
+let unlocked = null;
+let staffRecId = null;
+let localUpdates = {}; // taskId -> { st, chk: {id:bool}, note, ts }
+let filter = 'today';
+let ym = T0.slice(0, 7), sel = T0;
+let unsubs = [];
+let chatData = null;
+let chatOpen = false;
+let currentPhoneRaw = '';
+
+function toast(m) {
+  const old = $('#toast');
+  if (old) old.remove();
+  const t = document.createElement('div');
+  t.id = 'toast';
+  t.textContent = m;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+/*CRYPTO*/
+const norm = p => String(p).replace(/\D/g, '').slice(-9);
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const hex = u => [...u].map(x => x.toString(16).padStart(2, '0')).join('');
+async function unlockStaff(phone) {
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode('staff:' + norm(phone)), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: b64(D.salt), iterations: D.iter, hash: 'SHA-256' }, km, 384));
+  const recId = hex(bits.slice(0, 16));
+  const rec = (D.recs || []).find(r => r.id === recId);
+  if (!rec) return null;
+  const key = await crypto.subtle.importKey('raw', bits.slice(16), 'AES-GCM', false, ['decrypt']);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(rec.iv) }, key, b64(rec.ct));
+  const parsed = JSON.parse(new TextDecoder().decode(pt));
+  parsed._recId = recId;
+  return parsed;
+}
+/*END*/
+
+const SESSION_KEY = 'tm-staff-session';
+function saveSession(phone) { try { localStorage.setItem(SESSION_KEY, JSON.stringify({ phone })); } catch (e) {} }
+function loadSession() {
+  try {
+    const o = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    return o && typeof o.phone === 'string' && norm(o.phone).length >= 7 ? o : null;
+  } catch (e) { return null; }
+}
+function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} }
+
+function stopSubs() {
+  unsubs.forEach(fn => { try { fn(); } catch (e) {} });
+  unsubs = [];
+  chatData = null;
+  localUpdates = {};
+}
+
+function startSubs(recId) {
+  stopSubs();
+  staffRecId = recId;
+  // Live updates to pub/staff (so new delegated tasks appear live!)
+  unsubs.push(onSnapshot(doc(db, 'pub', 'staff'), async snap => {
+    if (!snap.exists() || !currentPhoneRaw) return;
+    D = snap.data();
+    wh = Array.isArray(D.wh) && D.wh.length === 2 ? D.wh : [9, 18];
+    N = wh[1] - wh[0];
+    try {
+      const fresh = await unlockStaff(currentPhoneRaw);
+      if (fresh) { unlocked = fresh; renderAll(); }
+    } catch (e) {}
+  }, () => {}));
+
+  // Employee's own progress updates document
+  unsubs.push(onSnapshot(doc(db, 'staff_updates', recId), snap => {
+    localUpdates = (snap.exists() && snap.data().updates) ? snap.data().updates : {};
+    renderAll();
+  }, () => {}));
+
+  // Direct 1-on-1 chat with manager ONLY
+  unsubs.push(onSnapshot(doc(db, 'chats', recId), snap => {
+    chatData = snap.exists() ? snap.data() : null;
+    const badge = $('#chatBadge');
+    const u = (chatData && Number(chatData.unreadClient)) || 0;
+    if (badge) { badge.textContent = u; badge.hidden = u === 0; }
+    if (chatOpen) {
+      renderChatMessages();
+      if (u > 0) markStaffChatRead();
+    }
+  }, () => {}));
+}
+
+// Merge base task from pub/staff with any newer local employee update
+function effectiveTask(t) {
+  const u = localUpdates && localUpdates[t.id];
+  const baseTs = Number(t.ut) || 0;
+  const useUpd = u && Number(u.ts) > baseTs;
+  const st = useUpd && u.st ? u.st : (t.x || t.st === 'done' ? 'done' : (t.st === 'in_progress' ? 'in_progress' : 'todo'));
+  const chk = (Array.isArray(t.chk) ? t.chk : []).map(c => ({
+    id: c.id,
+    t: c.t,
+    x: useUpd && u.chk && typeof u.chk[c.id] === 'boolean' ? u.chk[c.id] : Boolean(c.x)
+  }));
+  const note = useUpd && typeof u.note === 'string' ? u.note : (t.sn || '');
+  return Object.assign({}, t, { st, x: st === 'done', chk, sn: note });
+}
+
+async function pushTaskUpdate(taskId, patch) {
+  if (!staffRecId || !unlocked) return;
+  const base = (unlocked.tasks || []).find(x => x.id === taskId);
+  if (!base) return;
+  const cur = effectiveTask(base);
+  const nextChk = {};
+  cur.chk.forEach(c => { nextChk[c.id] = c.x; });
+  if (patch.chk) Object.assign(nextChk, patch.chk);
+  const now = Date.now();
+  const nextRec = {
+    st: patch.st !== undefined ? patch.st : cur.st,
+    chk: nextChk,
+    note: patch.note !== undefined ? patch.note : cur.sn,
+    ts: now
+  };
+  const merged = Object.assign({}, localUpdates, { [taskId]: nextRec });
+  localUpdates = merged;
+  renderAll();
+  try {
+    await setDoc(doc(db, 'staff_updates', staffRecId), {
+      staffId: unlocked.staff.id || '',
+      staffName: unlocked.staff.name || '',
+      updates: merged,
+      lastTs: now
+    });
+    toast(I18N[lang].saved);
+  } catch (e) {
+    toast(I18N[lang].saveErr);
+  }
+}
+
+function applyLangStatic() {
+  const L = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = L.pageTitle + ' — Techmaster';
+  $('#htitle').textContent = L.pageTitle;
+  $('#btn-ru').classList.toggle('on', lang === 'ru');
+  $('#btn-az').classList.toggle('on', lang === 'az');
+  $('#lTitle').textContent = L.loginTitle;
+  $('#lHint').textContent = L.loginHint;
+  $('#lPhLbl').textContent = L.phoneLabel;
+  $('#loadTxt').textContent = L.loadingCab;
+  if (!$('#go').disabled) $('#go').textContent = L.enter;
+  $('#tasksTitle').textContent = L.tasksTitle;
+  $('#calTitle').textContent = L.calTitle;
+  $('#calLeg').innerHTML = `<span><i class="sw free"></i>${esc(L.legFree)}</span><span><i class="sw busy"></i>${esc(L.legBusy)}</span><span><i class="sw part"></i>${esc(L.legPart)}</span>`;
+  $('#logoutBtn').textContent = L.logout;
+}
+
+function fmtD(d) {
+  const L = I18N[lang];
+  if (!d) return L.dateTbd;
+  return new Date(d + 'T12:00:00').toLocaleDateString(L.locale, { weekday: 'short', day: 'numeric', month: 'long' });
+}
+const cmp = (a, b) => ((a.d || '9999') + (a.tm || '99:99')).localeCompare((b.d || '9999') + (b.tm || '99:99'));
+
+function computeMySchedule(effTasks) {
+  const busyMap = new Map(), fullSet = new Set();
+  for (const t of effTasks) {
+    if (t.x || !t.d) continue;
+    const tm = (t.tm || '').trim();
+    if (!tm) { fullSet.add(t.d); continue; }
+    const parts = tm.split(':'), h = Number(parts[0]), m = Number(parts[1] || 0);
+    if (!Number.isFinite(h)) { fullSet.add(t.d); continue; }
+    const s = h * 60 + m, e = s + 60;
+    for (let H = wh[0]; H < wh[1]; H++) {
+      if (H * 60 < e && (H + 1) * 60 > s) {
+        if (!busyMap.has(t.d)) busyMap.set(t.d, new Set());
+        busyMap.get(t.d).add(H);
+      }
+    }
+  }
+  const busy = {};
+  for (const [d, hs] of busyMap.entries()) busy[d] = [...hs].sort((a, b) => a - b);
+  return { busy, full: [...fullSet] };
+}
+
+let mySched = { busy: {}, full: [] };
+const hoursOf = d => mySched.full.includes(d) ? 'all' : (mySched.busy[d] || []);
+function dayState(d) {
+  if (d < T0) return 'past';
+  const b = hoursOf(d), n = b === 'all' ? N : b.length;
+  return n === 0 ? 'free' : n >= N ? 'busy' : 'part';
+}
+
+function renderAll() {
+  if (!unlocked) return;
+  const L = I18N[lang];
+  const st = unlocked.staff || {};
+  const effTasks = (unlocked.tasks || []).map(effectiveTask);
+  mySched = computeMySchedule(effTasks);
+  const unread = (chatData && Number(chatData.unreadClient)) || 0;
+
+  $('#staffTop').innerHTML = `<section class="panel">
+    <h2>${esc(L.profileTitle)}</h2>
+    <div>
+      <div class="info-row"><span class="info-k">${esc(L.kName)}</span><span class="info-v">${esc(st.name || '—')}</span></div>
+      ${st.role ? `<div class="info-row"><span class="info-k">${esc(L.kRole)}</span><span class="info-v">${esc(st.role)}</span></div>` : ''}
+      ${st.phone ? `<div class="info-row"><span class="info-k">${esc(L.kPhone)}</span><span class="info-v">${esc(st.phone)}</span></div>` : ''}
+    </div>
+    <div class="row">
+      <button type="button" class="btn p full" id="openChatBtn">${esc(L.chatBtn)}<span class="cbadge" id="chatBadge"${unread ? '' : ' hidden'}>${unread}</span></button>
+    </div>
+  </section>`;
+  $('#openChatBtn').onclick = openChat;
+
+  const pass = {
+    today: t => !t.x && t.d && t.d <= T0,
+    later: t => !t.x && (!t.d || t.d > T0),
+    all: t => !t.x,
+    done: t => t.x
+  };
+  const cnt = k => effTasks.filter(pass[k]).length;
+  let th = '<div class="chips">' + [['today', L.fToday], ['later', L.fLater], ['all', L.fAll], ['done', L.fDone]].map(([k, lb]) =>
+    `<button type="button" class="chip${filter === k ? ' on' : ''}" data-f="${k}">${esc(lb)}<b>${cnt(k)}</b></button>`).join('') + '</div>';
+
+  const list = effTasks.filter(pass[filter]).sort(cmp);
+  if (!list.length) {
+    th += `<div class="muted" style="text-align:center;padding:20px 6px">${esc(L.noTasks)}</div>`;
+  } else {
+    th += list.map(t => {
+      const cls = t.x ? ' dn' : (t.st === 'in_progress' ? ' act' : (t.hi ? ' hi' : ''));
+      const tags = (t.hi && !t.x ? `<span class="tag hi">${esc(L.urgent)}</span>` : '')
+        + (t.st === 'in_progress' ? `<span class="tag">${esc(L.stProg)}</span>` : '')
+        + (t.x ? `<span class="tag ok">${esc(L.stDone)}</span>` : '');
+      const meta = [fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w, t.e].filter(Boolean).join(' · ');
+      const addrHtml = t.addr ? `<div class="tm"><a href="https://maps.apple.com/?q=${encodeURIComponent(t.addr)}" target="_blank" rel="noopener">${esc(t.addr)}</a></div>` : '';
+      const chkHtml = t.chk.length ? `<div class="chk-list">${t.chk.map(c =>
+        `<label class="chk-item${c.x ? ' x' : ''}"><input type="checkbox" data-tid="${esc(t.id)}" data-cid="${esc(c.id)}" ${c.x ? 'checked' : ''}><span>${esc(c.t)}</span></label>`).join('')}</div>` : '';
+      const itsHtml = Array.isArray(t.it) && t.it.length ? `<div class="sub-its"><div class="muted">${esc(L.itemsLbl)}:</div>${t.it.map(x => `<div class="sub-it"><span>${esc(x.n)} × ${x.q}</span></div>`).join('')}</div>` : '';
+      const stBtns = t.x
+        ? `<button type="button" class="btn sm" data-st="todo" data-tid="${esc(t.id)}">${esc(L.btnReopen)}</button>`
+        : `<button type="button" class="btn sm${t.st === 'in_progress' ? '' : ' p'}" data-st="${t.st === 'in_progress' ? 'todo' : 'in_progress'}" data-tid="${esc(t.id)}">${esc(t.st === 'in_progress' ? L.btnStop : L.btnStart)}</button><button type="button" class="btn sm ok" data-st="done" data-tid="${esc(t.id)}">${esc(L.btnDone)}</button>`;
+      return `<div class="tcard${cls}">
+        <div class="tt">${esc(t.t)}${tags}</div>
+        ${t.cl ? `<div class="tm">${esc(t.cl)}</div>` : ''}
+        ${addrHtml}
+        ${meta ? `<div class="tm">${esc(meta)}</div>` : ''}
+        ${t.dtls ? `<div class="tdtls">${esc(t.dtls)}</div>` : ''}
+        ${chkHtml}
+        ${itsHtml}
+        <div class="snote-row">
+          <input type="text" maxlength="250" data-sninp="${esc(t.id)}" placeholder="${esc(L.notePh)}" value="${esc(t.sn || '')}">
+          <button type="button" class="btn sm" data-snsave="${esc(t.id)}">${esc(L.noteSave)}</button>
+        </div>
+        <div class="row">${stBtns}</div>
+      </div>`;
+    }).join('');
+  }
+  $('#tasksBox').innerHTML = th;
+
+  $('#tasksBox').querySelectorAll('[data-f]').forEach(b => b.onclick = () => { filter = b.dataset.f; renderAll(); });
+  $('#tasksBox').querySelectorAll('input[data-cid]').forEach(cb => cb.onchange = () => {
+    pushTaskUpdate(cb.dataset.tid, { chk: { [cb.dataset.cid]: cb.checked } });
+  });
+  $('#tasksBox').querySelectorAll('[data-st]').forEach(b => b.onclick = () => {
+    pushTaskUpdate(b.dataset.tid, { st: b.dataset.st });
+  });
+  $('#tasksBox').querySelectorAll('[data-snsave]').forEach(b => b.onclick = () => {
+    const inp = $('#tasksBox').querySelector(`[data-sninp="${b.dataset.snsave}"]`);
+    if (inp) pushTaskUpdate(b.dataset.snsave, { note: inp.value.trim() });
+  });
+
+  drawCal();
+  drawHours();
+  $('#upd').textContent = L.updText(D && D.upd);
+}
+
+function drawCal() {
+  const L = I18N[lang];
+  const [y, m] = ym.split('-').map(Number), b = T0.split('-').map(Number), k = (y * 12 + m) - (b[0] * 12 + b[1]);
+  const off = (new Date(y, m - 1, 1).getDay() + 6) % 7, n = new Date(y, m, 0).getDate();
+  let h = `<div class="ch"><button id="pm" ${k <= 0 ? 'disabled' : ''}>‹</button><span>${new Date(y, m - 1, 1).toLocaleDateString(L.locale, { month: 'long', year: 'numeric' })}</span><button id="nm" ${k >= 3 ? 'disabled' : ''}>›</button></div><div class="g">` + L.wds.map(x => `<span class="wd">${x}</span>`).join('');
+  for (let i = 0; i < off; i++) h += '<span></span>';
+  for (let d = 1; d <= n; d++) {
+    const s = y + '-' + pad(m) + '-' + pad(d), st = dayState(s);
+    h += `<button type="button" class="d ${st === 'past' ? 'past' : st}${s === sel ? ' sel' : ''}" data-d="${s}">${d}</button>`;
+  }
+  $('#cal').innerHTML = h + '</div>';
+  $('#pm').onclick = () => { ym = iso(new Date(y, m - 2, 1)).slice(0, 7); drawCal(); };
+  $('#nm').onclick = () => { ym = iso(new Date(y, m, 1)).slice(0, 7); drawCal(); };
+  $('#cal').querySelectorAll('.d').forEach(e => e.onclick = () => { sel = e.dataset.d; drawCal(); drawHours(); });
+}
+
+function drawHours() {
+  const L = I18N[lang];
+  let h = `<h3 class="dayh">${esc(fmtD(sel))}</h3>`;
+  if (sel < T0) h += `<p class="muted">${esc(L.dayPast)}</p>`;
+  else {
+    const b = hoursOf(sel);
+    h += '<div class="hs">';
+    for (let x = wh[0]; x < wh[1]; x++) h += `<div class="h ${b === 'all' || b.includes(x) ? 'busy' : 'free'}">${pad(x)}:00</div>`;
+    h += '</div>';
+  }
+  $('#hrs').innerHTML = h;
+}
+
+// --- Direct chat with manager ONLY ---
+async function markStaffChatRead() {
+  if (!staffRecId || !chatData || !chatData.unreadClient) return;
+  try { await updateDoc(doc(db, 'chats', staffRecId), { unreadClient: 0 }); } catch (e) {}
+}
+function renderChatMessages() {
+  const log = $('#chatLog');
+  if (!log) return;
+  const L = I18N[lang];
+  const msgs = (chatData && Array.isArray(chatData.messages)) ? chatData.messages : [];
+  if (!msgs.length) {
+    log.innerHTML = `<div class="muted" style="text-align:center;margin:auto;max-width:300px">${esc(L.chatEmpty)}</div>`;
+    return;
+  }
+  let html = '', lastDay = '';
+  for (const m of msgs) {
+    const dStr = m.ts ? new Date(m.ts).toLocaleDateString(L.locale, { day: 'numeric', month: 'long' }) : '';
+    const tStr = m.ts ? new Date(m.ts).toLocaleTimeString(L.locale, { hour: '2-digit', minute: '2-digit' }) : '';
+    if (dStr && dStr !== lastDay) { lastDay = dStr; html += `<div class="chat-day">${esc(dStr)}</div>`; }
+    const isMe = m.from === 'client';
+    html += `<div class="mbub ${isMe ? 'me' : 'them'}">${!isMe ? `<div class="mw">${esc(L.chatMaster)}</div>` : ''}${esc(m.text)}<div class="mt">${esc(tStr)}</div></div>`;
+  }
+  log.innerHTML = html;
+  log.scrollTop = log.scrollHeight;
+}
+function openChat() {
+  if (!staffRecId || !unlocked) return;
+  const L = I18N[lang];
+  chatOpen = true;
+  const ov = document.createElement('div');
+  ov.className = 'ov';
+  ov.innerHTML = `<div class="chat-sheet">
+    <div class="chat-hd"><h3>${esc(L.chatTitle)}</h3><button type="button" class="btn" id="chatClose" aria-label="Закрыть">×</button></div>
+    <div class="chat-log" id="chatLog"></div>
+    <form class="chat-bar" id="chatForm">
+      <textarea id="chatInp" rows="1" maxlength="1000" placeholder="${esc(L.chatPh)}"></textarea>
+      <button type="submit" class="btn p" id="chatSendBtn">${esc(L.chatSend)}</button>
+    </form>
+  </div>`;
+  document.body.appendChild(ov);
+  renderChatMessages();
+  markStaffChatRead();
+  const close = () => { chatOpen = false; ov.remove(); };
+  ov.querySelector('#chatClose').onclick = close;
+  ov.onclick = e => { if (e.target === ov) close(); };
+  const inp = ov.querySelector('#chatInp'), sendBtn = ov.querySelector('#chatSendBtn');
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ov.querySelector('#chatForm').requestSubmit(); } });
+  ov.querySelector('#chatForm').onsubmit = async e => {
+    e.preventDefault();
+    const text = inp.value.trim();
+    if (!text || sendBtn.disabled) return;
+    sendBtn.disabled = true;
+    const now = Date.now();
+    const msg = { id: Math.random().toString(36).slice(2, 10) + now.toString(36).slice(-4), from: 'client', text, ts: now };
+    const st = unlocked.staff || {};
+    const ref = doc(db, 'chats', staffRecId);
+    try {
+      if (chatData) {
+        await updateDoc(ref, {
+          clientName: st.name || 'Сотрудник',
+          phone: st.phone || currentPhoneRaw,
+          kind: 'staff',
+          messages: arrayUnion(msg),
+          lastTs: now,
+          lastFrom: 'client',
+          lastText: text.slice(0, 140),
+          unreadAdmin: increment(1),
+          unreadClient: 0
+        });
+      } else {
+        await setDoc(ref, {
+          clientName: st.name || 'Сотрудник',
+          phone: st.phone || currentPhoneRaw,
+          kind: 'staff',
+          messages: [msg],
+          lastTs: now,
+          lastFrom: 'client',
+          lastText: text.slice(0, 140),
+          unreadAdmin: 1,
+          unreadClient: 0
+        });
+      }
+      inp.value = '';
+    } catch (ex) {
+      alert(I18N[lang].chatErr);
+    } finally {
+      sendBtn.disabled = false;
+      inp.focus();
+    }
+  };
+  inp.focus();
+}
+
+async function fetchStaffPortal() {
+  const snap = await getDoc(doc(db, 'pub', 'staff'));
+  if (!snap.exists()) return null;
+  D = snap.data();
+  wh = Array.isArray(D.wh) && D.wh.length === 2 ? D.wh : [9, 18];
+  N = wh[1] - wh[0];
+  return D;
+}
+
+async function login() {
+  const L = I18N[lang];
+  const err = m => { $('#err').textContent = m; }, btn = $('#go');
+  const rawPhone = $('#ph').value.trim();
+  if (norm(rawPhone).length < 7) { err(L.errShort); return; }
+  if (!(window.crypto && crypto.subtle)) { err(L.errCrypto); return; }
+  err('');
+  btn.disabled = true;
+  btn.textContent = L.checking;
+  try {
+    const portal = await fetchStaffPortal();
+    if (!portal) { err(L.errNoData); return; }
+    const data = await unlockStaff(rawPhone);
+    if (!data) { err(L.errNotFound); return; }
+    currentPhoneRaw = rawPhone;
+    unlocked = data;
+    saveSession(rawPhone);
+    startSubs(data._recId);
+    $('#login').hidden = true;
+    $('#view').hidden = false;
+    renderAll();
+    window.scrollTo(0, 0);
+  } catch (e) {
+    err(L.errNet);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = I18N[lang].enter;
+  }
+}
+
+async function restoreSession() {
+  const saved = loadSession();
+  if (!saved || !(window.crypto && crypto.subtle)) return;
+  $('#ph').value = saved.phone;
+  $('#login').hidden = true;
+  $('#loading').hidden = false;
+  try {
+    const portal = await fetchStaffPortal();
+    if (!portal) { $('#loading').hidden = true; $('#login').hidden = false; $('#err').textContent = I18N[lang].errNoData; return; }
+    const data = await unlockStaff(saved.phone);
+    if (!data) { clearSession(); $('#loading').hidden = true; $('#login').hidden = false; return; }
+    currentPhoneRaw = saved.phone;
+    unlocked = data;
+    startSubs(data._recId);
+    $('#loading').hidden = true;
+    $('#view').hidden = false;
+    renderAll();
+  } catch (e) {
+    $('#loading').hidden = true;
+    $('#login').hidden = false;
+    $('#err').textContent = I18N[lang].errNet;
+  }
+}
+
+$('#go').onclick = login;
+$('#ph').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('#logoutBtn').onclick = () => {
+  clearSession();
+  stopSubs();
+  unlocked = null;
+  currentPhoneRaw = '';
+  $('#ph').value = '';
+  $('#view').hidden = true;
+  $('#login').hidden = false;
+  $('#err').textContent = '';
+  $('#ph').focus();
+};
+
+document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
+  applyLangStatic();
+  if (unlocked) renderAll();
+});
+
+applyLangStatic();
+restoreSession();
+</script>
+</body>
+</html>

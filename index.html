@@ -84,9 +84,11 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .btn:disabled{opacity:.6;cursor:default}
 .empty{color:var(--muted);text-align:center;padding:40px 10px}
 .bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:6px 6px 6px 12px;font-size:14px;margin:8px 0}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-nav button{flex:1;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:13px 2px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
-@media (max-width:440px){nav button{font-size:11.5px;padding:13px 1px}}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;overflow-x:auto;scrollbar-width:none;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+nav::-webkit-scrollbar{display:none}
+nav button{position:relative;flex:1 0 auto;min-width:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0;border-top:2px solid transparent;margin-top:-1px;background:none;color:var(--muted);padding:8px 4px 7px;font:inherit;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap}
+nav button svg{width:18px;height:18px;display:block;flex:none}
+nav button .nbadge{position:absolute;top:4px;right:6px;margin-left:0;min-width:16px;height:16px;line-height:16px;padding:0 4px;font-size:10px}
 nav button.on{color:var(--text);border-top-color:var(--accent);font-weight:600}
 .chat-sheet{background:var(--card);width:100%;max-width:640px;height:86dvh;max-height:760px;border-radius:4px 4px 0 0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
 .chat-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex:none}
@@ -142,7 +144,14 @@ textarea{min-height:90px;resize:vertical}
 </header>
 <div id="note" hidden></div>
 <main id="app"><div class="empty">Загрузка…</div></main>
-<nav id="nav" hidden><button data-act="tab" data-v="tasks">Задачи</button><button data-act="tab" data-v="clients">Клиенты</button><button data-act="tab" data-v="messages">Сообщения<span id="msgb" class="nbadge" hidden></span></button><button data-act="tab" data-v="requests">Заявки<span id="reqb" class="nbadge" hidden></span></button><button data-act="tab" data-v="shop">Магазин<span id="ordb" class="nbadge" hidden></span></button></nav>
+<nav id="nav" hidden>
+  <button data-act="tab" data-v="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Задачи</span></button>
+  <button data-act="tab" data-v="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Клиенты</span></button>
+  <button data-act="tab" data-v="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Исполнители</span></button>
+  <button data-act="tab" data-v="messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Сообщения</span><span id="msgb" class="nbadge" hidden></span></button>
+  <button data-act="tab" data-v="requests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Заявки</span><span id="reqb" class="nbadge" hidden></span></button>
+  <button data-act="tab" data-v="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg><span>Магазин</span><span id="ordb" class="nbadge" hidden></span></button>
+</nav>
 <input type="file" id="impfile" accept=".json,application/json" hidden>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -181,9 +190,13 @@ const today = () => iso(new Date());
 const addDays = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return iso(d); };
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
-let clients = [], tasks = [], requests = [], products = [], orders = [], chats = [];
-let reqErr = false, prodErr = false, ordErr = false, chatErr = false, view = 'tasks', filter = 'today', shopTab = 'orders', clientFilter = '';
-let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null, openChatId = null, openChatMeta = null;
+let clients = [], tasks = [], requests = [], products = [], orders = [], chats = [], staff = [];
+let reqErr = false, prodErr = false, ordErr = false, chatErr = false, staffErr = false;
+let view = 'tasks', filter = 'today', shopTab = 'orders', msgFilter = 'all', clientFilter = '', staffFilter = '';
+let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null, staffTimer = null, openChatId = null, openChatMeta = null;
+const staffKeyCache = new Map();
+let staffSalt = null, staffRunning = false, staffDirty = false, staffChecked = false;
+const sname = id => { const s = staff.find(x => x.id === id); return s ? s.name : ''; };
 const opened = new Set();
 
 const SHOP_CATS = { security: 'Видеонаблюдение', network: 'Сеть и Wi-Fi', access: 'Домофония и СКУД', smarthome: 'Умный дом', av: 'Аудио-видео', cable: 'Кабель и расходники', other: 'Другое' };
@@ -508,10 +521,144 @@ async function checkInitialPortal() {
   } catch (e) {}
 }
 
+// --- Staff portal (pub/staff) encrypted sync & employee progress ingestion ---
+async function ensureStaffSalt() {
+  if (staffSalt) return staffSalt;
+  try {
+    const snap = await getDoc(doc(db, 'pub', 'staff'));
+    if (snap.exists() && typeof snap.data().salt === 'string' && fromB64(snap.data().salt).length === 16) {
+      staffSalt = snap.data().salt;
+      return staffSalt;
+    }
+  } catch (e) {}
+  staffSalt = toB64(crypto.getRandomValues(new Uint8Array(16)));
+  return staffSalt;
+}
+
+async function deriveForStaffPhone(phone9, saltB64) {
+  const ck = saltB64 + ':staff:' + phone9;
+  if (staffKeyCache.has(ck)) return staffKeyCache.get(ck);
+  const km = await crypto.subtle.importKey('raw', new TextEncoder().encode('staff:' + phone9), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({
+    name: 'PBKDF2',
+    salt: fromB64(saltB64),
+    iterations: PORTAL_ITER,
+    hash: 'SHA-256'
+  }, km, 384));
+  const id = toHex(bits.slice(0, 16));
+  const key = await crypto.subtle.importKey('raw', bits.slice(16), 'AES-GCM', false, ['encrypt']);
+  const entry = { id, key };
+  staffKeyCache.set(ck, entry);
+  return entry;
+}
+
+function scheduleStaffPortal(delayMs = 2500) {
+  if (!user) return;
+  staffDirty = true;
+  if (staffTimer) clearTimeout(staffTimer);
+  staffTimer = setTimeout(() => { staffTimer = null; rebuildStaffPortal(false); }, delayMs);
+}
+
+async function rebuildStaffPortal(notify = false) {
+  if (!user || ready < 2) return;
+  if (!(window.crypto && crypto.subtle) || !navigator.onLine) { staffDirty = true; return; }
+  if (staffRunning) { staffDirty = true; return; }
+  staffRunning = true;
+  staffDirty = false;
+  try {
+    const saltB64 = await ensureStaffSalt();
+    const enc = new TextEncoder();
+    const recs = [];
+    for (const s of staff) {
+      if (s.active === false) continue;
+      const n = normPhone(s.phone);
+      if (n.length < 7) continue;
+      // Delegated tasks for this staff member (NO client phone number!)
+      const myTasks = tasks
+        .filter(t => t.assigneeId === s.id)
+        .map(t => {
+          const cl = clients.find(c => c.id === t.clientId);
+          return {
+            id: t.id,
+            t: t.title || '',
+            cl: cl ? (cl.name || '') : '',
+            addr: cl ? (cl.address || '') : '',
+            w: t.work || '',
+            e: t.equip || '',
+            d: t.date || '',
+            tm: t.time || '',
+            dtls: t.details || '',
+            hi: Boolean(t.high),
+            x: Boolean(t.done),
+            st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
+            chk: Array.isArray(t.checklist) ? t.checklist.map(c => ({ id: c.id, t: c.text || '', x: Boolean(c.done) })) : [],
+            sn: t.staffNote || '',
+            ut: Number(t.staffSyncTs) || 0,
+            it: Array.isArray(t.items) ? t.items.map(x => ({ n: x.name || '', q: Number(x.qty) || 1 })) : []
+          };
+        });
+      const { id, key } = await deriveForStaffPhone(n, saltB64);
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const payloadObj = {
+        staff: { id: s.id, name: s.name || '', role: s.role || '', phone: s.phone || '' },
+        tasks: myTasks
+      };
+      const ctBuf = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(payloadObj)));
+      recs.push({ id, iv: toB64(iv), ct: toB64(new Uint8Array(ctBuf)) });
+    }
+    const upd = new Date().toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    await setDoc(doc(db, 'pub', 'staff'), { salt: saltB64, iter: PORTAL_ITER, wh: [...PORTAL_WH], recs, upd });
+    if (notify) toast('Кабинет исполнителей обновлён');
+  } catch (e) {
+    staffDirty = true;
+    if (notify) toast('Не удалось обновить кабинет исполнителей');
+  } finally {
+    staffRunning = false;
+    if (staffDirty && navigator.onLine) scheduleStaffPortal(1500);
+  }
+}
+
+async function applyStaffUpdates(docs) {
+  if (!user || ready < 2) return;
+  let changed = false;
+  for (const d of docs) {
+    const upds = d.updates || {};
+    for (const [tid, u] of Object.entries(upds)) {
+      if (!u || !u.ts) continue;
+      const t = tasks.find(x => x.id === tid);
+      if (!t || (d.staffId && t.assigneeId !== d.staffId)) continue;
+      if (Number(u.ts) <= (Number(t.staffSyncTs) || 0)) continue;
+      const nextSt = u.st === 'done' ? 'done' : (u.st === 'in_progress' ? 'in_progress' : 'todo');
+      const nextChk = Array.isArray(t.checklist) ? t.checklist.map(c => ({
+        id: c.id,
+        text: c.text,
+        done: u.chk && typeof u.chk[c.id] === 'boolean' ? u.chk[c.id] : Boolean(c.done)
+      })) : [];
+      const nextDoc = Object.assign({}, t, {
+        status: nextSt,
+        done: nextSt === 'done',
+        checklist: nextChk,
+        staffNote: typeof u.note === 'string' ? u.note : (t.staffNote || ''),
+        staffSyncTs: Number(u.ts)
+      });
+      delete nextDoc.id;
+      try {
+        await setDoc(doc(db, 'tasks', tid), nextDoc);
+        changed = true;
+      } catch (e) {}
+    }
+  }
+  if (changed) {
+    schedulePortal(2000);
+    scheduleStaffPortal(2000);
+  }
+}
+
 window.addEventListener('online', () => {
   if (user) {
     note('');
     if (portalDirty) schedulePortal(1000);
+    if (staffDirty) scheduleStaffPortal(1200);
   }
 });
 window.addEventListener('offline', () => {
@@ -523,6 +670,7 @@ async function save(col, id, data) {
   if (!user) return;
   portalDirty = true;
   schedulePortal(3000);
+  if (col === 'tasks' || col === 'clients') scheduleStaffPortal(2500);
   try {
     await setDoc(doc(db, col, id), data);
   } catch (e) {
@@ -533,6 +681,7 @@ async function del(col, id) {
   if (!user) return;
   portalDirty = true;
   schedulePortal(3000);
+  if (col === 'tasks' || col === 'clients') scheduleStaffPortal(2500);
   try {
     await deleteDoc(doc(db, col, id));
   } catch (e) {
@@ -547,7 +696,8 @@ function exportJson() {
     note: 'Личные данные. НЕ загружать в публичный репозиторий.',
     clients,
     tasks,
-    products
+    products,
+    staff
   };
   const blob = new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json;charset=utf-8' });
   const a = document.createElement('a');
@@ -571,7 +721,8 @@ async function importJsonFile(file) {
   const impClients = Array.isArray(data.clients) ? data.clients : [];
   const impTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const impProds = Array.isArray(data.products) ? data.products : [];
-  if (!impClients.length && !impTasks.length && !impProds.length) {
+  const impStaff = Array.isArray(data.staff) ? data.staff : [];
+  if (!impClients.length && !impTasks.length && !impProds.length && !impStaff.length) {
     toast('В файле нет данных для импорта');
     return;
   }
@@ -609,6 +760,10 @@ async function importJsonFile(file) {
       status: st,
       pub: t.pub !== false,
       pubNote: String(t.pubNote || '').trim(),
+      assigneeId: String(t.assigneeId || ''),
+      checklist: Array.isArray(t.checklist) ? t.checklist.map(c => ({ id: String(c.id || uid()), text: String(c.text || '').trim(), done: Boolean(c.done) })).filter(c => c.text) : [],
+      staffNote: String(t.staffNote || '').trim(),
+      staffSyncTs: Number(t.staffSyncTs) || 0,
       items: Array.isArray(t.items) ? t.items.map(x => ({
         name: String(x.name || '').trim(),
         qty: Math.max(1, Number(x.qty) || 1),
@@ -639,6 +794,21 @@ async function importJsonFile(file) {
       }
     });
   }
+  for (const s of impStaff) {
+    const id = String(s.id || uid());
+    ops.push({
+      col: 'staff',
+      id,
+      doc: {
+        name: String(s.name || '').trim(),
+        phone: String(s.phone || '').trim(),
+        role: String(s.role || '').trim(),
+        note: String(s.note || '').trim(),
+        active: s.active !== false,
+        created: Number(s.created) || Date.now()
+      }
+    });
+  }
   try {
     for (let i = 0; i < ops.length; i += 400) {
       const batch = writeBatch(db);
@@ -651,9 +821,11 @@ async function importJsonFile(file) {
     if (impClients.length) parts.push(`${impClients.length} кл.`);
     if (impTasks.length) parts.push(`${impTasks.length} зад.`);
     if (impProds.length) parts.push(`${impProds.length} тов.`);
+    if (impStaff.length) parts.push(`${impStaff.length} исп.`);
     toast('Импортировано: ' + parts.join(', '));
     if (impClients.length || impTasks.length) schedulePortal(500);
     if (impProds.length) scheduleCatalog(500);
+    if (impStaff.length || impTasks.length) scheduleStaffPortal(600);
   } catch (e) {
     toast('Ошибка импорта: проверьте доступ к базе');
   }
@@ -736,11 +908,13 @@ function tasksHtml() {
     all: t => !t.done,
     done: t => t.done
   };
-  const cnt = k => tasks.filter(t => (!clientFilter || t.clientId === clientFilter) && pass[k](t)).length;
+  const matchF = t => (!clientFilter || t.clientId === clientFilter) && (!staffFilter || t.assigneeId === staffFilter);
+  const cnt = k => tasks.filter(t => matchF(t) && pass[k](t)).length;
   let h = '<div class="chips">' + [['today', 'Сегодня'], ['later', 'Позже'], ['all', 'Все'], ['done', 'Готово']].map(([k, l]) =>
     `<button class="chip ${filter === k ? 'on' : ''}" data-act="filter" data-f="${k}">${l}<b>${cnt(k)}</b></button>`).join('') + '</div>';
   if (clientFilter) h += `<div class="bar"><span>Клиент: <b>${esc(cname(clientFilter))}</b></span><button class="btn" data-act="clearc">Сбросить</button></div>`;
-  const list = tasks.filter(t => (!clientFilter || t.clientId === clientFilter) && pass[filter](t))
+  if (staffFilter) h += `<div class="bar"><span>Исполнитель: <b>${esc(sname(staffFilter) || '—')}</b></span><button class="btn" data-act="clears">Сбросить</button></div>`;
+  const list = tasks.filter(t => matchF(t) && pass[filter](t))
     .sort((a, b) => ((a.date || '9999') + (a.time || '99:99')).localeCompare((b.date || '9999') + (b.time || '99:99')));
   if (!list.length) return h + `<div class="empty">${tasks.length || clients.length ? 'Здесь пока пусто.' : 'Начните с вкладки «Клиенты» или импортируйте данные в меню (⋯).'}</div>`;
   const gs = [];
@@ -758,14 +932,21 @@ function cardHtml(t) {
   const inProg = !t.done && t.status === 'in_progress';
   const hiddenPub = t.pub === false;
   const items = Array.isArray(t.items) ? t.items : [];
+  const chk = Array.isArray(t.checklist) ? t.checklist : [];
+  const asgName = t.assigneeId ? sname(t.assigneeId) : '';
   const wt = [t.work, t.equip].filter(Boolean).map(esc).join(', ');
-  const itemSummary = items.length ? `Товары: ${items.length} (получено ${items.filter(x => x.status === 'received').length})` : '';
+  const itemSummary = [
+    asgName ? 'Исполнитель: ' + asgName : '',
+    chk.length ? `Пункты: ${chk.filter(x => x.done).length}/${chk.length}` : '',
+    items.length ? `Товары: ${items.length} (получено ${items.filter(x => x.status === 'received').length})` : ''
+  ].filter(Boolean).join(' · ');
   const tm = late ? esc(shortDate(t.date)) + '<small>' + esc(t.time || '') + '</small>' : (t.time ? esc(t.time) : '—');
   let more = '';
   if (o) {
     const links = [];
     if (c && c.phone) links.push(`<a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a>`);
     if (c && c.address) links.push(`<a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a>`);
+    const chkHtml = chk.length ? `<div class="it-list">${chk.map(x => `<div class="it-row"><label style="display:flex;align-items:center;gap:8px;margin:0;color:var(--text);cursor:pointer"><input type="checkbox" style="width:auto" data-act="togchk" data-id="${t.id}" data-cid="${esc(x.id)}" ${x.done ? 'checked' : ''}><span style="${x.done ? 'text-decoration:line-through;color:var(--muted)' : ''}">${esc(x.text)}</span></label></div>`).join('')}</div>` : '';
     const itemsHtml = items.length ? `<div class="it-list">${items.map(x => {
       const stLbl = ITEM_ST[x.status] || ITEM_ST.pending;
       const stCls = ITEM_CLS[x.status] || 'info';
@@ -773,7 +954,7 @@ function cardHtml(t) {
       const eta = x.eta ? ' · получение ' + shortDate(x.eta) : '';
       return `<div class="it-row"><div><b>${esc(x.name)}</b> × ${Number(x.qty) || 1}${esc(pr)}${esc(eta)}</div><span class="tag ${stCls}" style="margin-left:0;flex:none">${esc(stLbl)}</span></div>`;
     }).join('')}</div>` : '';
-    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}${itemsHtml}<div class="links">${links.join('')}</div>
+    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.staffNote ? `<p><b>Отчёт исполнителя:</b> ${esc(t.staffNote)}</p>` : ''}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}${chkHtml}${itemsHtml}<div class="links">${links.join('')}</div>
     <div class="row">${!t.done ? `<button class="btn${inProg ? '' : ' p'}" data-act="inprog" data-id="${t.id}">${inProg ? 'Снять «В работе»' : 'В работу'}</button>` : ''}<button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
   }
   const tags = (t.high ? '<span class="tag">Срочно</span>' : '')
@@ -883,21 +1064,59 @@ function shopHtml() {
   }).join('');
 }
 
+function staffHtml() {
+  if (staffErr) return '<div class="empty">Нет доступа к разделу исполнителей. Обновите правила Firestore (разделы <code>staff</code> и <code>staff_updates</code>) и обновите страницу.</div>';
+  const topBar = `<div class="bar"><span>Исполнителей: <b>${staff.length}</b></span><div style="display:flex;gap:6px"><button class="btn" data-act="copystaff">Ссылка для входа</button><button class="btn" data-act="syncstaff">Опубликовать</button></div></div>`;
+  if (!staff.length) {
+    return topBar + `<div class="empty">Исполнителей пока нет. Нажмите «Новый исполнитель», чтобы добавить ассистента и делегировать ему задачи.</div>`;
+  }
+  return topBar + [...staff].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(s => {
+    const openCnt = tasks.filter(t => t.assigneeId === s.id && !t.done).length;
+    const statusTag = s.active === false ? '<span class="tag info">Отключён</span>' : '';
+    return `<div class="cl"><div class="main">
+      <div class="ttl">${esc(s.name)}${statusTag}</div>
+      <div class="meta">${esc([s.role, 'Открытых задач: ' + openCnt].filter(Boolean).join(' · '))}</div>
+      ${s.phone ? `<div class="links meta"><a href="tel:${esc(tel(s.phone))}">${esc(s.phone)}</a></div>` : '<div class="meta" style="color:var(--warn)">Укажите номер телефона для входа</div>'}
+      ${s.note ? `<div class="meta" style="white-space:pre-wrap">${esc(s.note)}</div>` : ''}
+      <div class="row">
+        <button class="btn p" data-act="stasks" data-id="${s.id}">Задачи</button>
+        ${normPhone(s.phone).length >= 7 ? `<button class="btn" data-act="schat" data-id="${s.id}">Чат</button>` : ''}
+        <button class="btn" data-act="editstaff" data-id="${s.id}">Изменить</button>
+        <button class="btn d" data-act="delstaff" data-id="${s.id}">Удалить</button>
+      </div>
+    </div></div>`;
+  }).join('');
+}
+
 function messagesHtml() {
   if (chatErr) return '<div class="empty">Нет доступа к сообщениям. Обновите правила Firestore (раздел <code>chats</code>) и обновите страницу.</div>';
-  if (!chats.length) return '<div class="empty">Сообщений пока нет. Нажмите «Написать», чтобы начать чат с клиентом.</div>';
-  const list = [...chats].sort((a, b) => (Number(b.lastTs) || 0) - (Number(a.lastTs) || 0));
-  return list.map(ch => {
+  const isStaffChat = ch => ch.kind === 'staff';
+  const cAll = chats.length;
+  const cCli = chats.filter(ch => !isStaffChat(ch)).length;
+  const cStf = chats.filter(isStaffChat).length;
+  let h = `<div class="chips">
+    <button class="chip ${msgFilter === 'all' ? 'on' : ''}" data-act="msgf" data-mf="all">Все<b>${cAll}</b></button>
+    <button class="chip ${msgFilter === 'client' ? 'on' : ''}" data-act="msgf" data-mf="client">Клиенты<b>${cCli}</b></button>
+    <button class="chip ${msgFilter === 'staff' ? 'on' : ''}" data-act="msgf" data-mf="staff">Исполнители<b>${cStf}</b></button>
+  </div>`;
+  const filtered = chats.filter(ch => msgFilter === 'all' ? true : (msgFilter === 'staff' ? isStaffChat(ch) : !isStaffChat(ch)));
+  if (!filtered.length) return h + '<div class="empty">Сообщений пока нет. Нажмите «Написать», чтобы начать чат с клиентом или исполнителем.</div>';
+  const list = [...filtered].sort((a, b) => (Number(b.lastTs) || 0) - (Number(a.lastTs) || 0));
+  return h + list.map(ch => {
     const p9 = normPhone(ch.phone);
-    const cl = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
-    const title = (cl && cl.name) || ch.clientName || 'Клиент';
+    const stf = isStaffChat(ch);
+    const person = p9.length >= 7
+      ? (stf ? staff.find(s => normPhone(s.phone) === p9) : clients.find(c => normPhone(c.phone) === p9))
+      : null;
+    const title = (person && person.name) || ch.clientName || (stf ? 'Исполнитель' : 'Клиент');
     const dt = ch.lastTs ? new Date(ch.lastTs).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
     const u = Number(ch.unreadAdmin) || 0;
+    const roleTag = stf ? '<span class="tag prog">Исполнитель</span>' : '<span class="tag info">Клиент</span>';
     const badge = u > 0 ? `<span class="tag">${u} нов.</span>` : '';
     const pref = ch.lastFrom === 'admin' ? 'Вы: ' : '';
     return `<div class="cl"><div class="main">
       <div class="head" data-act="openchat" data-id="${ch.id}">
-        <div class="ttl">${esc(title)}${badge}</div>
+        <div class="ttl">${esc(title)}${roleTag}${badge}</div>
         <div class="meta">${esc([ch.phone, dt].filter(Boolean).join(' · '))}</div>
         ${ch.lastText ? `<div class="mprev">${esc(pref + ch.lastText)}</div>` : ''}
       </div>
@@ -934,9 +1153,9 @@ function render() {
   const unreadMsgs = chats.reduce((acc, c) => acc + (Number(c.unreadAdmin) || 0), 0);
   const mb = $('#msgb');
   if (mb) { mb.textContent = unreadMsgs; mb.hidden = unreadMsgs === 0; }
-  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
-  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'staff' ? 'Исполнители' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'staff' ? 'Новый исполнитель' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'staff' ? staffHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
 }
 
 // --- Modals ---
@@ -982,6 +1201,14 @@ function openMenu() {
       </div>
     </div>
     <div class="sec">
+      <div class="sec-t">Кабинет исполнителей</div>
+      <div class="meta">Отправьте ссылку сотруднику для входа по номеру телефона.</div>
+      <div class="row">
+        <button class="btn" type="button" data-copy-staff>Скопировать ссылку</button>
+        <button class="btn" type="button" data-sync-staff>Обновить сейчас</button>
+      </div>
+    </div>
+    <div class="sec">
       <div class="sec-t">Магазин оборудования</div>
       <div class="meta">Отправьте ссылку клиенту для выбора и заказа товаров.</div>
       <div class="row">
@@ -1019,6 +1246,8 @@ function openMenu() {
   ov.onclick = e => { if (e.target === ov) ov.remove(); };
   ov.querySelector('[data-x]').onclick = () => ov.remove();
   ov.querySelector('[data-copy-reg]').onclick = () => copyUrl('register.html', 'Ссылка на анкету');
+  ov.querySelector('[data-copy-staff]').onclick = () => copyUrl('staff.html', 'Ссылка для исполнителей');
+  ov.querySelector('[data-sync-staff]').onclick = () => rebuildStaffPortal(true);
   ov.querySelector('[data-copy-shop]').onclick = () => copyUrl('shop.html', 'Ссылка на магазин');
   ov.querySelector('[data-sync-cat]').onclick = () => syncCatalog(true);
   ov.querySelector('[data-copy]').onclick = () => copyUrl('client.html', 'Ссылка для клиента');
@@ -1078,9 +1307,11 @@ function pick(name, label, list, v) {
 
 function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
-  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '', items: [] }, prefill || {});
+  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, assigneeId: staffFilter || '', title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '', items: [], checklist: [], staffNote: '' }, prefill || {});
   const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
   const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  const staffOpts = [...staff].filter(s => s.active !== false || s.id === t.assigneeId).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'))
+    .map(s => `<option value="${s.id}" ${s.id === t.assigneeId ? 'selected' : ''}>${esc(s.name)}${s.role ? ' (' + esc(s.role) + ')' : ''}</option>`).join('');
   const prodOpts = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(p => `<option value="${p.id}">${esc(p.name)}${p.price > 0 ? ' (' + fmtAzn(p.price) + ')' : ''}</option>`).join('');
   let draftItems = (Array.isArray(t.items) ? t.items : []).map(x => ({
     name: x.name || '',
@@ -1089,8 +1320,10 @@ function openTask(id, clientId, prefill) {
     status: ITEM_ST[x.status] ? x.status : 'pending',
     eta: x.eta || ''
   }));
+  let draftChk = (Array.isArray(t.checklist) ? t.checklist : []).map(c => ({ id: c.id || uid(), text: c.text || '', done: Boolean(c.done) }));
 
   const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
+  <label>Исполнитель (делегирование)</label><select name="assigneeId"><option value="">Я сам (не делегировано)</option>${staffOpts}</select>
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
   <label>Статус выполнения</label><select name="status">
     <option value="todo"${curSt === 'todo' ? ' selected' : ''}>Запланировано</option>
@@ -1102,7 +1335,15 @@ function openTask(id, clientId, prefill) {
   <div class="qk"><button type="button" class="btn" data-d="today">Сегодня</button><button type="button" class="btn" data-d="tom">Завтра</button><button type="button" class="btn" data-d="">Без даты</button></div><div id="cal"></div>
   <label>Время</label><input type="time" name="time" value="${esc(t.time)}">
   <div class="qk">${['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '16:00', '18:00'].map(x => `<button type="button" class="btn" data-t="${x}">${x}</button>`).join('')}<button type="button" class="btn" data-t="">Без времени</button></div>
-  <label>Детали мастера (личные, клиенту не видны)</label><textarea name="details">${esc(t.details)}</textarea>
+  <label>Детали (видны исполнителю, клиенту не видны)</label><textarea name="details">${esc(t.details)}</textarea>
+  <div class="sec">
+    <div class="sec-t">Чек-лист пунктов (отмечает исполнитель)</div>
+    <div id="chkWrap"></div>
+    <div class="it-add">
+      <input type="text" id="chkNewInp" placeholder="Новый пункт (напр., Протянуть кабель)" style="flex:1;padding:8px;font-size:14px">
+      <button type="button" class="btn" id="chkAddBtn">+ Пункт</button>
+    </div>
+  </div>
   <div class="sec">
     <div class="sec-t">Товары и закупка (видны клиенту в кабинете)</div>
     <div id="itWrap"></div>
@@ -1122,8 +1363,10 @@ function openTask(id, clientId, prefill) {
     const cleanItems = draftItems
       .map(x => ({ name: String(x.name || '').trim(), qty: Math.max(1, Number(x.qty) || 1), price: Number(x.price) || 0, status: ITEM_ST[x.status] ? x.status : 'pending', eta: String(x.eta || '') }))
       .filter(x => x.name);
+    const cleanChk = draftChk.map(c => ({ id: c.id || uid(), text: String(c.text || '').trim(), done: Boolean(c.done) })).filter(c => c.text);
     return save('tasks', id || uid(), {
       clientId: f.clientId,
+      assigneeId: f.assigneeId || '',
       title: f.title.trim(),
       work: val(f, 'work'),
       equip: val(f, 'equip'),
@@ -1136,9 +1379,37 @@ function openTask(id, clientId, prefill) {
       pub: !!f.pub,
       pubNote: (f.pubNote || '').trim(),
       items: cleanItems,
+      checklist: cleanChk,
+      staffNote: t.staffNote || '',
+      staffSyncTs: Date.now(),
       created: t.created || Date.now()
     });
   }, id ? { confirm: 'Точно удалить?', run: () => del('tasks', id) } : null);
+
+  function drawChk() {
+    const wrap = ov.querySelector('#chkWrap');
+    if (!draftChk.length) { wrap.innerHTML = '<div class="meta">Пункты не добавлены.</div>'; return; }
+    wrap.innerHTML = draftChk.map((c, idx) => `<div class="it-top" style="margin-top:6px">
+      <input type="checkbox" data-cdone="${idx}" ${c.done ? 'checked' : ''} style="width:18px;height:18px;flex:none">
+      <input type="text" data-ctext="${idx}" value="${esc(c.text)}">
+      <button type="button" class="btn d" data-crem="${idx}">×</button>
+    </div>`).join('');
+    wrap.querySelectorAll('[data-cdone]').forEach(cb => cb.onchange = () => { draftChk[Number(cb.dataset.cdone)].done = cb.checked; });
+    wrap.querySelectorAll('[data-ctext]').forEach(inp => inp.oninput = () => { draftChk[Number(inp.dataset.ctext)].text = inp.value; });
+    wrap.querySelectorAll('[data-crem]').forEach(b => b.onclick = () => { draftChk.splice(Number(b.dataset.crem), 1); drawChk(); });
+  }
+  drawChk();
+  const addChk = () => {
+    const inp = ov.querySelector('#chkNewInp');
+    const txt = (inp.value || '').trim();
+    if (!txt) { inp.focus(); return; }
+    draftChk.push({ id: uid(), text: txt, done: false });
+    inp.value = '';
+    drawChk();
+    inp.focus();
+  };
+  ov.querySelector('#chkAddBtn').onclick = addChk;
+  ov.querySelector('#chkNewInp').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addChk(); } });
 
   function drawItems() {
     const wrap = ov.querySelector('#itWrap');
@@ -1396,29 +1667,82 @@ function renderAdminChatLog() {
   }
 }
 
-function openAdminChat(cid, fallbackName, fallbackPhone) {
+function openStaff(id) {
+  const s = staff.find(x => x.id === id) || { name: '', phone: '', role: '', note: '', active: true };
+  const ov = modal(id ? 'Исполнитель' : 'Новый исполнитель', `
+    <label>Имя и фамилия</label><input type="text" name="name" required value="${esc(s.name)}">
+    <label>Телефон (для входа в кабинет исполнителя)</label><input type="tel" name="phone" required placeholder="+994 50 123 45 67" value="${esc(s.phone)}">
+    <label>Специализация / роль</label><input type="text" name="role" placeholder="Например, Монтажник, Ассистент" value="${esc(s.role || '')}">
+    <label>Заметки</label><textarea name="note" style="min-height:64px">${esc(s.note || '')}</textarea>
+    <label class="inl"><input type="checkbox" name="active" ${s.active !== false ? 'checked' : ''}> Доступ к кабинету открыт</label>`,
+  async f => {
+    try {
+      await setDoc(doc(db, 'staff', id || uid()), {
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        role: (f.role || '').trim(),
+        note: (f.note || '').trim(),
+        active: !!f.active,
+        created: s.created || Date.now()
+      });
+      scheduleStaffPortal(600);
+      toast('Исполнитель сохранён');
+    } catch (e) {
+      toast('Не удалось сохранить исполнителя');
+    }
+  }, id ? {
+    confirm: 'Точно удалить?',
+    run: async () => {
+      try {
+        if (staffFilter === id) staffFilter = '';
+        await deleteDoc(doc(db, 'staff', id));
+        scheduleStaffPortal(600);
+        toast('Исполнитель удалён');
+      } catch (e) { toast('Не удалось удалить'); }
+    }
+  } : null);
+}
+
+async function openStaffChatById(staffId) {
+  const s = staff.find(x => x.id === staffId);
+  if (!s || normPhone(s.phone).length < 7) { toast('У исполнителя не указан телефон'); return; }
+  toast('Открываем чат…');
+  try {
+    const saltB64 = await ensureStaffSalt();
+    const { id } = await deriveForStaffPhone(normPhone(s.phone), saltB64);
+    openAdminChat(id, s.name, s.phone, 'staff');
+  } catch (e) {
+    toast('Не удалось открыть чат');
+  }
+}
+
+function openAdminChat(cid, fallbackName, fallbackPhone, fallbackKind) {
   const ch = chats.find(x => x.id === cid);
+  const kind = (ch && ch.kind) || fallbackKind || 'client';
   const phone = (ch && ch.phone) || fallbackPhone || '';
   const p9 = normPhone(phone);
-  const cl = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
-  const title = (cl && cl.name) || (ch && ch.clientName) || fallbackName || 'Клиент';
+  const person = p9.length >= 7
+    ? (kind === 'staff' ? staff.find(s => normPhone(s.phone) === p9) : clients.find(c => normPhone(c.phone) === p9))
+    : null;
+  const title = (person && person.name) || (ch && ch.clientName) || fallbackName || (kind === 'staff' ? 'Исполнитель' : 'Клиент');
+  const subLbl = (kind === 'staff' ? 'Исполнитель' : 'Клиент') + (phone ? ' · ' + phone : '');
 
   const old = $('#admChatOv');
   if (old) old.remove();
   openChatId = cid;
-  openChatMeta = { name: title, phone };
+  openChatMeta = { name: title, phone, kind };
 
   const ov = document.createElement('div');
   ov.className = 'ov';
   ov.id = 'admChatOv';
   ov.innerHTML = `<div class="chat-sheet">
     <div class="chat-hd">
-      <div><h3>${esc(title)}</h3>${phone ? `<div class="meta">${esc(phone)}</div>` : ''}</div>
+      <div><h3>${esc(title)}</h3><div class="meta">${esc(subLbl)}</div></div>
       <button type="button" class="btn" id="admChatClose" aria-label="Закрыть">×</button>
     </div>
     <div class="chat-log" id="admChatLog"></div>
     <form class="chat-bar" id="admChatForm">
-      <textarea id="admChatInp" rows="1" maxlength="1000" placeholder="Ответить клиенту…"></textarea>
+      <textarea id="admChatInp" rows="1" maxlength="1000" placeholder="Написать сообщение…"></textarea>
       <button type="submit" class="btn p" id="admChatSend">Отправить</button>
     </form>
   </div>`;
@@ -1449,6 +1773,7 @@ function openAdminChat(cid, fallbackName, fallbackPhone) {
         await updateDoc(ref, {
           clientName: title,
           phone,
+          kind,
           messages: arrayUnion(msg),
           lastTs: now,
           lastFrom: 'admin',
@@ -1460,6 +1785,7 @@ function openAdminChat(cid, fallbackName, fallbackPhone) {
         await setDoc(ref, {
           clientName: title,
           phone,
+          kind,
           messages: [msg],
           lastTs: now,
           lastFrom: 'admin',
@@ -1480,19 +1806,25 @@ function openAdminChat(cid, fallbackName, fallbackPhone) {
 }
 
 function openNewChatModal() {
-  const withPhone = [...clients].filter(c => normPhone(c.phone).length >= 7).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-  if (!withPhone.length) { toast('Нет клиентов с номером телефона'); return; }
-  const opts = withPhone.map(c => `<option value="${c.id}">${esc(c.name)} (${esc(c.phone)})</option>`).join('');
-  modal('Написать клиенту', `<label>Выберите клиента</label><select name="cid">${opts}</select>`, async f => {
-    const c = clients.find(x => x.id === f.cid);
-    if (!c) return;
-    toast('Открываем чат…');
-    try {
-      const saltB64 = await ensurePortalSalt();
-      const { id } = await deriveForPhone(normPhone(c.phone), saltB64);
-      openAdminChat(id, c.name, c.phone);
-    } catch (e) {
-      toast('Не удалось открыть чат');
+  const cliWithPh = [...clients].filter(c => normPhone(c.phone).length >= 7).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  const stfWithPh = [...staff].filter(s => normPhone(s.phone).length >= 7).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  if (!cliWithPh.length && !stfWithPh.length) { toast('Нет клиентов или исполнителей с номером телефона'); return; }
+  let opts = '';
+  if (stfWithPh.length) opts += `<optgroup label="Исполнители">${stfWithPh.map(s => `<option value="s:${s.id}">${esc(s.name)} (${esc(s.phone)})</option>`).join('')}</optgroup>`;
+  if (cliWithPh.length) opts += `<optgroup label="Клиенты">${cliWithPh.map(c => `<option value="c:${c.id}">${esc(c.name)} (${esc(c.phone)})</option>`).join('')}</optgroup>`;
+  modal('Новый чат', `<label>Кому написать</label><select name="target">${opts}</select>`, async f => {
+    const val = f.target || '';
+    if (val.startsWith('s:')) {
+      await openStaffChatById(val.slice(2));
+    } else if (val.startsWith('c:')) {
+      const c = clients.find(x => x.id === val.slice(2));
+      if (!c) return;
+      toast('Открываем чат…');
+      try {
+        const saltB64 = await ensurePortalSalt();
+        const { id } = await deriveForPhone(normPhone(c.phone), saltB64);
+        openAdminChat(id, c.name, c.phone, 'client');
+      } catch (e) { toast('Не удалось открыть чат'); }
     }
   });
 }
@@ -1561,10 +1893,38 @@ document.addEventListener('click', async e => {
   else if (a === 'fab') {
     if (view === 'tasks') openTask();
     else if (view === 'clients') openClient();
+    else if (view === 'staff') openStaff();
     else if (view === 'messages') openNewChatModal();
     else if (view === 'requests') copyUrl('register.html', 'Ссылка на анкету');
     else if (shopTab === 'catalog') openProduct();
     else copyUrl('shop.html', 'Ссылка на магазин');
+  }
+  else if (a === 'clears') { staffFilter = ''; render(); }
+  else if (a === 'copystaff') { copyUrl('staff.html', 'Ссылка для исполнителей'); }
+  else if (a === 'syncstaff') { await rebuildStaffPortal(true); }
+  else if (a === 'stasks') { staffFilter = id; clientFilter = ''; filter = 'all'; view = 'tasks'; render(); }
+  else if (a === 'schat') { await openStaffChatById(id); }
+  else if (a === 'editstaff') { openStaff(id); }
+  else if (a === 'delstaff') {
+    if (armed !== 's:' + id) { armed = 's:' + id; el.textContent = 'Точно удалить?'; return; }
+    armed = null;
+    try {
+      if (staffFilter === id) staffFilter = '';
+      await deleteDoc(doc(db, 'staff', id));
+      scheduleStaffPortal(600);
+      toast('Исполнитель удалён');
+    } catch (ex) { toast('Не удалось удалить'); }
+  }
+  else if (a === 'msgf') { msgFilter = el.dataset.mf; render(); }
+  else if (a === 'togchk') {
+    const t = tasks.find(x => x.id === id);
+    const cid = el.dataset.cid;
+    if (t && Array.isArray(t.checklist)) {
+      const nextChk = t.checklist.map(c => c.id === cid ? Object.assign({}, c, { done: el.checked }) : c);
+      const d = Object.assign({}, t, { checklist: nextChk, staffSyncTs: Date.now() });
+      delete d.id;
+      save('tasks', id, d);
+    }
   }
   else if (a === 'openchat') { openAdminChat(id); }
   else if (a === 'delchat') {
@@ -1598,7 +1958,7 @@ document.addEventListener('click', async e => {
     const t = tasks.find(x => x.id === id);
     if (t) {
       const nextDone = !t.done;
-      const d = Object.assign({}, t, { done: nextDone, status: nextDone ? 'done' : 'todo' });
+      const d = Object.assign({}, t, { done: nextDone, status: nextDone ? 'done' : 'todo', staffSyncTs: Date.now() });
       delete d.id;
       save('tasks', id, d);
     }
@@ -1607,7 +1967,7 @@ document.addEventListener('click', async e => {
     const t = tasks.find(x => x.id === id);
     if (t && !t.done) {
       const nextSt = t.status === 'in_progress' ? 'todo' : 'in_progress';
-      const d = Object.assign({}, t, { status: nextSt });
+      const d = Object.assign({}, t, { status: nextSt, staffSyncTs: Date.now() });
       delete d.id;
       save('tasks', id, d);
       toast(nextSt === 'in_progress' ? 'Задача переведена «В работу»' : 'Статус «В работе» снят');
@@ -1649,6 +2009,7 @@ onAuthStateChanged(auth, u => {
   unsubs = [];
   if (portalTimer) { clearTimeout(portalTimer); portalTimer = null; }
   if (catTimer) { clearTimeout(catTimer); catTimer = null; }
+  if (staffTimer) { clearTimeout(staffTimer); staffTimer = null; }
   user = u;
   authReady = true;
   clients = [];
@@ -1657,11 +2018,16 @@ onAuthStateChanged(auth, u => {
   products = [];
   orders = [];
   chats = [];
+  staff = [];
   reqErr = false;
   prodErr = false;
   ordErr = false;
   chatErr = false;
+  staffErr = false;
   openChatId = null;
+  staffSalt = null;
+  staffDirty = false;
+  staffChecked = false;
   ready = 0;
   portalSalt = null;
   portalExists = false;
@@ -1733,6 +2099,25 @@ onAuthStateChanged(auth, u => {
     chatErr = true;
     render();
   }));
+  unsubs.push(onSnapshot(collection(db, 'staff'), s => {
+    staffErr = false;
+    staff = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    render();
+    if (!staffChecked && staff.length && ready >= 2) {
+      staffChecked = true;
+      getDoc(doc(db, 'pub', 'staff')).then(snap => {
+        if (snap.exists() && snap.data().salt) staffSalt = snap.data().salt;
+        else scheduleStaffPortal(600);
+      }).catch(() => {});
+    }
+  }, () => {
+    staffErr = true;
+    render();
+  }));
+  unsubs.push(onSnapshot(collection(db, 'staff_updates'), s => {
+    const docs = s.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    applyStaffUpdates(docs);
+  }, () => {}));
 });
 </script>
 </body>
