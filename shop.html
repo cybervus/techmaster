@@ -32,7 +32,10 @@ h1{font-size:19px;font-weight:600;margin:0;line-height:1.2}
 .flag{width:18px;height:12px;display:block;border-radius:1px;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
 .top-links{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px}
 .top-links a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;font-weight:500}
-.search-bar{display:flex;gap:8px;margin:10px 0}
+.search-bar{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+.search-bar input{flex:1;min-width:180px}
+.search-bar select{flex:none;width:168px}
+@media (max-width:460px){.search-bar select{width:100%}}
 input[type=text],input[type=search],input[type=tel],input[type=number],select,textarea{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--muted);border-radius:3px;padding:10px 12px}
 textarea{min-height:74px;resize:vertical}
 .chips{display:flex;gap:16px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:10px}
@@ -141,6 +144,8 @@ const I18N = {
     emptyCatalog: 'Каталог пока пуст. Вы можете добавить нужный товар вручную ниже.',
     notFound: 'По вашему запросу ничего не найдено.',
     searchPh: 'Поиск по названию или модели…',
+    allBrands: 'Все бренды',
+    showMore: n => `Показать ещё (${n})`,
     allCats: 'Все',
     inStock: 'В наличии',
     byOrder: 'Под заказ',
@@ -191,6 +196,8 @@ const I18N = {
     emptyCatalog: 'Kataloq hələ boşdur. Lazım olan məhsulu aşağıda əl ilə əlavə edə bilərsiniz.',
     notFound: 'Sorğunuza uyğun məhsul tapılmadı.',
     searchPh: 'Ad və ya model üzrə axtarış…',
+    allBrands: 'Bütün brendlər',
+    showMore: n => `Daha çox göstər (${n})`,
     allCats: 'Hamısı',
     inStock: 'Anbarda var',
     byOrder: 'Sifarişlə',
@@ -246,9 +253,20 @@ let lang = (() => {
 let products = [];
 let loaded = false;
 let catFilter = 'all';
+let brandFilter = 'all';
 let searchQ = '';
+let pageLimit = 30;
 let cart = []; // { id, name, price, unit, qty }
 let orderDone = null;
+
+const KNOWN_BRANDS = ['Hikvision', 'Ubiquiti', 'Dahua', 'MikroTik', 'TP-Link', 'Keenetic', 'Cudy', 'EZVIZ', 'Ajax', 'Uniview', 'Shturmann', 'Schneider', 'Legrand', 'Famatel', 'Zubr', 'Teltonika', 'Starlink', 'WD Purple'];
+function detectBrand(p) {
+  const hay = (p.name || '') + ' ' + (p.sku || '');
+  for (const b of KNOWN_BRANDS) {
+    if (hay.toLowerCase().includes(b.toLowerCase())) return b;
+  }
+  return '';
+}
 
 function toast(m) {
   const old = $('#toast');
@@ -344,9 +362,13 @@ function render() {
   const catTabs = ['all', ...usedCats];
   if (!catTabs.includes(catFilter)) catFilter = 'all';
 
+  const usedBrands = [...new Set(products.map(detectBrand).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  if (brandFilter !== 'all' && !usedBrands.includes(brandFilter)) brandFilter = 'all';
+
   const q = searchQ.trim().toLowerCase();
   const filtered = products.filter(p => {
     if (catFilter !== 'all' && (p.cat || 'other') !== catFilter) return false;
+    if (brandFilter !== 'all' && detectBrand(p) !== brandFilter) return false;
     if (q) {
       const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
       if (!hay.includes(q)) return false;
@@ -354,7 +376,13 @@ function render() {
     return true;
   });
 
-  let html = `<div class="search-bar"><input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}"></div>`;
+  const shown = filtered.slice(0, pageLimit);
+  const rest = filtered.length - shown.length;
+
+  let html = `<div class="search-bar">
+    <input id="qInp" type="search" placeholder="${esc(L.searchPh)}" value="${esc(searchQ)}">
+    ${usedBrands.length > 1 ? `<select id="bSel" aria-label="Brand"><option value="all">${esc(L.allBrands)} (${products.length})</option>${usedBrands.map(b => `<option value="${esc(b)}"${brandFilter === b ? ' selected' : ''}>${esc(b)}</option>`).join('')}</select>` : ''}
+  </div>`;
   if (usedCats.length > 1) {
     html += '<div class="chips">' + catTabs.map(c => {
       const lbl = c === 'all' ? L.allCats : (L.cats[c] || c);
@@ -367,7 +395,7 @@ function render() {
   } else if (!filtered.length) {
     html += `<div class="empty">${esc(L.notFound)}</div>`;
   } else {
-    html += '<div class="plist">' + filtered.map(p => {
+    html += '<div class="plist">' + shown.map(p => {
       const ci = cart.find(x => x.id === p.id);
       const stockTag = p.inStock !== false
         ? `<span class="tag ok">${esc(L.inStock)}</span>`
@@ -389,6 +417,9 @@ function render() {
         </div>
       </div>`;
     }).join('') + '</div>';
+    if (rest > 0) {
+      html += `<div class="row" style="justify-content:center;margin-top:12px"><button type="button" class="btn" id="moreBtn">${esc(L.showMore(rest))}</button></div>`;
+    }
   }
 
   html += `<div class="custom-box">
@@ -404,8 +435,12 @@ function render() {
   $('#app').innerHTML = html;
 
   const qInp = $('#qInp');
-  qInp.oninput = () => { searchQ = qInp.value; renderListOnly(); };
-  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catFilter = b.dataset.cat; render(); });
+  qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
+  const bSel = $('#bSel');
+  if (bSel) bSel.onchange = () => { brandFilter = bSel.value; pageLimit = 30; render(); };
+  const moreBtn = $('#moreBtn');
+  if (moreBtn) moreBtn.onclick = () => { pageLimit += 30; render(); };
+  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { catFilter = b.dataset.cat; pageLimit = 30; render(); });
   document.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => {
     const p = products.find(x => x.id === b.dataset.inc);
     if (p) addToCart(p, 1);
