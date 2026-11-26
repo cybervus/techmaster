@@ -50,6 +50,7 @@ h2.late{color:var(--danger);border-top-color:var(--danger)}
 .tr.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
 .tag{margin-left:8px;padding:1px 6px;border:1px solid var(--danger);color:var(--danger);border-radius:2px;font-size:12px;font-weight:500;vertical-align:1px}
 .tag.ok{border-color:var(--ok);color:var(--ok)}
+.tag.prog{border-color:var(--accent);color:var(--accent)}
 .tag.info{border-color:var(--line);color:var(--muted)}
 .nbadge{display:inline-block;margin-left:5px;padding:0 5px;min-width:18px;border-radius:2px;background:var(--danger);color:#fff;font-size:11px;font-weight:600;line-height:17px;vertical-align:1px}
 .kv{margin-top:6px;font-size:13px;line-height:1.45}
@@ -295,17 +296,32 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
     const n = normPhone(c.phone);
     if (n.length < 7) continue;
     const ts = tasksList
-      .filter(t => t.clientId === c.id)
+      .filter(t => t.clientId === c.id && t.pub !== false)
       .map(t => ({
         t: t.title || '',
         w: t.work || '',
         e: t.equip || '',
         d: t.date || '',
         tm: t.time || '',
-        x: Boolean(t.done)
+        x: Boolean(t.done),
+        st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
+        n: t.pubNote || ''
       }));
+    const pctRaw = c.pubPct;
+    const pct = (pctRaw !== undefined && pctRaw !== '' && pctRaw !== null && Number.isFinite(Number(pctRaw)))
+      ? Math.max(0, Math.min(100, Math.round(Number(pctRaw))))
+      : null;
     if (!groups.has(n)) groups.set(n, []);
-    groups.get(n).push({ name: c.name || '', tasks: ts });
+    groups.get(n).push({
+      name: c.name || '',
+      phone: c.phone || '',
+      addr: c.showAddress !== false ? (c.address || '') : '',
+      proj: c.pubProject || '',
+      msg: c.pubMsg || '',
+      pct,
+      cal: c.showCal !== false,
+      tasks: ts
+    });
   }
 
   const enc = new TextEncoder();
@@ -466,36 +482,40 @@ async function importJsonFile(file) {
   const ops = [];
   for (const c of impClients) {
     const id = String(c.id || uid());
-    ops.push({
-      col: 'clients',
-      id,
-      doc: {
-        name: String(c.name || '').trim(),
-        phone: String(c.phone || '').trim(),
-        address: String(c.address || '').trim(),
-        note: String(c.note || '').trim(),
-        created: Number(c.created) || Date.now()
-      }
-    });
+    const docData = {
+      name: String(c.name || '').trim(),
+      phone: String(c.phone || '').trim(),
+      address: String(c.address || '').trim(),
+      note: String(c.note || '').trim(),
+      created: Number(c.created) || Date.now()
+    };
+    if (c.showAddress !== undefined) docData.showAddress = Boolean(c.showAddress);
+    if (c.showCal !== undefined) docData.showCal = Boolean(c.showCal);
+    if (c.pubProject) docData.pubProject = String(c.pubProject).trim();
+    if (c.pubMsg) docData.pubMsg = String(c.pubMsg).trim();
+    if (c.pubPct !== undefined && c.pubPct !== '' && c.pubPct !== null && Number.isFinite(Number(c.pubPct))) docData.pubPct = Number(c.pubPct);
+    ops.push({ col: 'clients', id, doc: docData });
   }
   for (const t of impTasks) {
     const id = String(t.id || uid());
-    ops.push({
-      col: 'tasks',
-      id,
-      doc: {
-        clientId: String(t.clientId || ''),
-        title: String(t.title || '').trim(),
-        work: String(t.work || ''),
-        equip: String(t.equip || ''),
-        date: String(t.date || ''),
-        time: String(t.time || ''),
-        details: String(t.details || '').trim(),
-        high: Boolean(t.high),
-        done: Boolean(t.done),
-        created: Number(t.created) || Date.now()
-      }
-    });
+    const isDone = Boolean(t.done);
+    const st = isDone ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
+    const docData = {
+      clientId: String(t.clientId || ''),
+      title: String(t.title || '').trim(),
+      work: String(t.work || ''),
+      equip: String(t.equip || ''),
+      date: String(t.date || ''),
+      time: String(t.time || ''),
+      details: String(t.details || '').trim(),
+      high: Boolean(t.high),
+      done: isDone,
+      status: st,
+      pub: t.pub !== false,
+      pubNote: String(t.pubNote || '').trim(),
+      created: Number(t.created) || Date.now()
+    };
+    ops.push({ col: 'tasks', id, doc: docData });
   }
   try {
     for (let i = 0; i < ops.length; i += 400) {
@@ -608,6 +628,8 @@ function tasksHtml() {
 function cardHtml(t) {
   const c = clients.find(x => x.id === t.clientId), o = opened.has(t.id);
   const late = t.date && t.date < today() && !t.done;
+  const inProg = !t.done && t.status === 'in_progress';
+  const hiddenPub = t.pub === false;
   const wt = [t.work, t.equip].filter(Boolean).map(esc).join(', ');
   const tm = late ? esc(shortDate(t.date)) + '<small>' + esc(t.time || '') + '</small>' : (t.time ? esc(t.time) : '—');
   let more = '';
@@ -615,11 +637,14 @@ function cardHtml(t) {
     const links = [];
     if (c && c.phone) links.push(`<a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a>`);
     if (c && c.address) links.push(`<a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a>`);
-    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}<div class="links">${links.join('')}</div>
-    <div class="row"><button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
+    more = `<div class="more">${t.details ? `<p>${esc(t.details)}</p>` : '<p style="color:var(--muted)">Без описания</p>'}${t.pubNote ? `<p><b>Для клиента:</b> ${esc(t.pubNote)}</p>` : ''}<div class="links">${links.join('')}</div>
+    <div class="row">${!t.done ? `<button class="btn${inProg ? '' : ' p'}" data-act="inprog" data-id="${t.id}">${inProg ? 'Снять «В работе»' : 'В работу'}</button>` : ''}<button class="btn" data-act="edittask" data-id="${t.id}">Изменить</button><button class="btn d" data-act="deltask" data-id="${t.id}">Удалить</button></div></div>`;
   }
+  const tags = (t.high ? '<span class="tag">Срочно</span>' : '')
+    + (inProg ? '<span class="tag prog">В работе</span>' : '')
+    + (hiddenPub ? '<span class="tag info">Скрыто</span>' : '');
   return `<div class="tr${t.done ? ' done' : ''}${t.high ? ' hi' : ''}"><button class="chk" data-act="toggle" data-id="${t.id}" aria-label="Отметить выполненной">✓</button><div class="tm">${tm}</div>
-  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${t.high ? '<span class="tag">Срочно</span>' : ''}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}</div>${more}</div></div>`;
+  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${tags}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}</div>${more}</div></div>`;
 }
 
 function clientsHtml() {
@@ -702,7 +727,7 @@ function modal(title, body, onSave) {
   ov.querySelector('form').onsubmit = async e => {
     e.preventDefault();
     const f = Object.fromEntries(new FormData(e.target));
-    f.high = !!e.target.high?.checked;
+    e.target.querySelectorAll('input[type=checkbox]').forEach(cb => { if (cb.name) f[cb.name] = cb.checked; });
     ov.remove();
     await onSave(f);
   };
@@ -761,14 +786,38 @@ function openMenu() {
 }
 
 function openClient(id) {
-  const c = clients.find(x => x.id === id) || { name: '', phone: '', address: '', note: '' };
+  const c = clients.find(x => x.id === id) || { name: '', phone: '', address: '', note: '', showAddress: true, showCal: true, pubProject: '', pubMsg: '', pubPct: '' };
+  const pctVal = (c.pubPct !== undefined && c.pubPct !== null && c.pubPct !== '') ? String(c.pubPct) : '';
   const ov = modal(id ? 'Клиент' : 'Новый клиент', `<label>Название / имя</label><input type="text" name="name" required value="${esc(c.name)}">
   <label>Телефон</label><input type="tel" name="phone" value="${esc(c.phone)}">
   <div class="qk"><button type="button" class="btn" data-pick>Из контактов</button><button type="button" class="btn" data-paste>Вставить номер</button></div>
   <div id="chint" class="meta">В «Контактах» нажмите на номер → «Скопировать», затем «Вставить номер».</div>
   <label>Адрес объекта</label><input type="text" name="address" value="${esc(c.address)}">
-  <label>Заметки (доступы, контакты, особенности)</label><textarea name="note">${esc(c.note)}</textarea>`,
-  f => save('clients', id || uid(), { name: f.name.trim(), phone: f.phone.trim(), address: f.address.trim(), note: f.note.trim(), created: c.created || Date.now() }));
+  <label>Заметки мастера (личные, клиенту не видны)</label><textarea name="note">${esc(c.note)}</textarea>
+  <div class="sec">
+    <div class="sec-t">Личный кабинет клиента</div>
+    <label>Название проекта / объекта (видно клиенту)</label><input type="text" name="pubProject" placeholder="Например, Видеонаблюдение и Wi-Fi" value="${esc(c.pubProject || '')}">
+    <label>Сообщение для клиента (вверху кабинета)</label><textarea name="pubMsg" placeholder="Например, Оборудование заказано, следующий визит в пятницу" style="min-height:68px">${esc(c.pubMsg || '')}</textarea>
+    <label>Прогресс вручную, % (оставьте пустым для авторасчёта)</label><input type="number" name="pubPct" min="0" max="100" step="1" placeholder="Авто по задачам" value="${esc(pctVal)}">
+    <label class="inl"><input type="checkbox" name="showAddress" ${c.showAddress !== false ? 'checked' : ''}> Показывать адрес в кабинете</label>
+    <label class="inl"><input type="checkbox" name="showCal" ${c.showCal !== false ? 'checked' : ''}> Показывать график занятости</label>
+  </div>`,
+  f => {
+    const pRaw = String(f.pubPct || '').trim();
+    const docData = {
+      name: f.name.trim(),
+      phone: f.phone.trim(),
+      address: f.address.trim(),
+      note: f.note.trim(),
+      pubProject: (f.pubProject || '').trim(),
+      pubMsg: (f.pubMsg || '').trim(),
+      pubPct: pRaw === '' ? null : Math.max(0, Math.min(100, Math.round(Number(pRaw)))),
+      showAddress: !!f.showAddress,
+      showCal: !!f.showCal,
+      created: c.created || Date.now()
+    };
+    return save('clients', id || uid(), docData);
+  });
   wireContacts(ov);
 }
 
@@ -783,18 +832,46 @@ function pick(name, label, list, v) {
 
 function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
-  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false }, prefill || {});
+  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '' }, prefill || {});
+  const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
   const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
   const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
+  <label>Статус выполнения</label><select name="status">
+    <option value="todo"${curSt === 'todo' ? ' selected' : ''}>Запланировано</option>
+    <option value="in_progress"${curSt === 'in_progress' ? ' selected' : ''}>В работе (выделяется у клиента)</option>
+    <option value="done"${curSt === 'done' ? ' selected' : ''}>Выполнено</option>
+  </select>
   ${pick('work', 'Вид работ', WORKS, t.work || '')}${pick('equip', 'Тип оборудования', EQUIPS, t.equip || '')}
   <label>Дата</label><input type="hidden" name="date" value="${esc(t.date)}"><div id="seld" class="meta"></div>
   <div class="qk"><button type="button" class="btn" data-d="today">Сегодня</button><button type="button" class="btn" data-d="tom">Завтра</button><button type="button" class="btn" data-d="">Без даты</button></div><div id="cal"></div>
   <label>Время</label><input type="time" name="time" value="${esc(t.time)}">
   <div class="qk">${['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '16:00', '18:00'].map(x => `<button type="button" class="btn" data-t="${x}">${x}</button>`).join('')}<button type="button" class="btn" data-t="">Без времени</button></div>
-  <label>Детали (что взять, что проверить)</label><textarea name="details">${esc(t.details)}</textarea>
+  <label>Детали мастера (личные, клиенту не видны)</label><textarea name="details">${esc(t.details)}</textarea>
+  <div class="sec">
+    <div class="sec-t">Отображение в кабинете клиента</div>
+    <label class="inl" style="margin-top:4px"><input type="checkbox" name="pub" ${t.pub !== false ? 'checked' : ''}> Показывать эту задачу клиенту</label>
+    <label>Комментарий для клиента (виден в кабинете)</label><textarea name="pubNote" placeholder="Например, Кабели проложены, настраиваем регистратор" style="min-height:64px">${esc(t.pubNote || '')}</textarea>
+  </div>
   <label class="inl"><input type="checkbox" name="high" ${t.high ? 'checked' : ''}> Срочно</label>`,
-  f => save('tasks', id || uid(), { clientId: f.clientId, title: f.title.trim(), work: val(f, 'work'), equip: val(f, 'equip'), date: f.date, time: f.time, details: f.details.trim(), high: f.high, done: !!t.done, created: t.created || Date.now() }));
+  f => {
+    const st = f.status === 'done' ? 'done' : (f.status === 'in_progress' ? 'in_progress' : 'todo');
+    return save('tasks', id || uid(), {
+      clientId: f.clientId,
+      title: f.title.trim(),
+      work: val(f, 'work'),
+      equip: val(f, 'equip'),
+      date: f.date,
+      time: f.time,
+      details: f.details.trim(),
+      high: !!f.high,
+      done: st === 'done',
+      status: st,
+      pub: !!f.pub,
+      pubNote: (f.pubNote || '').trim(),
+      created: t.created || Date.now()
+    });
+  });
   initCal(ov);
   ['work', 'equip'].forEach(n => {
     const s = ov.querySelector('[name=' + n + ']'), o = ov.querySelector('[name=' + n + 'Other]');
@@ -861,13 +938,15 @@ async function acceptRequest(reqId) {
   if (existing) {
     cid = existing.id;
     const mergedNote = [existing.note, noteBlock].filter(Boolean).join('\n---\n');
-    await save('clients', cid, {
+    const updatedClient = Object.assign({}, existing, {
       name: existing.name || r.name || '',
       phone: existing.phone || r.phone || '',
       address: existing.address || '',
       note: mergedNote,
       created: existing.created || Date.now()
     });
+    delete updatedClient.id;
+    await save('clients', cid, updatedClient);
     toast('Данные добавлены к существующему клиенту');
   } else {
     cid = uid();
@@ -876,6 +955,8 @@ async function acceptRequest(reqId) {
       phone: String(r.phone || '').trim(),
       address: '',
       note: noteBlock,
+      showAddress: true,
+      showCal: true,
       created: Date.now()
     });
     toast('Клиент создан из заявки');
@@ -900,7 +981,22 @@ document.addEventListener('click', async e => {
   else if (a === 'open') { opened.has(id) ? opened.delete(id) : opened.add(id); render(); }
   else if (a === 'toggle') {
     const t = tasks.find(x => x.id === id);
-    if (t) { const d = Object.assign({}, t, { done: !t.done }); delete d.id; save('tasks', id, d); }
+    if (t) {
+      const nextDone = !t.done;
+      const d = Object.assign({}, t, { done: nextDone, status: nextDone ? 'done' : 'todo' });
+      delete d.id;
+      save('tasks', id, d);
+    }
+  }
+  else if (a === 'inprog') {
+    const t = tasks.find(x => x.id === id);
+    if (t && !t.done) {
+      const nextSt = t.status === 'in_progress' ? 'todo' : 'in_progress';
+      const d = Object.assign({}, t, { status: nextSt });
+      delete d.id;
+      save('tasks', id, d);
+      toast(nextSt === 'in_progress' ? 'Задача переведена «В работу»' : 'Статус «В работе» снят');
+    }
   }
   else if (a === 'edittask') openTask(id);
   else if (a === 'newtask') openTask(null, id);
