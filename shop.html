@@ -814,21 +814,22 @@ function detectBrand(p) {
 /* Map existing 7-cat Firestore items + new 11-cat items cleanly into the 11 categories */
 function detectShopCat(p) {
   if (p.cat && CAT_IDS.includes(p.cat)) return p.cat;
-  const hay = ((p.name || '') + ' ' + (p.sku || '') + ' ' + (p.desc || '')).toLowerCase();
-  if (/шлагбаум|турникет|барьер|привод ворот/.test(hay)) return 'barriers';
-  if (/домофон|вызывн|глазок|intercom|ds-kh|ds-kv|vto|vth|dp2|cp4/.test(hay)) return 'intercom';
-  if (/сигнал|ajax|скуд|замок|контроллер|считывател|ax pro|ds-k1|ds-pwa|motionprotect|doorprotect/.test(hay)) return 'alarm';
-  if (/\bups\b|ибп|аккумулятор|батаре|бесперебойн|резервн.*питан/.test(hay)) return 'ups';
-  if (/монитор|телевизор|\bтв\b|\btv\b|видеостен|проектор|дисплей/.test(hay)) return 'monitors';
-  if (/аудио|колонк|усилител.*звук|микрофон|динамик|ресивер|сабвуфер/.test(hay)) return 'audio';
-  if (/автомат|узо|дифавтомат|реле напряж|щиток|розетк|выключат|\bled\b|светильн|освещ|schneider|legrand|zubr/.test(hay)) return 'electrical';
-  if (/шкаф|rack|стойк|распред.*коробк|монтажн.*коробк|бокс|кронштейн|патч-панел|органайзер|ds-1280|ds-1273|famatel/.test(hay)) return 'racks';
-  if (p.cat === 'smarthome' || /умный дом|датчик|сенсор|zigbee|tuya/.test(hay)) return 'smarthome';
-  if (p.cat === 'network' || /роутер|коммутатор|switch|poe|wi-fi|wifi|точк.*доступ|unifi|mikrotik|cudy|keenetic|tp-link|маршрутизатор|патч-корд|utp|ftp|rj-45|rj45|starlink/.test(hay)) return 'network';
-  if (p.cat === 'security' || /камер|nvr|dvr|видеорегистратор|видеонаблюд|bnc|коаксиал|квк|wd purple|skyhawk|hikvision|dahua|ezviz|uniview/.test(hay)) return 'cctv';
+  const nm = ((p.name || '') + ' ' + (p.sku || '')).toLowerCase();
+  if (/шлагбаум|турникет|барьер|привод ворот/.test(nm)) return 'barriers';
+  if (/домофон|вызывн|видеоглазок|глазок|intercom|ds-kh|ds-kv|ds-kis|vto|vth|dp2c|cp4/.test(nm)) return 'intercom';
+  if (/\bups\b|ибп|аккумуляторн.*батаре|аккумулятор 12|бесперебойн|блок питания 12в/.test(nm)) return 'ups';
+  if (/видеорегистратор|\bnvr\b|\bdvr\b|\bxvr\b|ds-7[1267]|камер|bullet|turret|dome|colorvu|acusense|turbo hd|wizsense|tioc|colorhunter|wd purple|skyhawk|солнечная панель/.test(nm)
+      && !/монтажная коробка|кронштейн|шввп|кабель питания|коммутатор|switch/.test(nm)) return 'cctv';
+  if (/сигнализац|ajax|ax pro|скуд|электромагнитн|электромеханическ|замок|контроллер доступ|считывател|кнопка выхода|брелок|сирена|ds-k1|ds-pwa|motionprotect|doorprotect|streetsiren|homesiren|spacecontrol/.test(nm)) return 'alarm';
+  if (/монитор|телевизор|\bтв\b|\btv\b|видеостен|проектор|дисплей/.test(nm)) return 'monitors';
+  if (/колонк|усилител.*звук|аудиосистем|динамик|ресивер|сабвуфер|громкоговорител/.test(nm)) return 'audio';
+  if (/умный дом|умн(ое|ая|ый)\s|zigbee|tuya|датчик протечк|датчик дыма|термостат/.test(nm) || p.cat === 'smarthome') return 'smarthome';
+  if (/автоматическ.*выключат|\bузо\b|дифавтомат|реле напряж|электрическ.*щит|щиток|розетк.*220|блок розеток|\bpdu\b|светильн|освещ|силовой кабель|nym|ввгнг|шввп|zubr/.test(nm)) return 'electrical';
+  if (/телекоммуникационн.*шкаф|серверн.*шкаф|\brack\b|стойк|монтажн.*коробк|распаечн.*коробк|распред.*коробк|кронштейн|патч-панел|органайзер|кабель-канал|гофра-труб|ds-1280|ds-1273/.test(nm)) return 'racks';
+  if (p.cat === 'network' || /роутер|маршрутизатор|коммутатор|switch|poe|точк.*доступ|wi-fi|wifi|mesh|unifi|mikrotik|cudy|keenetic|tp-link|teltonika|starlink|utp|ftp|sftp|патч-корд|коннектор.*rj45|интернет-розетк/.test(nm)) return 'network';
+  if (p.cat === 'security') return 'cctv';
   if (p.cat === 'access') return 'alarm';
   if (p.cat === 'av') return 'monitors';
-  if (p.cat === 'cable') return 'racks';
   return 'racks';
 }
 
@@ -1031,22 +1032,30 @@ function matchWizProducts() {
   const ch = wizNvrChannels();
   const mp = wizAns.mp && wizAns.mp !== 'specialist' ? wizAns.mp.replace('+', '') : '';
 
-  const cctvPool = products.filter(p => {
-    const c = detectShopCat(p);
-    return c === 'cctv' || (c === 'network' && /poe|utp|коммутатор|switch/i.test((p.name || '') + ' ' + (p.desc || ''))) || (c === 'racks' && /коробк|кронштейн|ds-12/i.test(p.name || ''));
-  });
-
-  const isReg = p => /nvr|dvr|регистратор|ds-7[1267]|nvr[0-9]|xvr/i.test((p.name || '') + ' ' + (p.sku || ''));
-  const isCam = p => !isReg(p) && detectShopCat(p) === 'cctv' && !/wd purple|skyhawk|hdd|диск|кабель|bnc|разъём|коробк|кронштейн|блок питан/i.test((p.name || '') + ' ' + (p.desc || ''));
-  const isExtra = p => !isReg(p) && !isCam(p);
+  const nmOf = p => ((p.name || '') + ' ' + (p.sku || '')).toLowerCase();
+  const isReg = p => /видеорегистратор|\bnvr\b|\bdvr\b|\bxvr\b|i?ds-7[1267]|nvr[0-9]/.test(nmOf(p));
+  const isCam = p => {
+    const nm = nmOf(p);
+    if (detectShopCat(p) !== 'cctv' || isReg(p)) return false;
+    if (/солнечн|коробк|кронштейн|гофра|канал|кабель|диск|wd purple|skyhawk|блок питан|коммутатор/.test(nm)) return false;
+    return /камер|bullet|turret|dome|ptz/.test(nm);
+  };
+  const isExtra = p => {
+    const nm = nmOf(p);
+    if (isReg(p) || isCam(p)) return false;
+    if (/wd purple|skyhawk|\bhdd\b|монтажная коробка|распаечная коробка|солнечная панель/.test(nm)) return true;
+    if (isAnalog) return /блок питания 12в|шввп|коаксиал|квк|\bbnc\b/.test(nm);
+    return /poe.*коммутатор|коммутатор.*poe|poe.*switch|кабель.*utp|utp.*кабель|коннектор.*rj45/.test(nm);
+  };
 
   const scoreBrand = p => (!br ? 1 : (detectBrand(p).toLowerCase() === br ? 3 : 0));
 
-  // 1. Cameras
-  let cams = cctvPool.filter(isCam).filter(p => {
-    const hay = ((p.name || '') + ' ' + (p.desc || '')).toLowerCase();
-    if (isAnalog && /\bip\b|poe|ds-2cd|ipc-/i.test(hay) && !/tvi|cvi|analog|turbo/i.test(hay)) return false;
-    if (!isAnalog && wizAns.sys === 'ip' && /turbo hd|hd-tvi|hd-cvi|ds-2ce|hac-/i.test(hay)) return false;
+  // 1. Cameras (strictly real cameras only!)
+  let cams = products.filter(isCam).filter(p => {
+    const nm = nmOf(p);
+    const isAnalogCam = /turbo hd|hd-tvi|hd-cvi|ds-2ce|hac-/.test(nm);
+    if (isAnalog) return isAnalogCam;
+    if (wizAns.sys === 'ip') return !isAnalogCam;
     return true;
   });
   if (br) {
@@ -1055,27 +1064,32 @@ function matchWizProducts() {
   }
   if (mp) {
     const mpRx = new RegExp(`\\b${mp}\\s?(мп|mp)\\b`, 'i');
-    const mpCams = cams.filter(p => mpRx.test((p.name || '') + ' ' + (p.desc || '')));
+    const mpCams = cams.filter(p => mpRx.test(nmOf(p)));
     if (mpCams.length >= 2) cams = mpCams;
   }
-  if (!cams.length) cams = cctvPool.filter(isCam);
+  if (!cams.length) cams = products.filter(isCam);
   cams.sort((a, b) => scoreBrand(b) - scoreBrand(a));
 
-  // 2. Recorders (NVR/DVR)
-  let nvrs = cctvPool.filter(isReg);
+  // 2. Recorders (NVR for IP, DVR/XVR for Analog)
+  let nvrs = products.filter(isReg);
+  const typedNvrs = nvrs.filter(p => {
+    const isDvr = /\bdvr\b|\bxvr\b|hqhi|huhi|ids-72/.test(nmOf(p));
+    return isAnalog ? isDvr : !isDvr;
+  });
+  if (typedNvrs.length) nvrs = typedNvrs;
   if (br) {
     const brNvr = nvrs.filter(p => detectBrand(p).toLowerCase() === br);
     if (brNvr.length) nvrs = brNvr;
   }
   const chRx = new RegExp(`(\\b${ch}[\\s-]?кан|[-/]${ch}[pq]?\\b|\\b${ch}ch\\b)`, 'i');
   nvrs.sort((a, b) => {
-    const am = chRx.test((a.name || '') + ' ' + (a.sku || '')) ? 2 : 0;
-    const bm = chRx.test((b.name || '') + ' ' + (b.sku || '')) ? 2 : 0;
+    const am = chRx.test(nmOf(a)) ? 2 : 0;
+    const bm = chRx.test(nmOf(b)) ? 2 : 0;
     return (bm + scoreBrand(b)) - (am + scoreBrand(a));
   });
 
-  // 3. Extras (HDD, PoE switch, cables, mounts)
-  let extras = cctvPool.filter(isExtra);
+  // 3. Extras (HDD, PoE switch / 12V PSU, cables, mounting boxes)
+  let extras = products.filter(isExtra);
   extras.sort((a, b) => scoreBrand(b) - scoreBrand(a));
 
   return { cams: cams.slice(0, 12), nvrs: nvrs.slice(0, 6), extras: extras.slice(0, 8) };
