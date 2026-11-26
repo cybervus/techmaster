@@ -127,6 +127,10 @@ h3.dayh{font-size:14px;font-weight:600;margin:12px 0 6px;text-transform:capitali
 </header>
 
 <main>
+  <section id="loading" class="panel" hidden>
+    <div class="muted" id="loadTxt" style="text-align:center;padding:18px 0">Загрузка кабинета…</div>
+  </section>
+
   <section id="login" class="panel">
     <h2 id="lTitle">Вход в личный кабинет</h2>
     <div class="muted" id="lHint">Введите номер телефона, который вы указывали при заказе.</div>
@@ -173,6 +177,7 @@ const I18N = {
     phoneLabel: 'Номер телефона',
     enter: 'Войти',
     checking: 'Проверяем…',
+    loadingCab: 'Загрузка кабинета…',
     noAcc: 'Ещё не регистрировались?',
     regLink: 'Заполнить анкету',
     errShort: 'Введите номер телефона полностью.',
@@ -224,6 +229,7 @@ const I18N = {
     phoneLabel: 'Telefon nömrəsi',
     enter: 'Daxil ol',
     checking: 'Yoxlanılır…',
+    loadingCab: 'Kabinet yüklənir…',
     noAcc: 'Hələ qeydiyyatdan keçməmisiniz?',
     regLink: 'Anketi doldur',
     errShort: 'Telefon nömrəsini tam daxil edin.',
@@ -347,6 +353,7 @@ function applyLangStatic() {
   $('#btn-ru').classList.toggle('on', lang === 'ru');
   $('#btn-az').classList.toggle('on', lang === 'az');
   $('#lTitle').textContent = L.loginTitle;
+  $('#loadTxt').textContent = L.loadingCab;
   $('#lHint').textContent = L.loginHint;
   $('#lPhLbl').textContent = L.phoneLabel;
   if (!$('#go').disabled) $('#go').textContent = L.enter;
@@ -425,7 +432,12 @@ function renderCabinet() {
   if (list.length > 1) {
     tabsEl.hidden = false;
     tabsEl.innerHTML = list.map((x, i) => `<button type="button" class="tab${i === activeIdx ? ' on' : ''}" data-cidx="${i}">${esc(x.proj || x.name)}</button>`).join('');
-    tabsEl.querySelectorAll('[data-cidx]').forEach(b => b.onclick = () => { activeIdx = Number(b.dataset.cidx); renderCabinet(); });
+    tabsEl.querySelectorAll('[data-cidx]').forEach(b => b.onclick = () => {
+      activeIdx = Number(b.dataset.cidx);
+      const s = loadSession();
+      if (s && s.phone) saveSession(s.phone, activeIdx);
+      renderCabinet();
+    });
   } else {
     tabsEl.hidden = true;
   }
@@ -561,10 +573,27 @@ function drawHours() {
   $('#hrs').innerHTML = h;
 }
 
+const SESSION_KEY = 'tm-client-session';
+function saveSession(phone, idx = 0) {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ phone, idx })); } catch (e) {}
+}
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    return obj && typeof obj.phone === 'string' && norm(obj.phone).length >= 7 ? obj : null;
+  } catch (e) { return null; }
+}
+function clearSession() {
+  try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+}
+
 async function login() {
   const L = I18N[lang];
   const err = m => { $('#err').textContent = m; }, btn = $('#go');
-  if (norm($('#ph').value).length < 7) { err(L.errShort); return; }
+  const rawPhone = $('#ph').value.trim();
+  if (norm(rawPhone).length < 7) { err(L.errShort); return; }
   if (!(window.crypto && crypto.subtle)) { err(L.errCrypto); return; }
   err('');
   btn.disabled = true;
@@ -572,10 +601,11 @@ async function login() {
   try {
     const portal = await loadPortal();
     if (!portal) { err(L.errNoData); return; }
-    const data = await unlock($('#ph').value);
+    const data = await unlock(rawPhone);
     if (!data) { err(L.errNotFound); return; }
     unlocked = data;
     activeIdx = 0;
+    saveSession(rawPhone, 0);
     $('#login').hidden = true;
     $('#view').hidden = false;
     renderCabinet();
@@ -588,10 +618,45 @@ async function login() {
   }
 }
 
+async function restoreSession() {
+  const saved = loadSession();
+  if (!saved || !(window.crypto && crypto.subtle)) return;
+  $('#ph').value = saved.phone;
+  $('#login').hidden = true;
+  $('#loading').hidden = false;
+  try {
+    const portal = await loadPortal();
+    if (!portal) {
+      $('#loading').hidden = true;
+      $('#login').hidden = false;
+      $('#err').textContent = I18N[lang].errNoData;
+      return;
+    }
+    const data = await unlock(saved.phone);
+    if (!data) {
+      clearSession();
+      $('#loading').hidden = true;
+      $('#login').hidden = false;
+      return;
+    }
+    unlocked = data;
+    activeIdx = Number(saved.idx) || 0;
+    $('#loading').hidden = true;
+    $('#view').hidden = false;
+    renderCabinet();
+  } catch (e) {
+    $('#loading').hidden = true;
+    $('#login').hidden = false;
+    $('#err').textContent = I18N[lang].errNet;
+  }
+}
+
 $('#go').onclick = login;
 $('#ph').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 $('#logoutBtn').onclick = () => {
+  clearSession();
   unlocked = null;
+  $('#ph').value = '';
   $('#view').hidden = true;
   $('#login').hidden = false;
   $('#err').textContent = '';
@@ -608,6 +673,7 @@ document.querySelectorAll('[data-lang]').forEach(btn => {
 });
 
 applyLangStatic();
+restoreSession();
 </script>
 </body>
 </html>
