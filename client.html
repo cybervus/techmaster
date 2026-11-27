@@ -136,6 +136,14 @@ input[type=tel]:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3
 .sec-total{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:2px solid var(--line);font-size:14.5px;font-weight:700}
 .sec-total-v{font-size:16px;color:var(--accent);white-space:nowrap}
 .brand.clickable{cursor:pointer}
+#cabBody .nav-tabs{position:sticky;top:62px;z-index:5}
+#cabBody .panel+.panel{margin-top:12px}
+#cabBody .det-grid>.panel{margin-top:0}
+#cabBody .panel .sub-its{gap:0}
+#cabBody .panel .sub-its .sub-it{padding:11px 0;border-bottom:1px solid var(--line)}
+#cabBody .panel .sub-its .sub-it:last-child{border-bottom:0}
+#cabBody .panel>.kpi3+.bar-wrap{margin-top:12px}
+@media (min-width:768px){#cabBody .nav-tabs{top:84px;max-width:560px;margin-inline:0}}
 
 /* Master message banner */
 .msg-banner{margin-bottom:12px;padding:12px 14px;background:var(--blue-bg);color:var(--text);border-left:3px solid var(--blue);border-radius:12px;font-size:13.5px;white-space:pre-wrap}
@@ -703,6 +711,10 @@ const I18N = {
     ist: { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' },
     chatBtn: 'Чат с мастером',
     callBtn: 'Позвонить мастеру',
+    tabGoods: 'Товары',
+    tabPay: 'Оплата',
+    allDone: 'Все работы выполнены 🎉',
+    budgetParts: 'Из чего состоит бюджет',
     chatTitle: 'Чат с мастером',
     chatPh: 'Напишите сообщение…',
     chatSend: 'Отправить',
@@ -822,6 +834,10 @@ const I18N = {
     ist: { pending: 'Sifariş gözləyir', ordered: 'Sifariş edilib', bought: 'Alınıb', received: 'Təhvil alınıb' },
     chatBtn: 'Usta ilə çat',
     callBtn: 'Ustaya zəng et',
+    tabGoods: 'Avadanlıq',
+    tabPay: 'Ödəniş',
+    allDone: 'Bütün işlər icra edilib 🎉',
+    budgetParts: 'Büdcənin tərkibi',
     chatTitle: 'Usta ilə çat',
     chatPh: 'Mesaj yazın…',
     chatSend: 'Göndər',
@@ -889,6 +905,7 @@ let activeIdx = 0;
 let cabView = 'objects';    // objects | detail
 let workFilter = 'all';     // all | in_progress | todo | done
 let showCalPanel = false;
+let objTab = 'overview';   // overview | works | goods | pay
 const openedTasks = new Set();
 
 let chatId = null;
@@ -1135,22 +1152,45 @@ function contactBarHtml(chatBtnId, badgeId) {
   </div>`;
 }
 
+function objMoney(m) {
+  const left = Math.round((m.objBudget - m.fin.paidTotal) * 100) / 100;
+  const has = m.objBudget > 0 || m.fin.paidTotal > 0;
+  return { left, has };
+}
+
+function leftLabel(left) {
+  const L = I18N[lang];
+  return left > 0 ? L.kpiDebt : (left < 0 ? L.kpiOver : L.kpiZero);
+}
+
+function moneyKpiHtml(m) {
+  const L = I18N[lang];
+  const mo = objMoney(m);
+  const leftCls = mo.left > 0 ? ' debt' : ' ok';
+  return `<div class="kpi3" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+    <div class="kpi"><div class="kpi-k">${esc(L.objBudget)}</div><div class="kpi-v">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div></div>
+    <div class="kpi ok"><div class="kpi-k">${esc(L.kpiPaid)}</div><div class="kpi-v">${esc(fmtAzn0(m.fin.paidTotal))}</div></div>
+    <div class="kpi${leftCls}"><div class="kpi-k">${esc(leftLabel(mo.left))}</div><div class="kpi-v">${mo.left === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(mo.left)))}</div></div>
+  </div>`;
+}
+
 function renderCabinet() {
   if (!unlocked || !unlocked.clients || !unlocked.clients.length) return;
   const L = I18N[lang];
   const list = unlocked.clients;
+  const multi = list.length > 1;
   if (activeIdx >= list.length) activeIdx = 0;
+  if (!multi) { cabView = 'detail'; activeIdx = 0; }
 
   const bodyEl = $('#cabBody');
   const calSec = $('#calSec');
   $('#hdrActs').hidden = false;
-  $('#hdrBrand').classList.toggle('clickable', cabView === 'detail');
+  $('#hdrBrand').classList.toggle('clickable', multi && cabView === 'detail');
 
   if (cabView === 'objects') {
     const first = list[0];
     $('#hsub').textContent = first.name || 'Techmaster IT Solutions';
 
-    // Aggregate calendar dates across all client objects if master schedule is visible
     mine.clear();
     let anyCal = false;
     for (const x of list) {
@@ -1163,58 +1203,37 @@ function renderCabinet() {
 
     const cardsHtml = list.map((x, i) => {
       const m = getObjMetrics(x);
+      const mo = objMoney(m);
       const title = x.proj || x.name || (L.objDef + ' #' + (i + 1));
-      const stBadge = m.inProg.length > 0
-        ? `<span class="badge" style="margin-left:0">${esc(L.inProgBadge)}</span>`
-        : (m.total > 0 && m.pct >= 100
-          ? `<span class="badge ok" style="margin-left:0">${esc(L.objDoneBadge)}</span>`
-          : `<span class="badge info" style="margin-left:0">${esc(L.objPlanBadge)}</span>`);
       return `<button type="button" class="ocard" data-open-obj="${i}">
         <div class="ocard-top">
           <div class="ocard-ic">${OBJ_IC_SVG}</div>
           <div class="ocard-main">
             <div class="ocard-title">${esc(title)}</div>
             ${x.addr ? `<div class="ocard-addr">${esc(x.addr)}</div>` : ''}
-            <div style="margin-top:6px">${stBadge}</div>
           </div>
           <span class="ocard-go" aria-hidden="true">›</span>
         </div>
         <div>
-          <div class="ocard-prog-hd">
-            <span>${esc(L.progressTitle)}</span>
-            <b>${m.pct}% <span style="font-weight:500;color:var(--muted)">(${m.done.length}/${m.total})</span></b>
-          </div>
+          <div class="ocard-prog-hd"><span>${esc(L.progressTitle)}</span><b>${m.pct}%</b></div>
           <div class="bar-wrap">
             <div class="bar-ok" style="width:${(m.doneShare * 100).toFixed(1)}%"></div>
             <div class="bar-pr" style="width:${(m.progShare * 100).toFixed(1)}%"></div>
           </div>
         </div>
-        <div class="ocard-stats">
-          <div class="ostat">
-            <div class="ostat-k">${esc(L.objBudget)}</div>
-            <div class="ostat-v accent">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div>
-          </div>
-          <div class="ostat">
-            <div class="ostat-k">${esc(L.kpiPaid)}</div>
-            <div class="ostat-v" style="${m.fin.paidTotal > 0 ? 'color:var(--ok)' : ''}">${esc(fmtAzn0(m.fin.paidTotal))}</div>
-          </div>
-          <div class="ostat">
-            <div class="ostat-k">${esc((m.objBudget - m.fin.paidTotal) > 0 ? L.kpiDebt : ((m.objBudget - m.fin.paidTotal) < 0 ? L.kpiOver : L.kpiZero))}</div>
-            <div class="ostat-v" style="${(m.objBudget - m.fin.paidTotal) > 0 ? 'color:var(--danger)' : (m.objBudget > 0 ? 'color:var(--ok)' : '')}">${m.objBudget > 0 || m.fin.paidTotal > 0 ? esc(fmtAzn0(Math.abs(Math.round((m.objBudget - m.fin.paidTotal) * 100) / 100))) : '—'}</div>
-          </div>
+        <div class="ocard-stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+          <div class="ostat"><div class="ostat-k">${esc(L.objBudget)}</div><div class="ostat-v accent">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div></div>
+          <div class="ostat"><div class="ostat-k">${esc(leftLabel(mo.left))}</div><div class="ostat-v" style="${mo.left > 0 ? 'color:var(--danger)' : (mo.has ? 'color:var(--ok)' : '')}">${mo.has ? esc(fmtAzn0(Math.abs(mo.left))) : '—'}</div></div>
         </div>
       </button>`;
     }).join('');
 
-    let html = `<div class="objs-hd">
-      <div>
-        <h2>${esc(L.myObjects)}<span class="pill">${list.length}</span></h2>
-        ${first.name ? `<div class="objs-sub">${esc(first.name)}</div>` : ''}
-      </div>
-    </div>`;
-
+    let html = `<div class="objs-hd"><div>
+      <h2>${esc(L.myObjects)}<span class="pill">${list.length}</span></h2>
+      ${first.name ? `<div class="objs-sub">${esc(first.name)}</div>` : ''}
+    </div></div>`;
+    html += `<div class="obj-grid">${cardsHtml}</div>`;
     html += contactBarHtml('ovChatBtn', 'ovChatBadge');
-    html += `<div class="obj-grid${list.length === 1 ? ' single' : ''}">${cardsHtml}</div>`;
     html += `<div class="sub-acts">
       <a class="btn" href="shop.html">${esc(L.openShop)}</a>
       ${anyCal ? `<button type="button" class="btn" id="toggleCalBtn">${esc(showCalPanel ? L.hideCalBtn : L.showCalBtn)}</button>` : ''}
@@ -1222,13 +1241,12 @@ function renderCabinet() {
 
     bodyEl.innerHTML = html;
     $('#ovChatBtn').onclick = openChat;
-    if ($('#toggleCalBtn')) {
-      $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
-    }
+    if ($('#toggleCalBtn')) $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
     bodyEl.querySelectorAll('[data-open-obj]').forEach(el => {
       el.onclick = () => {
         activeIdx = Number(el.dataset.openObj);
         cabView = 'detail';
+        objTab = 'overview';
         workFilter = 'all';
         showCalPanel = false;
         const s = loadSession();
@@ -1237,191 +1255,155 @@ function renderCabinet() {
         window.scrollTo(0, 0);
       };
     });
-
-    if (showCalPanel && anyCal) {
-      calSec.hidden = false;
-      drawCal();
-      drawHours();
-    } else {
-      calSec.hidden = true;
-    }
+    calSec.hidden = !(showCalPanel && anyCal);
+    if (!calSec.hidden) { drawCal(); drawHours(); }
   } else {
-    // Object Detail Page
+    // ===== Object page with 4 simple tabs =====
     const c = list[activeIdx];
     const m = getObjMetrics(c);
+    const mo = objMoney(m);
     const title = c.proj || c.name || (L.objDef + ' #' + (activeIdx + 1));
     $('#hsub').textContent = title;
-
-    mine.clear();
-    for (const t of [...m.inProg, ...m.todo]) { if (t.d) mine.add(t.d); }
     const showCal = c.cal !== false;
     if (!showCal) showCalPanel = false;
 
-    const orderedAll = [...m.inProg, ...m.todo, ...m.done];
-    const filters = [
-      ['all', L.fAll, orderedAll.length],
-      ['in_progress', L.fProg, m.inProg.length],
-      ['todo', L.fTodo, m.todo.length],
-      ['done', L.fDone, m.done.length]
-    ];
-    const shownTasks = workFilter === 'all' ? orderedAll : (workFilter === 'in_progress' ? m.inProg : (workFilter === 'todo' ? m.todo : m.done));
+    mine.clear();
+    for (const t of [...m.inProg, ...m.todo]) { if (t.d) mine.add(t.d); }
 
-    const remainBal = Math.round((m.objBudget - m.fin.paidTotal) * 100) / 100;
-    const budgetHint = m.manualBudget > 0 ? L.budgetApproved : L.budgetAuto;
+    const openCnt = m.inProg.length + m.todo.length;
+    const tabs = [
+      { id: 'overview', lbl: L.tabOv },
+      { id: 'works', lbl: L.tabWorks, cnt: openCnt },
+      { id: 'goods', lbl: L.tabGoods, cnt: m.allItems.length },
+      { id: 'pay', lbl: L.tabPay, dot: mo.has && mo.left > 0 }
+    ];
+    if (!tabs.some(t => t.id === objTab)) objTab = 'overview';
 
     let html = `<div class="det-top">
-      <button type="button" class="back-btn" id="backObjsBtn">← ${esc(L.backObjects)}</button>
+      ${multi ? `<button type="button" class="back-btn" id="backObjsBtn">← ${esc(L.backObjects)}</button>` : ''}
       <div class="det-head">
         <h2 class="det-title">${esc(title)}</h2>
         ${c.addr ? `<div class="det-addr">${esc(c.addr)}</div>` : ''}
       </div>
     </div>`;
 
-    if (c.msg) {
-      html += `<div class="msg-banner"><b>${esc(L.masterNote)}</b>${esc(c.msg)}</div>`;
-    }
+    html += `<nav class="nav-tabs" role="tablist">${tabs.map(tb => {
+      const extra = tb.cnt ? `<span class="cnt">${tb.cnt}</span>` : (tb.dot ? '<span class="ddot"></span>' : '');
+      return `<button type="button" role="tab" aria-selected="${objTab === tb.id}" class="ntab${objTab === tb.id ? ' on' : ''}" data-otab="${tb.id}">${esc(tb.lbl)}${extra}</button>`;
+    }).join('')}</nav>`;
 
-    html += '<div class="det-grid">';
-
-    // 1. Object Progress Card
-    html += `<section class="panel">
-      <h2>${esc(L.objProgress)}<span class="pill">${m.done.length} / ${m.total}</span></h2>
-      <div class="prog-box">
-        ${donutSvg(m.pct, m.doneShare, m.progShare)}
-        <div class="stats">
-          <div class="st-row"><span class="st-l"><i class="dot ok"></i>${esc(L.stDone)}</span><span class="st-v">${m.done.length}</span></div>
-          <div class="st-row"><span class="st-l"><i class="dot pr"></i>${esc(L.stProg)}</span><span class="st-v">${m.inProg.length}</span></div>
-          <div class="st-row"><span class="st-l"><i class="dot td"></i>${esc(L.stTodo)}</span><span class="st-v">${m.todo.length}</span></div>
+    if (objTab === 'overview') {
+      const featured = m.inProg.length ? m.inProg.slice(0, 2) : m.todo.slice(0, 1);
+      if (c.msg) html += `<div class="msg-banner"><b>${esc(L.masterNote)}</b>${esc(c.msg)}</div>`;
+      html += '<div class="det-grid">';
+      html += `<section class="panel">
+        <h2>${esc(L.progressTitle)}<span class="pill">${m.done.length} / ${m.total}</span></h2>
+        <div class="prog-box">
+          ${donutSvg(m.pct, m.doneShare, m.progShare)}
+          <div class="stats">
+            <div class="st-row"><span class="st-l"><i class="dot ok"></i>${esc(L.stDone)}</span><span class="st-v">${m.done.length}</span></div>
+            <div class="st-row"><span class="st-l"><i class="dot pr"></i>${esc(L.stProg)}</span><span class="st-v">${m.inProg.length}</span></div>
+            <div class="st-row"><span class="st-l"><i class="dot td"></i>${esc(L.stTodo)}</span><span class="st-v">${m.todo.length}</span></div>
+          </div>
         </div>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-ok" style="width:${(m.doneShare * 100).toFixed(1)}%"></div>
-        <div class="bar-pr" style="width:${(m.progShare * 100).toFixed(1)}%"></div>
-      </div>
-    </section>`;
-
-    // 2. Dedicated Object Budget Row + Summary
-    html += `<section class="panel budget-panel">
-      <div class="budget-row">
-        <div>
-          <div class="budget-lbl">${esc(L.objBudget)}</div>
-          <div class="budget-hint">${esc(budgetHint)}</div>
-        </div>
-        <div class="budget-val">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div>
-      </div>
-      <div class="budget-sub">
-        <div class="bstat"><div class="bstat-k">${esc(L.kpiGoods)}</div><div class="bstat-v">${esc(fmtAzn0(m.itemsSum))}</div></div>
-        <div class="bstat"><div class="bstat-k">${esc(L.kpiTasks)}</div><div class="bstat-v">${esc(fmtAzn0(m.tasksSum))}</div></div>
-        ${m.fin.svcTotal > 0 ? `<div class="bstat"><div class="bstat-k">${esc(L.kpiSvcs)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.svcTotal))}</div></div>` : ''}
-        ${(m.objBudget > 0 || m.fin.paidTotal > 0) ? `<div class="bstat ok"><div class="bstat-k">${esc(L.kpiPaid)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.paidTotal))}</div></div>` : ''}
-        ${(m.objBudget > 0 || m.fin.paidTotal > 0) ? `<div class="bstat${remainBal > 0 ? ' debt' : ' ok'}"><div class="bstat-k">${esc(remainBal > 0 ? L.kpiDebt : (remainBal < 0 ? L.kpiOver : L.kpiZero))}</div><div class="bstat-v">${remainBal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(remainBal)))}</div></div>` : ''}
-      </div>
-    </section>`;
-
-    // 3. Goods / Equipment Purchased for This Object (with prices & total sum at the bottom)
-    html += `<section class="panel span2">
-      <h2>${esc(L.objGoodsTitle)}<span class="pill">${m.allItems.length}</span></h2>
-      ${m.allItems.length
-        ? `<table class="ptbl">
-            <thead><tr><th>${esc(L.thItem)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
-            <tbody>${m.allItems.map(x => {
-              const q = Number(x.q) || 1;
-              const p = Number(x.p) > 0 ? Number(x.p) : 0;
-              const lineSum = Math.round(q * p * 100) / 100;
+      </section>`;
+      html += `<section class="panel">
+        <h2>${esc(L.tabPay)}<button type="button" class="link-act" data-otab-go="pay">${esc(L.finDetailsBtn)}</button></h2>
+        ${moneyKpiHtml(m)}
+      </section>`;
+      html += `<section class="panel span2">
+        <h2>${esc(L.nearTitle)}<button type="button" class="link-act" data-otab-go="works">${esc(L.allWorksBtn)}</button></h2>
+        ${featured.length
+          ? `<div class="tlist">${featured.map((t, i) => compactTaskHtml(t, taskStatus(t), 'ov:' + taskKey(t, i), true)).join('')}</div>`
+          : `<div class="empty-s">${esc(m.total ? L.allDone : L.noTasksYet)}</div>`}
+      </section>`;
+      html += '</div>';
+      html += contactBarHtml('dtChatBtn', 'dtChatBadge');
+      if (showCal) html += `<div class="sub-acts"><button type="button" class="btn" id="toggleCalBtn">${esc(showCalPanel ? L.hideCalBtn : L.showCalBtn)}</button></div>`;
+    } else if (objTab === 'works') {
+      const orderedAll = [...m.inProg, ...m.todo, ...m.done];
+      const filters = [
+        ['all', L.fAll, orderedAll.length],
+        ['in_progress', L.fProg, m.inProg.length],
+        ['todo', L.fTodo, m.todo.length],
+        ['done', L.fDone, m.done.length]
+      ];
+      const shown = workFilter === 'all' ? orderedAll : (workFilter === 'in_progress' ? m.inProg : (workFilter === 'todo' ? m.todo : m.done));
+      html += `<section class="panel">
+        ${m.total > 0 ? `<div class="chips">${filters.map(([id, lb, cnt]) =>
+          `<button type="button" class="chip${workFilter === id ? ' on' : ''}" data-wf="${id}">${esc(lb)}<b>${cnt}</b></button>`).join('')}</div>` : ''}
+        ${shown.length
+          ? `<div class="tlist">${shown.map((t, i) => compactTaskHtml(t, taskStatus(t), taskKey(t, i), true, true)).join('')}</div>`
+          : `<div class="empty-s">${esc(m.total ? L.noTasksFilter : L.noTasksYet)}</div>`}
+        ${m.tasksSum > 0 ? `<div class="sec-total"><span>${esc(L.tasksTotal)}</span><span class="sec-total-v">${esc(fmtAzn0(m.tasksSum))}</span></div>` : ''}
+      </section>`;
+    } else if (objTab === 'goods') {
+      html += `<section class="panel">
+        ${m.allItems.length
+          ? `<div class="sub-its">${m.allItems.map(x => {
+              const q = Number(x.q) || 1, p = Number(x.p) > 0 ? Number(x.p) : 0;
               const stLbl = (L.ist && L.ist[x.s]) || L.ist.pending;
               const stCls = IST_CLS[x.s] !== undefined ? IST_CLS[x.s] : 'info';
-              const eta = x.dt ? `${L.etaLbl}: ${fmtShortDate(x.dt)}` : '';
-              const subNote = [x.taskTitle, eta].filter(Boolean).join(' · ');
-              return `<tr>
-                <td>
-                  <b>${esc(x.n)}</b> <span class="badge ${stCls}" style="margin-left:4px">${esc(stLbl)}</span>
-                  ${subNote ? `<span class="pnote">${esc(subNote)}</span>` : ''}
-                </td>
-                <td class="r">${p > 0 ? `${q} × ${esc(fmtAzn0(p))}` : `× ${q}`}</td>
-                <td class="r"><b>${lineSum > 0 ? esc(fmtAzn0(lineSum)) : '—'}</b></td>
-              </tr>`;
-            }).join('')}</tbody>
-            <tfoot><tr><td colspan="2">${esc(L.itemsTotal)}</td><td class="r">${esc(fmtAzn0(m.itemsSum))}</td></tr></tfoot>
-          </table>`
-        : `<div class="empty-s">${esc(L.objGoodsEmpty)}</div>`}
-      <div class="shop-foot">
-        <span class="muted">${m.allItems.length ? '' : ''}</span>
-        <a class="btn" href="shop.html">${esc(L.openShop)}</a>
-      </div>
-    </section>`;
-
-    // 4. Tasks Linked to This Object (with prices & total sum at the bottom)
-    html += `<section class="panel span2">
-      <h2>${esc(L.objTasksTitle)}<span class="pill">${m.total}</span></h2>
-      ${m.total > 0 ? `<div class="chips">${filters.map(([id, lb, cnt]) =>
-        `<button type="button" class="chip${workFilter === id ? ' on' : ''}" data-wf="${id}">${esc(lb)}<b>${cnt}</b></button>`
-      ).join('')}</div>` : ''}
-      ${shownTasks.length
-        ? `<div class="tlist">${shownTasks.map((t, i) => compactTaskHtml(t, taskStatus(t), taskKey(t, i), true, true)).join('')}</div>`
-        : `<div class="empty-s">${esc(m.total ? L.noTasksFilter : L.noTasksYet)}</div>`}
-      <div class="sec-total">
-        <span>${esc(L.tasksTotal)}</span>
-        <span class="sec-total-v">${esc(fmtAzn0(m.tasksSum))}</span>
-      </div>
-    </section>`;
-
-    // Optional: Additional services table (if any exist in legacy/finance calculation)
-    if (m.fin.svcs.length) {
-      html += `<section class="panel span2">
-        <h2>${esc(L.extraSvcsTitle)}<span class="pill">${m.fin.svcs.length}</span></h2>
-        <table class="ptbl">
-          <thead><tr><th>${esc(L.thSvc)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
-          <tbody>${m.fin.svcs.map(s => {
+              const meta = [p > 0 ? `${q} × ${fmtAzn0(p)}` : `× ${q}`, x.dt ? `${L.etaLbl}: ${fmtShortDate(x.dt)}` : ''].filter(Boolean).join(' · ');
+              return `<div class="sub-it">
+                <div class="sub-it-l"><div><b>${esc(x.n)}</b></div><div class="sub-it-m">${esc(meta)}</div></div>
+                <div style="text-align:right;flex:none">
+                  <div style="font-weight:700">${p > 0 ? esc(fmtAzn0(Math.round(q * p * 100) / 100)) : '—'}</div>
+                  <span class="badge ${stCls}" style="margin:3px 0 0">${esc(stLbl)}</span>
+                </div>
+              </div>`;
+            }).join('')}</div>`
+          : `<div class="empty-s">${esc(L.objGoodsEmpty)}</div>`}
+        <div class="shop-foot">
+          <span>${m.itemsSum > 0 ? `${esc(L.itemsTotal)}: <b>${esc(fmtAzn0(m.itemsSum))}</b>` : ''}</span>
+          <a class="btn p" href="shop.html">${esc(L.openShop)}</a>
+        </div>
+      </section>`;
+    } else {
+      const paidPct = m.objBudget > 0 ? Math.max(0, Math.min(100, Math.round(m.fin.paidTotal / m.objBudget * 100))) : 0;
+      html += `<section class="panel">
+        ${moneyKpiHtml(m)}
+        ${m.objBudget > 0 ? `<div class="bar-wrap"><div class="bar-ok" style="width:${paidPct}%"></div></div>` : ''}
+      </section>`;
+      const parts = [[L.kpiGoods, m.itemsSum], [L.kpiTasks, m.tasksSum], [L.kpiSvcs, m.fin.svcTotal]].filter(x => x[1] > 0);
+      if (parts.length) {
+        html += `<section class="panel"><h2>${esc(L.budgetParts)}</h2><div class="stats">${parts.map(([k, v]) =>
+          `<div class="st-row"><span class="st-l">${esc(k)}</span><span class="st-v">${esc(fmtAzn0(v))}</span></div>`).join('')}</div></section>`;
+      }
+      html += `<section class="panel"><h2>${esc(L.paysTitle)}<span class="pill">${m.fin.pays.length}</span></h2>
+        ${m.fin.pays.length
+          ? `<table class="ptbl"><thead><tr><th>${esc(L.thDate)}</th><th>${esc(L.thType)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>${m.fin.pays.map(p =>
+              `<tr><td>${esc(p.d ? fmtShortDate(p.d) : '—')}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.cm ? `<span class="pnote">${esc(p.cm)}</span>` : ''}</td><td class="r">${esc(fmtAzn0(p.a))}</td></tr>`).join('')}</tbody>
+            <tfoot><tr><td colspan="2">${esc(L.totPaid)}</td><td class="r">${esc(fmtAzn0(m.fin.paidTotal))}</td></tr></tfoot></table>`
+          : `<div class="empty-s">${esc(L.noPays)}</div>`}
+      </section>`;
+      if (m.fin.svcs.length) {
+        html += `<section class="panel"><h2>${esc(L.extraSvcsTitle)}<span class="pill">${m.fin.svcs.length}</span></h2>
+          <table class="ptbl"><thead><tr><th>${esc(L.thSvc)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>${m.fin.svcs.map(s => {
             const q = Number(s.q) || 1, p = Number(s.p) || 0;
             return `<tr><td>${esc(s.n)}${s.cm ? `<span class="pnote">${esc(s.cm)}</span>` : ''}</td><td class="r">${q} × ${esc(fmtAzn0(p))}</td><td class="r">${esc(fmtAzn0(q * p))}</td></tr>`;
-          }).join('')}</tbody>
-          <tfoot><tr><td colspan="2">${esc(L.totSvc)}</td><td class="r">${esc(fmtAzn0(m.fin.svcTotal))}</td></tr></tfoot>
-        </table>
-      </section>`;
-    }
-
-    // Optional: Payments table (if any payments recorded)
-    if (m.fin.pays.length) {
-      html += `<section class="panel span2">
-        <h2>${esc(L.paysTitle)}<span class="pill">${m.fin.pays.length}</span></h2>
-        <table class="ptbl">
-          <thead><tr><th>${esc(L.thDate)}</th><th>${esc(L.thType)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
-          <tbody>${m.fin.pays.map(p => `<tr><td>${esc(p.d ? fmtShortDate(p.d) : '—')}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.cm ? `<span class="pnote">${esc(p.cm)}</span>` : ''}</td><td class="r">${esc(fmtAzn0(p.a))}</td></tr>`).join('')}</tbody>
-          <tfoot><tr><td colspan="2">${esc(L.totPaid)}</td><td class="r">${esc(fmtAzn0(m.fin.paidTotal))}</td></tr></tfoot>
-        </table>
-      </section>`;
-    }
-
-    html += '</div>'; // end det-grid
-
-    // Master Contact Bar (Chat + Call) & optional Schedule toggle
-    html += contactBarHtml('dtChatBtn', 'dtChatBadge');
-    if (showCal) {
-      html += `<div class="sub-acts"><button type="button" class="btn" id="toggleCalBtn">${esc(showCalPanel ? L.hideCalBtn : L.showCalBtn)}</button></div>`;
+          }).join('')}</tbody><tfoot><tr><td colspan="2">${esc(L.totSvc)}</td><td class="r">${esc(fmtAzn0(m.fin.svcTotal))}</td></tr></tfoot></table></section>`;
+      }
     }
 
     bodyEl.innerHTML = html;
 
-    $('#backObjsBtn').onclick = () => {
-      cabView = 'objects';
-      showCalPanel = false;
-      renderCabinet();
-      window.scrollTo(0, 0);
-    };
-    $('#dtChatBtn').onclick = openChat;
-    if ($('#toggleCalBtn')) {
-      $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
+    if ($('#backObjsBtn')) {
+      $('#backObjsBtn').onclick = () => { cabView = 'objects'; objTab = 'overview'; objTab = 'overview'; showCalPanel = false; renderCabinet(); window.scrollTo(0, 0); };
     }
+    bodyEl.querySelectorAll('[data-otab]').forEach(b => b.onclick = () => {
+      objTab = b.dataset.otab; showCalPanel = false; renderCabinet();
+    });
+    bodyEl.querySelectorAll('[data-otab-go]').forEach(b => b.onclick = () => {
+      objTab = b.dataset.otabGo; showCalPanel = false; renderCabinet(); window.scrollTo(0, 0);
+    });
+    if ($('#dtChatBtn')) $('#dtChatBtn').onclick = openChat;
+    if ($('#toggleCalBtn')) $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
     bodyEl.querySelectorAll('[data-wf]').forEach(b => b.onclick = () => { workFilter = b.dataset.wf; renderCabinet(); });
     bindTaskExpand(bodyEl);
 
-    if (showCalPanel && showCal) {
-      calSec.hidden = false;
-      drawCal();
-      drawHours();
-    } else {
-      calSec.hidden = true;
-    }
+    calSec.hidden = !(showCalPanel && showCal && objTab === 'overview');
+    if (!calSec.hidden) { drawCal(); drawHours(); }
   }
 
   $('#upd').textContent = L.updText(D && D.upd);
@@ -1826,7 +1808,7 @@ function doLogout() {
   clearSession();
   stopChatSub();
   unlocked = null;
-  cabView = 'objects';
+  cabView = 'objects'; objTab = 'overview';
   workFilter = 'all';
   showCalPanel = false;
   openedTasks.clear();
@@ -1886,7 +1868,7 @@ async function login() {
 
     unlocked = data;
     activeIdx = 0;
-    cabView = 'objects';
+    cabView = 'objects'; objTab = 'overview';
     workFilter = 'all';
     showCalPanel = false;
     openedTasks.clear();
@@ -1962,7 +1944,7 @@ $('#hdrChatBtn').onclick = openChat;
 $('#hdrProfBtn').onclick = openProfile;
 $('#hdrBrand').onclick = () => {
   if (unlocked && cabView === 'detail') {
-    cabView = 'objects';
+    cabView = 'objects'; objTab = 'overview';
     showCalPanel = false;
     renderCabinet();
     window.scrollTo(0, 0);
