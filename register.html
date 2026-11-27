@@ -3,124 +3,217 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Регистрация клиента — Techmaster</title>
+<title>Müştəri qeydiyyatı — Techmaster</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="icon" type="image/png" href="apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#191c22" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0c0f16">
 <style>
-:root{--bg:#f5f6f8;--card:#ffffff;--text:#1e242b;--muted:#7b8494;--line:#eceef2;--accent:#e52520;--on:#ffffff;--danger:#e52520;--ok:#00b578;--soft:#fdecec;--sh:0 2px 10px rgba(15,23,42,.05);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--soft:#331819;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0f1115;--card:#191c22;--text:#f1f3f6;--muted:#8e97a6;--line:#272c35;--accent:#f03e38;--on:#ffffff;--danger:#f03e38;--ok:#10c988;--soft:#331819;--sh:0 2px 12px rgba(0,0,0,.35);color-scheme:dark}
+:root{--accent:#f03e38;--accent2:#c81914;--ok:#10c988;--blue:#60a5fa;--text:#f3f5f9;--muted:rgba(255,255,255,.62);--line:rgba(255,255,255,.13);color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [hidden]{display:none!important}
 html{scroll-padding-top:env(safe-area-inset-top,0px);overflow-x:clip}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 48px;max-width:600px;margin-inline:auto;overflow-x:clip}
-header{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px 12px;padding:12px 14px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--sh)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.logo{margin:0;line-height:0;flex:none;width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(229,37,32,.25)}
-.logo svg{width:26px;height:26px;display:block}
-h1{font-size:18px;font-weight:700;margin:0;line-height:1.2}
-.sub{color:var(--muted);font-size:12.5px;margin-top:1px}
-.lang{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--bg);flex:none;padding:2px}
-.lang button{display:inline-flex;align-items:center;gap:5px;border:0;background:none;color:var(--muted);padding:5px 10px;border-radius:16px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
-.lang button.on{background:var(--accent);color:var(--on)}
-.flag{width:16px;height:11px;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
-.prog{margin:12px 0 14px}
-.prog-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
-.prog-bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,#f03e38,#d61c17);border-radius:6px;transition:width .22s ease}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;box-shadow:var(--sh)}
-h2{margin:0 0 4px;font-size:18px;font-weight:700;line-height:1.3}
-.hint{color:var(--muted);font-size:13px;margin:0 0 14px}
-label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px}
-input[type=text],input[type=tel],select{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
-input:focus,select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(229,37,32,.12)}
-.ph-row{display:flex;gap:8px;align-items:stretch}
-.ph-cc{flex:none;display:flex;align-items:center;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--text);font-weight:700;font-size:16px}
-.ph-op{flex:none;width:82px;text-align:center;font-weight:600}
-.ph-op-c{flex:none;width:62px;text-align:center}
-.ph-num{flex:1;min-width:0;letter-spacing:.03em}
-.opts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-.opt{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);cursor:pointer;user-select:none;transition:all .15s ease}
-.opt.on{background:var(--soft);border-color:var(--accent)}
-.opt input{flex:none;width:19px;height:19px;margin:2px 0 0;accent-color:var(--accent);cursor:pointer}
-.opt-t{font-size:15px;font-weight:600;line-height:1.35}
-.opt-d{display:block;font-size:13px;font-weight:400;color:var(--muted);margin-top:2px}
+body{margin:0;min-height:100dvh;background:#0c0f16;color:var(--text);font:15px/1.45 "Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding:0 14px 36px;max-width:680px;margin-inline:auto;overflow-x:clip}
+
+/* Animated Tech Background (iOS-safe SMIL + GPU orbs) */
+.reg-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 15% 15%,rgba(229,37,32,.22),transparent 65%),radial-gradient(ellipse 75% 65% at 88% 82%,rgba(37,99,235,.18),transparent 65%),linear-gradient(155deg,#0b0e15 0%,#141520 48%,#0f0d14 100%)}
+.reg-bg svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(54px);opacity:.26;will-change:transform}
+.bg-orb.o1{width:340px;height:340px;background:#e52520;top:-90px;left:-80px;-webkit-animation:orbF1 15s ease-in-out infinite;animation:orbF1 15s ease-in-out infinite}
+.bg-orb.o2{width:380px;height:380px;background:#2563eb;bottom:-110px;right:-90px;-webkit-animation:orbF2 18s ease-in-out infinite;animation:orbF2 18s ease-in-out infinite}
+@-webkit-keyframes orbF1{0%,100%{-webkit-transform:translate3d(0,0,0) scale(1)}50%{-webkit-transform:translate3d(55px,42px,0) scale(1.12)}}
+@keyframes orbF1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(55px,42px,0) scale(1.12)}}
+@-webkit-keyframes orbF2{0%,100%{-webkit-transform:translate3d(0,0,0) scale(1)}50%{-webkit-transform:translate3d(-50px,-38px,0) scale(1.1)}}
+@keyframes orbF2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-50px,-38px,0) scale(1.1)}}
+
+/* Floating minimal top bar: logo + AZ/RU only */
+header,main{position:relative;z-index:2}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 8px}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#f03e38,#c81914);color:#fff;box-shadow:0 4px 14px rgba(229,37,32,.34);text-decoration:none;flex:none}
+.logo svg{width:25px;height:25px;display:block}
+.lang{display:flex;border:1px solid rgba(255,255,255,.15);border-radius:20px;overflow:hidden;background:rgba(20,24,35,.62);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);flex:none;padding:2px}
+.lang button{display:inline-flex;align-items:center;gap:5px;border:0;background:none;color:rgba(255,255,255,.72);padding:5px 10px;border-radius:16px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.lang button.on{background:var(--accent);color:#fff}
+.flag{width:16px;height:11px;display:block;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+
+/* Centered frosted glass stage */
+.reg-stage{min-height:calc(100dvh - 100px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0 16px}
+.reg-card{position:relative;width:100%;max-width:560px;background:rgba(20,24,35,.76);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:22px;padding:24px 20px 22px;box-shadow:0 24px 64px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.14);overflow:hidden}
+.reg-card::before{content:'';position:absolute;left:18%;right:18%;top:0;height:2px;background:linear-gradient(90deg,transparent,#f03e38,transparent);opacity:.9}
+.reg-body{will-change:transform,opacity}
+.reg-body.in-next{-webkit-animation:stepInNext .3s cubic-bezier(.22,.9,.32,1) both;animation:stepInNext .3s cubic-bezier(.22,.9,.32,1) both}
+.reg-body.in-prev{-webkit-animation:stepInPrev .3s cubic-bezier(.22,.9,.32,1) both;animation:stepInPrev .3s cubic-bezier(.22,.9,.32,1) both}
+@-webkit-keyframes stepInNext{from{opacity:0;-webkit-transform:translate3d(18px,0,0)}to{opacity:1;-webkit-transform:translate3d(0,0,0)}}
+@keyframes stepInNext{from{opacity:0;transform:translate3d(18px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@-webkit-keyframes stepInPrev{from{opacity:0;-webkit-transform:translate3d(-18px,0,0)}to{opacity:1;-webkit-transform:translate3d(0,0,0)}}
+@keyframes stepInPrev{from{opacity:0;transform:translate3d(-18px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+
+/* Segmented 5-step progress indicator */
+.seg-prog{display:flex;align-items:center;gap:6px;margin-bottom:20px}
+.seg-bar{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;position:relative}
+.seg-bar.done{background:var(--accent)}
+.seg-bar.cur{background:linear-gradient(90deg,#f03e38,#ff7670);box-shadow:0 0 10px rgba(240,62,56,.55)}
+.seg-lbl{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.55);margin-left:6px;white-space:nowrap}
+
+/* Step header emblem + title */
+.step-emblem{width:56px;height:56px;margin:0 auto 12px;border-radius:16px;background:linear-gradient(135deg,#f03e38,#b81410);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(229,37,32,.38)}
+.step-emblem svg{width:32px;height:32px;display:block}
+h2{margin:0 0 4px;font-size:20px;font-weight:700;text-align:center;color:#fff;line-height:1.28}
+.hint{text-align:center;color:var(--muted);font-size:13px;margin:0 0 18px;line-height:1.4}
+
+/* Form fields */
+label.fld{display:block;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.56);margin:14px 0 7px}
+input.g-inp{width:100%;height:46px;font:inherit;font-size:15.5px;color:#fff;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.16);border-radius:12px;padding:0 14px;outline:none;transition:border-color .16s,box-shadow .16s,background .16s}
+input.g-inp::placeholder{color:rgba(255,255,255,.35)}
+input.g-inp:focus{border-color:#f03e38;background:rgba(240,62,56,.11);box-shadow:0 0 0 3px rgba(240,62,56,.26)}
+
+/* +994 prefix + Operator dropdown + 7 glowing dark glass digit boxes */
+.ph-top{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
+.ph-prefix{flex:none;display:inline-flex;align-items:center;gap:6px;padding:0 13px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.16);color:#fff;font-weight:700;font-size:15.5px}
+.ph-op-sel{flex:1;height:44px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.16);color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s}
+.ph-op-sel option{background:#181c26;color:#f3f5f9}
+.ph-op-sel:focus,.ph-top input.ph-op-c:focus{border-color:#f03e38;box-shadow:0 0 0 3px rgba(240,62,56,.28)}
+.ph-top input.ph-op-c{flex:none;width:68px;height:44px;padding:0 8px;border-radius:12px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;font:inherit;font-size:16px;font-weight:700;text-align:center;outline:none}
+
+.digits-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.digits-row.shake{-webkit-animation:regShake .42s ease;animation:regShake .42s ease}
+@-webkit-keyframes regShake{0%,100%{-webkit-transform:translateX(0)}20%,60%{-webkit-transform:translateX(-7px)}40%,80%{-webkit-transform:translateX(7px)}}
+@keyframes regShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.d-sep{width:6px;height:2px;border-radius:2px;background:rgba(255,255,255,.25);flex:none}
+.digits-row input.dbox{width:100%;min-width:0;flex:1;height:50px;padding:0;border-radius:12px;border:1.5px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#ffffff;font:inherit;font-size:20px;font-weight:700;text-align:center;caret-color:#f03e38;outline:none;transition:transform .16s cubic-bezier(.22,.9,.32,1),border-color .16s,box-shadow .16s,background .16s;-webkit-appearance:none;appearance:none}
+.digits-row input.dbox:focus{border-color:#f03e38;background:rgba(240,62,56,.16);box-shadow:0 0 0 4px rgba(240,62,56,.28),0 6px 18px rgba(229,37,32,.25);-webkit-transform:translateY(-2px) scale(1.05);transform:translateY(-2px) scale(1.05);z-index:2}
+.digits-row input.dbox.filled{border-color:rgba(240,62,56,.68);background:rgba(255,255,255,.13)}
+.digits-row input.dbox.pop{-webkit-animation:dPop .2s ease;animation:dPop .2s ease}
+@-webkit-keyframes dPop{0%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.1)}100%{-webkit-transform:scale(1)}}
+@keyframes dPop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+/* Glass Option Cards */
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1.5px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.055);cursor:pointer;user-select:none;transition:all .15s ease;-webkit-animation:optIn .28s cubic-bezier(.22,.9,.32,1) both;animation:optIn .28s cubic-bezier(.22,.9,.32,1) both;-webkit-animation-delay:calc(var(--i,0) * 28ms);animation-delay:calc(var(--i,0) * 28ms)}
+@-webkit-keyframes optIn{from{opacity:0;-webkit-transform:translate3d(0,8px,0)}to{opacity:1;-webkit-transform:translate3d(0,0,0)}}
+@keyframes optIn{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.opt.on{background:rgba(240,62,56,.18);border-color:#f03e38;box-shadow:0 4px 16px rgba(229,37,32,.2)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt-chk{width:20px;height:20px;flex:none;margin-top:1px;border-radius:6px;border:1.8px solid rgba(255,255,255,.35);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:transparent;transition:all .15s}
+.opt-chk.rad{border-radius:50%}
+.opt.on .opt-chk{background:#f03e38;border-color:#f03e38;color:#fff}
+.opt-t{font-size:14.5px;font-weight:600;line-height:1.35;color:#fff}
+.opt-d{display:block;font-size:12.5px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px}
 .other-wrap{margin-top:10px}
-.err{color:var(--danger);font-size:13px;margin-top:12px;min-height:18px}
-.nav-row{display:flex;gap:10px;margin-top:16px}
-.btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:11px;padding:11px 16px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:var(--on);flex:1;box-shadow:0 3px 10px rgba(229,37,32,.24)}
-.btn:disabled{opacity:.55;cursor:default}
-.ok-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.ok-badge{width:30px;height:30px;border-radius:50%;background:var(--ok);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}
-.sum{margin-top:14px;border-top:1px solid var(--line)}
-.sum-row{display:flex;flex-direction:column;gap:2px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
-.sum-k{font-size:11.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
-.sum-v{font-weight:600}
-/* Responsive: small phones */
+
+.err{color:#ff6b6b;font-size:13px;font-weight:500;text-align:center;margin-top:12px;min-height:18px}
+.nav-row{display:flex;gap:10px;margin-top:14px}
+.btn{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;border-radius:12px;height:46px;padding:0 16px;font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:#fff;flex:1;box-shadow:0 6px 18px rgba(229,37,32,.34)}
+.btn:disabled{opacity:.5;cursor:default}
+
+.card-foot{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:center;align-items:center;gap:12px;font-size:13px;color:rgba(255,255,255,.45)}
+.card-foot a{color:#ff6b66;text-decoration:none;font-weight:600}
+.card-foot a:hover{text-decoration:underline}
+
+/* Submitting overlay & Success screen */
+.reg-ov{position:absolute;inset:0;z-index:5;background:rgba(15,19,28,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+.reg-ov svg{width:64px;height:64px;display:block}
+.ok-icon{width:64px;height:64px;margin:0 auto 12px}
+.ok-icon svg{width:64px;height:64px;display:block}
+.sum{margin-top:16px;border-top:1px solid rgba(255,255,255,.12)}
+.sum-row{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:14px}
+.sum-k{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.04em}
+.sum-v{font-weight:600;color:#fff}
+
+/* Responsive */
 @media (max-width:420px){
-  body{padding:0 10px 44px;font-size:14.5px}
-  header{margin:0 -10px 10px;padding:10px;gap:8px}
-  .logo{width:36px;height:36px}
-  h1{font-size:16px}
-  .panel{padding:15px 12px}
-  .ph-row{gap:5px}
-  .ph-cc{padding:0 9px;font-size:14.5px}
-  .ph-op{width:70px}
-  .ph-op-c{width:52px}
-  .nav-row{flex-wrap:wrap}
+  body{padding:0 10px 30px;font-size:14.5px}
+  .reg-card{padding:20px 14px 18px;border-radius:18px}
+  h2{font-size:18.5px}
+  .digits-row{gap:4px}
+  .d-sep{width:4px}
+  .digits-row input.dbox{height:45px;font-size:18.5px;border-radius:10px}
 }
-/* Responsive: hover feedback on desktop/mouse */
 @media (hover:hover){
-  .btn:not(:disabled):hover{filter:brightness(.96)}
-  .btn.p:not(:disabled):hover{filter:brightness(1.05)}
-  .opt:hover{border-color:var(--accent)}
+  .btn:not(:disabled):hover{filter:brightness(1.08)}
+  .opt:not(.on):hover{border-color:rgba(240,62,56,.5);background:rgba(255,255,255,.085)}
 }
-/* Responsive: tablets & laptops (700px+) */
-@media (min-width:700px){
-  body{max-width:760px;padding:14px 24px 64px}
-  header{margin:0 0 18px;padding:14px 20px;border-radius:16px;border:1px solid var(--line);top:14px}
-  .panel{padding:26px 28px}
-  h2{font-size:20px}
+@media (min-width:680px){
+  body{max-width:860px;padding:6px 24px 48px}
+  .reg-card{max-width:620px;padding:30px 30px 26px}
+  h2{font-size:22px}
   .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .opt{height:100%}
   .sum-row{flex-direction:row;justify-content:space-between;align-items:baseline;gap:16px}
   .sum-v{text-align:right}
 }
-/* Responsive: desktops (1280px+) */
-@media (min-width:1280px){
-  body{max-width:840px;padding-top:20px}
-  .panel{padding:30px 34px}
-}
-/* Responsive: Full HD+ / large monitors & TVs (1920px+) */
 @media (min-width:1920px){
-  body{max-width:960px;font-size:16.5px;padding-top:28px}
-  .logo{width:46px;height:46px}
-  h1{font-size:21px}
-  h2{font-size:22px}
-  .btn{font-size:16px;padding:13px 20px}
+  body{max-width:1040px;font-size:16.5px}
+  .reg-card{max-width:720px;padding:36px 36px 30px}
+  .digits-row input.dbox{height:56px;font-size:23px}
 }
-/* Responsive: 4K monitors & large TVs (2400px+) */
 @media (min-width:2400px){
-  body{max-width:1100px;font-size:18px}
+  body{max-width:1200px;font-size:18px}
+  .reg-card{max-width:780px}
 }
 </style>
 </head>
 <body>
+<div class="reg-bg" aria-hidden="true">
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+    <defs>
+      <linearGradient id="bgRed" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#f03e38" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#2563eb" stop-opacity="0.3"/>
+      </linearGradient>
+    </defs>
+    <g stroke="url(#bgRed)" stroke-width="1.2">
+      <circle cx="600" cy="400" r="170" stroke-dasharray="10 14" opacity="0.55">
+        <animateTransform attributeName="transform" type="rotate" from="0 600 400" to="360 600 400" dur="38s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="600" cy="400" r="290" stroke-dasharray="18 22" opacity="0.42">
+        <animateTransform attributeName="transform" type="rotate" from="360 600 400" to="0 600 400" dur="54s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="600" cy="400" r="430" stroke-dasharray="6 18" opacity="0.3">
+        <animateTransform attributeName="transform" type="rotate" from="0 600 400" to="360 600 400" dur="76s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <g stroke="#f03e38" stroke-width="1.4" opacity="0.55">
+      <path d="M-40 160 L260 160 L340 240 L600 240" stroke-dasharray="8 14">
+        <animate attributeName="stroke-dashoffset" from="132" to="0" dur="4.2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M1240 620 L920 620 L830 530 L600 530" stroke-dasharray="8 14">
+        <animate attributeName="stroke-dashoffset" from="0" to="132" dur="4.8s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <g stroke="#60a5fa" stroke-width="1.3" opacity="0.48">
+      <path d="M-40 640 L220 640 L310 550 L490 550" stroke-dasharray="6 16">
+        <animate attributeName="stroke-dashoffset" from="132" to="0" dur="5.2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M1240 190 L960 190 L870 280 L710 280" stroke-dasharray="6 16">
+        <animate attributeName="stroke-dashoffset" from="0" to="132" dur="5.6s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <g fill="#f03e38">
+      <circle cx="260" cy="160" r="4"><animate attributeName="opacity" values="0.35;1;0.35" dur="2.6s" repeatCount="indefinite"/></circle>
+      <circle cx="260" cy="160" r="4" fill="none" stroke="#f03e38" stroke-width="1.4"><animate attributeName="r" values="4;22" dur="3.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.75;0" dur="3.2s" repeatCount="indefinite"/></circle>
+      <circle cx="920" cy="620" r="4"><animate attributeName="opacity" values="0.35;1;0.35" dur="2.9s" repeatCount="indefinite"/></circle>
+      <circle cx="920" cy="620" r="4" fill="none" stroke="#f03e38" stroke-width="1.4"><animate attributeName="r" values="4;24" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0" dur="3.6s" repeatCount="indefinite"/></circle>
+    </g>
+    <g fill="#60a5fa">
+      <circle cx="960" cy="190" r="3.5"><animate attributeName="opacity" values="0.3;0.95;0.3" dur="3.1s" repeatCount="indefinite"/></circle>
+      <circle cx="960" cy="190" r="3.5" fill="none" stroke="#60a5fa" stroke-width="1.3"><animate attributeName="r" values="4;20" dur="3.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.65;0" dur="3.8s" repeatCount="indefinite"/></circle>
+      <circle cx="220" cy="640" r="3.5"><animate attributeName="opacity" values="0.3;0.95;0.3" dur="2.7s" repeatCount="indefinite"/></circle>
+      <circle cx="220" cy="640" r="3.5" fill="none" stroke="#60a5fa" stroke-width="1.3"><animate attributeName="r" values="4;20" dur="3.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.65;0" dur="3.4s" repeatCount="indefinite"/></circle>
+    </g>
+  </svg>
+</div>
+
 <header>
-  <div class="brand">
-    <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
-    <div>
-      <h1 id="htitle">Регистрация клиента</h1>
-      <div class="sub" id="hsub">Techmaster IT Solutions</div>
-    </div>
-  </div>
+  <a class="logo" href="client.html" aria-label="Techmaster">
+    <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg>
+  </a>
   <div class="lang" role="group" aria-label="Language">
     <button type="button" data-lang="az" id="btn-az">
       <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
@@ -133,12 +226,7 @@ input:focus,select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 
   </div>
 </header>
 
-<div class="prog" id="prog">
-  <div class="prog-top"><span id="stepLbl"></span><span id="stepPct"></span></div>
-  <div class="prog-bar"><div class="prog-fill" id="stepFill"></div></div>
-</div>
-
-<main id="app"></main>
+<main class="reg-stage" id="app"></main>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
@@ -152,26 +240,24 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 
-const OP_CODES = ['50', '51', '55', '70', '77', '99', '10'];
+const OP_CODES = ['50', '51', '55', '99', '70', '77', '10'];
+const OP_NAMES = { '50': '050 · Azercell', '51': '051 · Azercell', '55': '055 · Bakcell', '99': '099 · Bakcell', '70': '070 · Nar', '77': '077 · Nar', '10': '010 · Azercell' };
 
 const I18N = {
   ru: {
-    pageTitle: 'Регистрация клиента',
-    stepOf: (a, b) => `Шаг ${a} из ${b}`,
+    pageTitle: 'Регистрация',
     back: 'Назад',
     next: 'Далее',
     submit: 'Отправить заявку',
-    sending: 'Отправляем…',
-    multiHint: 'Можно выбрать несколько вариантов.',
-    singleHint: 'Выберите один вариант.',
+    sending: 'Отправляем заявку…',
+    multiHint: 'Можно выбрать несколько вариантов',
+    singleHint: 'Выберите один вариант',
     otherLabel: 'Другое',
-    otherOp: 'Другой',
-    step1Title: 'Контактные данные',
-    step1Hint: 'Укажите ваши имя, фамилию и мобильный номер для связи.',
+    otherOp: 'Другой код…',
+    step1Title: 'Регистрация',
     nameLabel: 'Имя и фамилия',
     namePh: 'Например, Эльчин Мамедов',
-    phoneLabel: 'Мобильный телефон',
-    phoneHint: 'Код оператора (2 цифры) и 7 цифр номера',
+    phoneLabel: 'Мобильный номер',
     step2Title: 'Какой у вас объект?',
     step2OtherPh: 'Укажите тип объекта',
     step3Title: 'Кем вы являетесь по объекту?',
@@ -182,7 +268,7 @@ const I18N = {
     step5OtherPh: 'Укажите планируемые задачи',
     errName: 'Введите имя и фамилию (минимум 2 символа).',
     errOp: 'Укажите 2 цифры кода оператора.',
-    errPhone: 'Введите 7 цифр мобильного номера.',
+    errPhone: 'Введите все 7 цифр мобильного номера.',
     errPickOne: 'Выберите хотя бы один вариант.',
     errPickRole: 'Выберите один из вариантов.',
     errOther: 'Заполните поле для варианта «Другое».',
@@ -196,7 +282,8 @@ const I18N = {
     sumServices: 'Услуги',
     sumCategories: 'Задачи',
     newReq: 'Новая заявка',
-    goPortal: 'График и задачи',
+    goCab: 'Личный кабинет',
+    goShop: 'Магазин',
     objects: [
       { id: 'flat', t: 'Квартира' },
       { id: 'house', t: 'Частный дом' },
@@ -227,22 +314,19 @@ const I18N = {
     ]
   },
   az: {
-    pageTitle: 'Müştəri qeydiyyatı',
-    stepOf: (a, b) => `Addım ${a} / ${b}`,
+    pageTitle: 'Qeydiyyat',
     back: 'Geri',
     next: 'İrəli',
     submit: 'Müraciəti göndər',
-    sending: 'Göndərilir…',
-    multiHint: 'Bir neçə variant seçə bilərsiniz.',
-    singleHint: 'Bir variant seçin.',
+    sending: 'Müraciət göndərilir…',
+    multiHint: 'Bir neçə variant seçə bilərsiniz',
+    singleHint: 'Bir variant seçin',
     otherLabel: 'Digər',
-    otherOp: 'Digər',
-    step1Title: 'Əlaqə məlumatları',
-    step1Hint: 'Əlaqə üçün ad, soyad və mobil nömrənizi qeyd edin.',
+    otherOp: 'Digər kod…',
+    step1Title: 'Qeydiyyat',
     nameLabel: 'Ad və soyad',
     namePh: 'Məsələn, Elçin Məmmədov',
     phoneLabel: 'Mobil nömrə',
-    phoneHint: 'Operator kodu (2 rəqəm) və nömrənin 7 rəqəmi',
     step2Title: 'Obyektinizin növü nədir?',
     step2OtherPh: 'Obyektin növünü yazın',
     step3Title: 'Obyekt üzrə statusunuz',
@@ -267,7 +351,8 @@ const I18N = {
     sumServices: 'Xidmətlər',
     sumCategories: 'İşlərin növü',
     newReq: 'Yeni müraciət',
-    goPortal: 'Qrafik və tapşırıqlar',
+    goCab: 'Şəxsi kabinet',
+    goShop: 'Mağaza',
     objects: [
       { id: 'flat', t: 'Mənzil' },
       { id: 'house', t: 'Fərdi yaşayış evi' },
@@ -303,6 +388,7 @@ let lang = 'az';
 
 const TOTAL = 5;
 let step = 1;
+let stepDir = 'next';
 let done = false;
 let busy = false;
 let errMsg = '';
@@ -343,99 +429,116 @@ function labelOf(list, id, otherText) {
   return item ? item.t : id;
 }
 
-function applyLangUI() {
-  const L = I18N[lang];
-  document.documentElement.lang = lang;
-  document.title = L.pageTitle + ' — Techmaster';
-  $('#htitle').textContent = L.pageTitle;
-  $('#btn-ru').classList.toggle('on', lang === 'ru');
-  $('#btn-az').classList.toggle('on', lang === 'az');
+function stepIconSvg(s) {
+  switch (s) {
+    case 1: // Static gear + rotating clock hands
+      return '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><line x1="20" y1="20" x2="20" y2="13.6" stroke-width="1.9"><animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="4.5s" repeatCount="indefinite"/></line><line x1="20" y1="20" x2="24.2" y2="22.4" stroke-width="2.1"><animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="24s" repeatCount="indefinite"/></line><circle cx="20" cy="20" r="1.2" fill="currentColor" stroke="none"/></svg>';
+    case 2: // House + pulsing radar
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17L18 7l13 10"/><path d="M9 14.5V29h18V14.5"/><rect x="15" y="21" width="6" height="8" rx="1"/><circle cx="27" cy="9" r="2" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.25;1" dur="1.3s" repeatCount="indefinite"/></circle><circle cx="27" cy="9" r="2.5" stroke-width="1.6"><animate attributeName="r" values="2.5;7.5" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0" dur="1.8s" repeatCount="indefinite"/></circle></svg>';
+    case 3: // Role / user badge
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="12" r="5"/><path d="M8 29c0-5.5 4.5-9 10-9s10 3.5 10 9"/><circle cx="28" cy="10" r="2.2" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.25;1" dur="1.5s" repeatCount="indefinite"/></circle></svg>';
+    case 4: // Services / setup
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><animateTransform attributeName="transform" type="rotate" values="-8 18 18; 8 18 18; -8 18 18" dur="2.6s" repeatCount="indefinite"/><path d="M22.5 8.5a6.5 6.5 0 0 0-8.2 8.2L7 24a2.4 2.4 0 0 0 3.4 3.4l7.3-7.3a6.5 6.5 0 0 0 8.2-8.2l-3.4 3.4-3.4-3.4 3.4-3.4z"/></g></svg>';
+    default: // Categories / security & network
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><animateTransform attributeName="transform" type="translate" values="0 0; 0 -2.5; 0 0" dur="2.2s" repeatCount="indefinite"/><path d="M18 4l11 4.5v9c0 7.2-4.7 12.2-11 14.5-6.3-2.3-11-7.3-11-14.5v-9L18 4z"/><path d="M13.5 18l3 3 6.5-6.5" stroke-width="2.3"><animate attributeName="opacity" values="0.45;1;0.45" dur="1.8s" repeatCount="indefinite"/></path></g></svg>';
+  }
 }
 
-function renderProgress() {
-  const L = I18N[lang];
-  const prog = $('#prog');
-  if (done) { prog.hidden = true; return; }
-  prog.hidden = false;
-  const pct = Math.round((step / TOTAL) * 100);
-  $('#stepLbl').textContent = L.stepOf(step, TOTAL);
-  $('#stepPct').textContent = pct + '%';
-  $('#stepFill').style.width = pct + '%';
-}
-
-function multiStepHtml(title, list, selected, otherVal, otherPh) {
-  const L = I18N[lang];
-  const hasOther = selected.includes('other');
-  return `<section class="panel">
-    <h2>${esc(title)}</h2>
-    <p class="hint">${esc(L.multiHint)}</p>
-    <div class="opts">${list.map(o => {
-      const on = selected.includes(o.id);
-      return `<label class="opt${on ? ' on' : ''}">
-        <input type="checkbox" data-opt="${o.id}" ${on ? 'checked' : ''}>
-        <span class="opt-t">${esc(o.t)}${o.d ? `<span class="opt-d">${esc(o.d)}</span>` : ''}</span>
-      </label>`;
-    }).join('')}</div>
-    <div class="other-wrap" ${hasOther ? '' : 'hidden'}>
-      <input type="text" id="otherInp" maxlength="200" placeholder="${esc(otherPh)}" value="${esc(otherVal)}">
-    </div>
-    <div class="err" id="err">${esc(errMsg)}</div>
-    ${navButtonsHtml()}
-  </section>`;
-}
-
-function singleStepHtml(title, list, selected, otherVal, otherPh) {
-  const L = I18N[lang];
-  const hasOther = selected === 'other';
-  return `<section class="panel">
-    <h2>${esc(title)}</h2>
-    <p class="hint">${esc(L.singleHint)}</p>
-    <div class="opts">${list.map(o => {
-      const on = selected === o.id;
-      return `<label class="opt${on ? ' on' : ''}">
-        <input type="radio" name="singleOpt" data-opt="${o.id}" ${on ? 'checked' : ''}>
-        <span class="opt-t">${esc(o.t)}${o.d ? `<span class="opt-d">${esc(o.d)}</span>` : ''}</span>
-      </label>`;
-    }).join('')}</div>
-    <div class="other-wrap" ${hasOther ? '' : 'hidden'}>
-      <input type="text" id="otherInp" maxlength="200" placeholder="${esc(otherPh)}" value="${esc(otherVal)}">
-    </div>
-    <div class="err" id="err">${esc(errMsg)}</div>
-    ${navButtonsHtml()}
-  </section>`;
+function progressHtml() {
+  let bars = '';
+  for (let i = 1; i <= TOTAL; i++) {
+    const cls = i < step ? ' done' : (i === step ? ' cur' : '');
+    bars += `<div class="seg-bar${cls}"></div>`;
+  }
+  return `<div class="seg-prog">${bars}<span class="seg-lbl">${step} / ${TOTAL}</span></div>`;
 }
 
 function navButtonsHtml() {
   const L = I18N[lang];
-  const nextText = step === TOTAL ? (busy ? L.sending : L.submit) : L.next;
+  const nextText = step === TOTAL ? L.submit : L.next;
   return `<div class="nav-row">
     ${step > 1 ? `<button type="button" class="btn" id="prevBtn" ${busy ? 'disabled' : ''}>${esc(L.back)}</button>` : ''}
     <button type="button" class="btn p" id="nextBtn" ${busy ? 'disabled' : ''}>${esc(nextText)}</button>
   </div>`;
 }
 
+function footLinksHtml() {
+  const L = I18N[lang];
+  return `<div class="card-foot"><a href="client.html">${esc(L.goCab)}</a><span>·</span><a href="shop.html">${esc(L.goShop)}</a></div>`;
+}
+
 function step1Html() {
   const L = I18N[lang];
   const isCustom = state.opSel === '__other';
-  return `<section class="panel">
+  const d = state.num7;
+  const dbox = i => `<input class="dbox${d[i] ? ' filled' : ''}" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="${i}" value="${esc(d[i] || '')}" aria-label="${i + 1}">`;
+  return `
+    <div class="step-emblem" aria-hidden="true">${stepIconSvg(1)}</div>
     <h2>${esc(L.step1Title)}</h2>
-    <p class="hint">${esc(L.step1Hint)}</p>
     <label class="fld" for="f-name">${esc(L.nameLabel)}</label>
-    <input id="f-name" type="text" autocomplete="name" maxlength="120" placeholder="${esc(L.namePh)}" value="${esc(state.name)}">
-    <label class="fld" for="f-num">${esc(L.phoneLabel)}</label>
-    <div class="ph-row">
-      <div class="ph-cc">+994</div>
-      <select id="f-op" class="ph-op" aria-label="Код оператора">
-        ${OP_CODES.map(c => `<option value="${c}"${state.opSel === c ? ' selected' : ''}>${c}</option>`).join('')}
+    <input id="f-name" class="g-inp" type="text" autocomplete="name" maxlength="120" placeholder="${esc(L.namePh)}" value="${esc(state.name)}">
+    <label class="fld" for="f-op">${esc(L.phoneLabel)}</label>
+    <div class="ph-top">
+      <div class="ph-prefix">
+        <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
+        <span>+994</span>
+      </div>
+      <select id="f-op" class="ph-op-sel" aria-label="Operator kodu">
+        ${OP_CODES.map(c => `<option value="${c}"${state.opSel === c ? ' selected' : ''}>${OP_NAMES[c]}</option>`).join('')}
         <option value="__other"${isCustom ? ' selected' : ''}>${esc(L.otherOp)}</option>
       </select>
       <input id="f-op-c" class="ph-op-c" type="tel" inputmode="numeric" maxlength="2" placeholder="XX" value="${esc(state.opCustom)}" ${isCustom ? '' : 'hidden'}>
-      <input id="f-num" class="ph-num" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="9" placeholder="123 45 67" value="${esc(fmt7(state.num7))}">
     </div>
-    <div class="sub" style="margin-top:5px">${esc(L.phoneHint)}</div>
+    <div class="digits-row" id="digitsRow">
+      ${dbox(0)}${dbox(1)}${dbox(2)}<span class="d-sep" aria-hidden="true"></span>${dbox(3)}${dbox(4)}<span class="d-sep" aria-hidden="true"></span>${dbox(5)}${dbox(6)}
+    </div>
     <div class="err" id="err">${esc(errMsg)}</div>
     ${navButtonsHtml()}
-  </section>`;
+    ${footLinksHtml()}`;
+}
+
+function multiStepHtml(s, title, list, selected, otherVal, otherPh) {
+  const L = I18N[lang];
+  const hasOther = selected.includes('other');
+  return `
+    <div class="step-emblem" aria-hidden="true">${stepIconSvg(s)}</div>
+    <h2>${esc(title)}</h2>
+    <p class="hint">${esc(L.multiHint)}</p>
+    <div class="opts">${list.map((o, idx) => {
+      const on = selected.includes(o.id);
+      return `<label class="opt${on ? ' on' : ''}" style="--i:${idx}">
+        <input type="checkbox" data-opt="${o.id}" ${on ? 'checked' : ''}>
+        <span class="opt-chk" aria-hidden="true">✓</span>
+        <span class="opt-t">${esc(o.t)}${o.d ? `<span class="opt-d">${esc(o.d)}</span>` : ''}</span>
+      </label>`;
+    }).join('')}</div>
+    <div class="other-wrap" ${hasOther ? '' : 'hidden'}>
+      <input type="text" class="g-inp" id="otherInp" maxlength="200" placeholder="${esc(otherPh)}" value="${esc(otherVal)}">
+    </div>
+    <div class="err" id="err">${esc(errMsg)}</div>
+    ${navButtonsHtml()}`;
+}
+
+function singleStepHtml(s, title, list, selected, otherVal, otherPh) {
+  const L = I18N[lang];
+  const hasOther = selected === 'other';
+  return `
+    <div class="step-emblem" aria-hidden="true">${stepIconSvg(s)}</div>
+    <h2>${esc(title)}</h2>
+    <p class="hint">${esc(L.singleHint)}</p>
+    <div class="opts">${list.map((o, idx) => {
+      const on = selected === o.id;
+      return `<label class="opt${on ? ' on' : ''}" style="--i:${idx}">
+        <input type="radio" name="singleOpt" data-opt="${o.id}" ${on ? 'checked' : ''}>
+        <span class="opt-chk rad" aria-hidden="true">✓</span>
+        <span class="opt-t">${esc(o.t)}${o.d ? `<span class="opt-d">${esc(o.d)}</span>` : ''}</span>
+      </label>`;
+    }).join('')}</div>
+    <div class="other-wrap" ${hasOther ? '' : 'hidden'}>
+      <input type="text" class="g-inp" id="otherInp" maxlength="200" placeholder="${esc(otherPh)}" value="${esc(otherVal)}">
+    </div>
+    <div class="err" id="err">${esc(errMsg)}</div>
+    ${navButtonsHtml()}`;
 }
 
 function doneHtml() {
@@ -444,11 +547,16 @@ function doneHtml() {
   const role = labelOf(L.roles, state.role, state.roleOther);
   const servs = state.services.map(id => labelOf(L.services, id, state.servicesOther)).join(', ');
   const cats = state.categories.map(id => labelOf(L.categories, id, state.categoriesOther)).join(', ');
-  return `<section class="panel" style="margin-top:16px">
-    <div class="ok-head">
-      <span class="ok-badge">✓</span>
-      <h2>${esc(L.doneTitle)}</h2>
+  return `<div class="reg-card">
+    <div class="ok-icon" aria-hidden="true">
+      <svg viewBox="0 0 68 68" fill="none">
+        <circle cx="34" cy="34" r="28" fill="rgba(16,201,136,0.16)" stroke="#10c988" stroke-width="3.5"/>
+        <path d="M22 34.5 L30.5 43 L46.5 26" stroke="#10c988" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="42" stroke-dashoffset="42">
+          <animate attributeName="stroke-dashoffset" from="42" to="0" dur="0.4s" fill="freeze"/>
+        </path>
+      </svg>
     </div>
+    <h2>${esc(L.doneTitle)}</h2>
     <p class="hint" style="margin-bottom:0">${esc(L.doneText(state.name.trim()))}</p>
     <div class="sum">
       <div class="sum-row"><span class="sum-k">${esc(L.sumName)}</span><span class="sum-v">${esc(state.name.trim())}</span></div>
@@ -458,16 +566,24 @@ function doneHtml() {
       <div class="sum-row"><span class="sum-k">${esc(L.sumServices)}</span><span class="sum-v">${esc(servs)}</span></div>
       <div class="sum-row"><span class="sum-k">${esc(L.sumCategories)}</span><span class="sum-v">${esc(cats)}</span></div>
     </div>
-    <div class="nav-row">
+    <div class="nav-row" style="margin-top:18px">
       <button type="button" class="btn" id="resetBtn">${esc(L.newReq)}</button>
-      <a class="btn p" href="client.html">${esc(L.goPortal)}</a>
+      <a class="btn p" href="client.html">${esc(L.goCab)}</a>
     </div>
-  </section>`;
+    <div class="card-foot"><a href="shop.html">${esc(L.goShop)}</a></div>
+  </div>`;
 }
 
-function render() {
+function applyLangUI() {
+  const L = I18N[lang];
+  document.documentElement.lang = lang;
+  document.title = L.pageTitle + ' — Techmaster';
+  $('#btn-ru').classList.toggle('on', lang === 'ru');
+  $('#btn-az').classList.toggle('on', lang === 'az');
+}
+
+function render(animate = true) {
   applyLangUI();
-  renderProgress();
   const L = I18N[lang];
   if (done) {
     $('#app').innerHTML = doneHtml();
@@ -477,63 +593,115 @@ function render() {
       state.role = ''; state.roleOther = '';
       state.services = []; state.servicesOther = '';
       state.categories = []; state.categoriesOther = '';
-      step = 1; done = false; errMsg = '';
-      render();
+      step = 1; stepDir = 'next'; done = false; errMsg = '';
+      render(true);
     };
     return;
   }
 
-  if (step === 1) $('#app').innerHTML = step1Html();
-  else if (step === 2) $('#app').innerHTML = multiStepHtml(L.step2Title, L.objects, state.objects, state.objectsOther, L.step2OtherPh);
-  else if (step === 3) $('#app').innerHTML = singleStepHtml(L.step3Title, L.roles, state.role, state.roleOther, L.step3OtherPh);
-  else if (step === 4) $('#app').innerHTML = multiStepHtml(L.step4Title, L.services, state.services, state.servicesOther, L.step4OtherPh);
-  else if (step === 5) $('#app').innerHTML = multiStepHtml(L.step5Title, L.categories, state.categories, state.categoriesOther, L.step5OtherPh);
+  let inner = '';
+  if (step === 1) inner = step1Html();
+  else if (step === 2) inner = multiStepHtml(2, L.step2Title, L.objects, state.objects, state.objectsOther, L.step2OtherPh);
+  else if (step === 3) inner = singleStepHtml(3, L.step3Title, L.roles, state.role, state.roleOther, L.step3OtherPh);
+  else if (step === 4) inner = multiStepHtml(4, L.step4Title, L.services, state.services, state.servicesOther, L.step4OtherPh);
+  else if (step === 5) inner = multiStepHtml(5, L.step5Title, L.categories, state.categories, state.categoriesOther, L.step5OtherPh);
+
+  const animCls = animate ? (stepDir === 'prev' ? ' in-prev' : ' in-next') : '';
+  const ovHtml = busy ? `<div class="reg-ov">
+    <svg viewBox="0 0 68 68" fill="none">
+      <circle cx="34" cy="34" r="28" stroke="rgba(255,255,255,0.12)" stroke-width="4"/>
+      <circle cx="34" cy="34" r="28" stroke="#f03e38" stroke-width="4" stroke-linecap="round" stroke-dasharray="56 125">
+        <animateTransform attributeName="transform" type="rotate" from="0 34 34" to="360 34 34" dur="0.9s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+    <div style="font-size:16px;font-weight:700">${esc(L.sending)}</div>
+  </div>` : '';
+
+  $('#app').innerHTML = `<section class="reg-card">
+    ${progressHtml()}
+    <div class="reg-body${animCls}">${inner}</div>
+    ${ovHtml}
+  </section>`;
 
   wireStep();
 }
 
 function wireStep() {
   if (step === 1) {
-    const nm = $('#f-name'), op = $('#f-op'), opc = $('#f-op-c'), num = $('#f-num');
+    const nm = $('#f-name'), op = $('#f-op'), opc = $('#f-op-c');
+    const boxes = [...document.querySelectorAll('.dbox')];
+
+    const syncDigits = () => {
+      state.num7 = boxes.map(b => (b.value || '').replace(/\D/g, '').slice(0, 1)).join('');
+    };
+    const fillFromRaw = raw => {
+      const digits = String(raw || '').replace(/\D/g, '');
+      let d7 = '';
+      if (digits.length >= 9) {
+        const last9 = digits.slice(-9), p2 = last9.slice(0, 2);
+        d7 = last9.slice(2);
+        if (OP_CODES.includes(p2)) { state.opSel = p2; op.value = p2; opc.hidden = true; }
+        else { state.opSel = '__other'; op.value = '__other'; state.opCustom = p2; opc.value = p2; opc.hidden = false; }
+      } else {
+        d7 = digits.slice(0, 7);
+      }
+      state.num7 = d7;
+      boxes.forEach((b, i) => { b.value = d7[i] || ''; b.classList.toggle('filled', Boolean(d7[i])); });
+      if (d7.length < 7) boxes[d7.length].focus();
+      else boxes[6].focus();
+    };
+
     nm.oninput = () => { state.name = nm.value; clearErr(); };
+    nm.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); boxes[0].focus(); } });
+
     op.onchange = () => {
       state.opSel = op.value;
       opc.hidden = op.value !== '__other';
-      if (!opc.hidden) opc.focus();
       clearErr();
+      if (!opc.hidden) opc.focus(); else (boxes.find(b => !b.value) || boxes[0]).focus();
     };
     opc.oninput = () => {
       opc.value = opc.value.replace(/\D/g, '').slice(0, 2);
       state.opCustom = opc.value;
       clearErr();
+      if (opc.value.length === 2) (boxes.find(b => !b.value) || boxes[0]).focus();
     };
-    num.oninput = () => {
-      const digits = num.value.replace(/\D/g, '');
-      // Handle full Azerbaijan number paste (+994XXXXXXXXX or 0XXXXXXXXX or 9 digits)
-      if (digits.length >= 9) {
-        const last9 = digits.slice(-9);
-        const p2 = last9.slice(0, 2);
-        const p7 = last9.slice(2);
-        if (OP_CODES.includes(p2)) {
-          state.opSel = p2;
-          op.value = p2;
-          opc.hidden = true;
+
+    boxes.forEach((box, idx) => {
+      box.addEventListener('focus', () => { setTimeout(() => { try { box.select(); } catch (e) {} }, 0); });
+      box.addEventListener('input', () => {
+        clearErr();
+        const digits = (box.value || '').replace(/\D/g, '');
+        if (digits.length > 1) { fillFromRaw(digits); return; }
+        box.value = digits;
+        box.classList.toggle('filled', Boolean(digits));
+        if (digits) {
+          box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
+          syncDigits();
+          if (idx < 6) boxes[idx + 1].focus();
         } else {
-          state.opSel = '__other';
-          op.value = '__other';
-          state.opCustom = p2;
-          opc.value = p2;
-          opc.hidden = false;
+          syncDigits();
         }
-        state.num7 = p7;
-        num.value = fmt7(p7);
-      } else {
-        state.num7 = digits.slice(0, 7);
-        num.value = fmt7(state.num7);
-      }
-      clearErr();
-    };
-    [nm, opc, num].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); goNext(); } }));
+      });
+      box.addEventListener('keydown', e => {
+        if (e.key === 'Backspace') {
+          if (!box.value && idx > 0) {
+            e.preventDefault();
+            boxes[idx - 1].value = '';
+            boxes[idx - 1].classList.remove('filled');
+            boxes[idx - 1].focus();
+            syncDigits();
+          }
+        } else if (e.key === 'ArrowLeft' && idx > 0) { e.preventDefault(); boxes[idx - 1].focus(); }
+        else if (e.key === 'ArrowRight' && idx < 6) { e.preventDefault(); boxes[idx + 1].focus(); }
+        else if (e.key === 'Enter') { e.preventDefault(); goNext(); }
+      });
+      box.addEventListener('paste', e => {
+        const txt = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+        const d = txt.replace(/\D/g, '');
+        if (d.length >= 2) { e.preventDefault(); fillFromRaw(d); }
+      });
+    });
   } else {
     const keyMap = { 2: ['objects', 'objectsOther', true], 3: ['role', 'roleOther', false], 4: ['services', 'servicesOther', true], 5: ['categories', 'categoriesOther', true] };
     const [field, otherField, isMulti] = keyMap[step];
@@ -567,7 +735,7 @@ function wireStep() {
   }
 
   const prev = $('#prevBtn');
-  if (prev) prev.onclick = () => { errMsg = ''; step--; render(); window.scrollTo(0, 0); };
+  if (prev) prev.onclick = () => { errMsg = ''; stepDir = 'prev'; step--; render(true); window.scrollTo(0, 0); };
   $('#nextBtn').onclick = goNext;
 }
 
@@ -584,12 +752,26 @@ function setErr(m) {
   if (el) el.textContent = m;
 }
 
+function shakeDigits() {
+  const r = $('#digitsRow');
+  if (!r) return;
+  r.classList.remove('shake');
+  void r.offsetWidth;
+  r.classList.add('shake');
+}
+
 function validateStep() {
   const L = I18N[lang];
   if (step === 1) {
     if (state.name.trim().length < 2) { setErr(L.errName); $('#f-name').focus(); return false; }
     if (getOp().length !== 2) { setErr(L.errOp); (state.opSel === '__other' ? $('#f-op-c') : $('#f-op')).focus(); return false; }
-    if (state.num7.length !== 7) { setErr(L.errPhone); $('#f-num').focus(); return false; }
+    if (state.num7.length !== 7) {
+      setErr(L.errPhone);
+      shakeDigits();
+      const boxes = [...document.querySelectorAll('.dbox')];
+      (boxes.find(b => !b.value) || boxes[0]).focus();
+      return false;
+    }
     return true;
   }
   if (step === 2) {
@@ -620,13 +802,14 @@ async function goNext() {
   if (!validateStep()) return;
   errMsg = '';
   if (step < TOTAL) {
+    stepDir = 'next';
     step++;
-    render();
+    render(true);
     window.scrollTo(0, 0);
     return;
   }
   busy = true;
-  render();
+  render(false);
   const payload = {
     name: state.name.trim(),
     phone: fullPhone(),
@@ -649,7 +832,7 @@ async function goNext() {
     errMsg = I18N[lang].errSend;
   } finally {
     busy = false;
-    render();
+    render(false);
     window.scrollTo(0, 0);
   }
 }
@@ -657,13 +840,12 @@ async function goNext() {
 document.querySelectorAll('[data-lang]').forEach(btn => {
   btn.onclick = () => {
     lang = btn.dataset.lang;
-    try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
     errMsg = '';
-    render();
+    render(false);
   };
 });
 
-render();
+render(true);
 </script>
 </body>
 </html>
