@@ -122,6 +122,67 @@ nav button.on::before{content:'';position:absolute;top:0;width:24px;height:3px;b
 .irow{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .irow span:first-child{color:var(--muted)}
 .irow b{font-weight:600}
+
+/* Unified Client Workspace & Object Manager */
+.cw-wrap{grid-column:1 / -1;display:flex;flex-direction:column;gap:12px}
+.cw-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.cw-head{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.cw-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.cw-name{font-size:20px;font-weight:700;margin:0;line-height:1.25}
+.cw-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.ckpi{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.ckpi-k{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ckpi-v{font-size:16px;font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ckpi.ok{background:var(--ok-bg);border-color:transparent;color:var(--ok)}
+.ckpi.ok .ckpi-k{color:var(--ok);opacity:.85}
+.ckpi.debt{background:var(--soft);border-color:transparent;color:var(--danger)}
+.ckpi.debt .ckpi-k{color:var(--danger);opacity:.85}
+.obj-bar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0;align-items:center}
+.obj-bar::-webkit-scrollbar{display:none}
+.otab{flex:none;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:12px;padding:9px 14px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--sh)}
+.otab.on{background:var(--soft);border-color:var(--accent);color:var(--accent)}
+.otab.add{border-style:dashed;color:var(--accent);border-color:rgba(229,37,32,.45);background:transparent;box-shadow:none}
+.cw-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.cw-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh)}
+.cw-card-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cw-card-hd h3{margin:0;font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:7px}
+.cw-pill{font-size:12px;font-weight:600;color:var(--muted);background:var(--bg);padding:2px 9px;border-radius:10px}
+.pbar{height:6px;background:var(--bg);border-radius:6px;overflow:hidden;display:flex;margin-top:10px}
+.pbar-ok{background:var(--ok);height:100%}
+.pbar-pr{background:var(--accent);height:100%}
+.inline-sel{width:auto;padding:5px 8px;font-size:12.5px;font-weight:600;border-radius:8px;min-width:112px}
+.inline-sel.st-pending{color:var(--muted)}
+.inline-sel.st-ordered{color:var(--warn);border-color:var(--warn);background:var(--warn-bg)}
+.inline-sel.st-bought{color:var(--blue);border-color:var(--blue);background:var(--blue-bg)}
+.inline-sel.st-received{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.inline-sel.ts-todo{color:var(--muted)}
+.inline-sel.ts-in_progress{color:var(--blue);border-color:var(--blue);background:var(--blue-bg)}
+.inline-sel.ts-done{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
+.cw-trow{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cw-trow:last-child{border-bottom:0}
+.cw-trow.done .ttl{text-decoration:line-through;color:var(--muted)}
+.cw-tacts{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:none;justify-content:flex-end}
+.cw-price{font-size:13.5px;font-weight:700;color:var(--text);white-space:nowrap}
+.cw-tot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:2px solid var(--line);font-weight:700;font-size:14px}
+.cw-tot b{color:var(--accent);font-size:15.5px}
+.qform{margin-top:12px;padding:12px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
+.qform-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qgrid .full{grid-column:1 / -1}
+.qform input,.qform select{padding:8px 10px;font-size:14px;background:var(--card)}
+.obj-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.ochip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:9px;background:var(--bg);border:1px solid var(--line);color:var(--text)}
+.dup-banner{grid-column:1 / -1;background:var(--warn-bg);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13.5px}
+@media (max-width:520px){
+  .cw-kpi{grid-template-columns:1fr}
+  .qgrid{grid-template-columns:1fr}
+  .cw-trow{flex-wrap:wrap}
+  .cw-tacts{width:100%;justify-content:space-between;margin-top:4px;padding-left:32px}
+}
+@media (min-width:960px){
+  .cw-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+  .cw-grid>.span2{grid-column:1 / -1}
+}
 .ov{position:fixed;inset:0;background:rgba(15,23,42,.52);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:20}
 .ov form,.ov .sheet{background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:92%;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)}
 .ov h3{margin:0 0 8px;font-size:18px;font-weight:700}
@@ -300,6 +361,7 @@ const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(
 let clients = [], tasks = [], requests = [], products = [], orders = [], chats = [], staff = [];
 let reqErr = false, prodErr = false, ordErr = false, chatErr = false, staffErr = false;
 let view = 'tasks', filter = 'today', shopTab = 'orders', msgFilter = 'all', clientFilter = '', staffFilter = '';
+let activeClientId = '', activeObjId = '';
 let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null, staffTimer = null, openChatId = null, openChatMeta = null;
 const staffKeyCache = new Map();
 let staffSalt = null, staffRunning = false, staffDirty = false, staffChecked = false;
@@ -332,13 +394,149 @@ const CLIENT_SERVICES = [
 const fmtAzn = p => { const n = Number(p); return (Number.isFinite(n) && n > 0) ? ((Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼') : ''; };
 const fmtAzn0 = p => { const n = Number(p) || 0; return (Number.isInteger(n) ? n : n.toFixed(2)) + ' ₼'; };
 
-function clientFinSummary(c) {
-  const svcs = Array.isArray(c.services) ? c.services : [];
-  const pays = Array.isArray(c.payments) ? [...c.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')) : [];
+function normObjItem(x) {
+  return {
+    id: String(x && x.id || uid()),
+    name: String(x && x.name || '').trim(),
+    qty: Math.max(1, Number(x && x.qty) || 1),
+    price: Number(x && x.price) > 0 ? Math.round(Number(x.price) * 100) / 100 : 0,
+    status: ITEM_ST[x && x.status] ? x.status : 'pending',
+    eta: String(x && x.eta || '')
+  };
+}
+function normObjSvc(s) {
+  return {
+    id: String(s && s.id || uid()),
+    name: String(s && s.name || '').trim(),
+    qty: Math.max(1, Number(s && s.qty) || 1),
+    price: Number(s && s.price) >= 0 ? Math.round((Number(s.price) || 0) * 100) / 100 : 0,
+    note: String(s && s.note || '').trim()
+  };
+}
+function normObjPay(p) {
+  return {
+    id: String(p && p.id || uid()),
+    date: String(p && p.date || ''),
+    amount: Number(p && p.amount) > 0 ? Math.round(Number(p.amount) * 100) / 100 : 0,
+    type: CLI_PAY_TYPES[p && p.type] ? p.type : 'final',
+    note: String(p && p.note || '').trim()
+  };
+}
+function getClientObjects(c) {
+  if (!c) return [];
+  if (Array.isArray(c.objects) && c.objects.length) {
+    return c.objects.map((o, idx) => ({
+      id: String(o.id || (idx === 0 ? 'main' : uid())),
+      name: String(o.name || (idx === 0 ? (c.pubProject || 'Основной объект') : `Объект ${idx + 1}`)).trim(),
+      address: String(o.address !== undefined ? o.address : (idx === 0 ? (c.address || '') : '')).trim(),
+      budget: Number(o.budget) > 0 ? Math.round(Number(o.budget) * 100) / 100 : 0,
+      msg: String(o.msg || '').trim(),
+      pct: (o.pct !== undefined && o.pct !== '' && o.pct !== null && Number.isFinite(Number(o.pct))) ? Math.max(0, Math.min(100, Math.round(Number(o.pct)))) : null,
+      items: Array.isArray(o.items) ? o.items.map(normObjItem).filter(x => x.name) : [],
+      services: Array.isArray(o.services) ? o.services.map(normObjSvc).filter(s => s.name) : [],
+      payments: Array.isArray(o.payments) ? o.payments.map(normObjPay).filter(p => p.amount > 0) : []
+    }));
+  }
+  const pctRaw = c.pubPct;
+  const pct = (pctRaw !== undefined && pctRaw !== '' && pctRaw !== null && Number.isFinite(Number(pctRaw))) ? Math.max(0, Math.min(100, Math.round(Number(pctRaw)))) : null;
+  return [{
+    id: 'main',
+    name: String(c.pubProject || c.address || 'Основной объект').trim(),
+    address: String(c.address || '').trim(),
+    budget: Number(c.budget) > 0 ? Math.round(Number(c.budget) * 100) / 100 : 0,
+    msg: String(c.pubMsg || '').trim(),
+    pct,
+    items: Array.isArray(c.items) ? c.items.map(normObjItem).filter(x => x.name) : [],
+    services: Array.isArray(c.services) ? c.services.map(normObjSvc).filter(s => s.name) : [],
+    payments: Array.isArray(c.payments) ? c.payments.map(normObjPay).filter(p => p.amount > 0) : []
+  }];
+}
+function tasksForObject(c, objId, tasksList = tasks) {
+  const objs = getClientObjects(c);
+  if (!objs.length) return [];
+  const validIds = new Set(objs.map(o => o.id));
+  const firstId = objs[0].id;
+  return tasksList.filter(t => {
+    if (t.clientId !== c.id) return false;
+    const tid = (t.objectId && validIds.has(t.objectId)) ? t.objectId : firstId;
+    return tid === objId;
+  });
+}
+function objSummary(c, obj, tasksList = tasks) {
+  const objTasks = tasksForObject(c, obj.id, tasksList);
+  const doneCnt = objTasks.filter(t => t.done).length;
+  const progCnt = objTasks.filter(t => !t.done && t.status === 'in_progress').length;
+  const todoCnt = objTasks.length - doneCnt - progCnt;
+  const pct = (typeof obj.pct === 'number' && Number.isFinite(obj.pct))
+    ? obj.pct
+    : (objTasks.length ? Math.round((doneCnt / objTasks.length) * 100) : 0);
+
+  const directItems = (obj.items || []).map(x => Object.assign({ source: 'obj' }, x));
+  const taskItems = [];
+  for (const t of objTasks) {
+    if (Array.isArray(t.items)) {
+      t.items.forEach((x, idx) => taskItems.push(Object.assign({ source: 'task', taskId: t.id, taskTitle: t.title, itemIdx: idx }, x)));
+    }
+  }
+  const allItems = [...directItems, ...taskItems];
+  const itemsSum = Math.round(allItems.reduce((acc, x) => acc + (Number(x.price) > 0 ? Number(x.price) * (Number(x.qty) || 1) : 0), 0) * 100) / 100;
+  const tasksSum = Math.round(objTasks.reduce((acc, t) => acc + (Number(t.clientPrice) > 0 ? Number(t.clientPrice) : 0), 0) * 100) / 100;
+  const svcs = Array.isArray(obj.services) ? obj.services : [];
   const svcTotal = Math.round(svcs.reduce((acc, s) => acc + (Number(s.qty) || 1) * (Number(s.price) || 0), 0) * 100) / 100;
+  const pays = Array.isArray(obj.payments) ? [...obj.payments].sort((a, b) => (b.date || '').localeCompare(a.date || '')) : [];
   const paidTotal = Math.round(pays.reduce((acc, p) => acc + (Number(p.amount) || 0), 0) * 100) / 100;
-  const bal = Math.round((svcTotal - paidTotal) * 100) / 100;
-  return { svcs, pays, svcTotal, paidTotal, bal };
+  const factTotal = Math.round((itemsSum + tasksSum + svcTotal) * 100) / 100;
+  const manualBudget = Number(obj.budget) > 0 ? Math.round(Number(obj.budget) * 100) / 100 : 0;
+  const objBudget = manualBudget > 0 ? manualBudget : factTotal;
+  const bal = Math.round((objBudget - paidTotal) * 100) / 100;
+  return { objTasks, doneCnt, progCnt, todoCnt, pct, directItems, taskItems, allItems, itemsSum, tasksSum, svcs, svcTotal, pays, paidTotal, factTotal, manualBudget, objBudget, bal };
+}
+function clientFinSummary(c) {
+  const objs = getClientObjects(c);
+  let totalBudget = 0, itemsSum = 0, tasksSum = 0, svcTotal = 0, paidTotal = 0, openTasks = 0;
+  const allSvcs = [], allPays = [];
+  for (const o of objs) {
+    const s = objSummary(c, o);
+    totalBudget += s.objBudget;
+    itemsSum += s.itemsSum;
+    tasksSum += s.tasksSum;
+    svcTotal += s.svcTotal;
+    paidTotal += s.paidTotal;
+    openTasks += (s.progCnt + s.todoCnt);
+    allSvcs.push(...s.svcs);
+    allPays.push(...s.pays);
+  }
+  totalBudget = Math.round(totalBudget * 100) / 100;
+  paidTotal = Math.round(paidTotal * 100) / 100;
+  const bal = Math.round((totalBudget - paidTotal) * 100) / 100;
+  return { objs, svcs: allSvcs, pays: allPays, totalBudget, itemsSum, tasksSum, svcTotal, paidTotal, bal, openTasks };
+}
+async function saveClientObjects(clientId, nextObjs, toastMsg) {
+  const cur = clients.find(x => x.id === clientId);
+  if (!cur) return;
+  const cleanObjs = nextObjs.length ? nextObjs : [{ id: 'main', name: 'Основной объект', address: cur.address || '', budget: 0, msg: '', pct: null, items: [], services: [], payments: [] }];
+  const first = cleanObjs[0];
+  const upd = Object.assign({}, cur, {
+    objects: cleanObjs,
+    pubProject: first.name || '',
+    address: first.address || cur.address || '',
+    budget: first.budget || 0,
+    pubMsg: first.msg || '',
+    pubPct: first.pct,
+    services: first.services || [],
+    payments: first.payments || []
+  });
+  delete upd.id;
+  await save('clients', clientId, upd);
+  if (toastMsg) toast(toastMsg);
+}
+function objNameOf(clientId, objectId) {
+  const c = clients.find(x => x.id === clientId);
+  if (!c) return '';
+  const objs = getClientObjects(c);
+  if (objs.length <= 1) return objs[0] ? objs[0].name : '';
+  const found = objs.find(o => o.id === objectId) || objs[0];
+  return found ? found.name : '';
 }
 
 function staffFinSummary(s) {
@@ -544,57 +742,64 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
   for (const c of clientsList) {
     const n = normPhone(c.phone);
     if (n.length < 7) continue;
-    const ts = tasksList
-      .filter(t => t.clientId === c.id && t.pub !== false)
-      .map(t => ({
-        t: t.title || '',
-        w: t.work || '',
-        e: t.equip || '',
-        d: t.date || '',
-        tm: t.time || '',
-        x: Boolean(t.done),
-        st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
-        pr: Number(t.clientPrice) > 0 ? Number(t.clientPrice) : 0,
-        n: t.pubNote || '',
-        it: Array.isArray(t.items) ? t.items.map(x => ({
-          n: x.name || '',
-          q: Number(x.qty) || 1,
-          p: Number(x.price) || 0,
-          s: x.status || 'pending',
-          dt: x.eta || ''
-        })) : []
-      }));
-    const pctRaw = c.pubPct;
-    const pct = (pctRaw !== undefined && pctRaw !== '' && pctRaw !== null && Number.isFinite(Number(pctRaw)))
-      ? Math.max(0, Math.min(100, Math.round(Number(pctRaw))))
-      : null;
+    const objs = getClientObjects(c);
     const showFin = c.showFin !== false;
-    const svcs = showFin && Array.isArray(c.services) ? c.services.map(s => ({
-      n: s.name || '',
-      q: Number(s.qty) || 1,
-      p: Number(s.price) || 0,
-      cm: s.note || ''
-    })) : [];
-    const pays = showFin && Array.isArray(c.payments) ? c.payments.map(p => ({
-      d: p.date || '',
-      a: Number(p.amount) || 0,
-      tp: CLI_PAY_TYPES[p.type] ? p.type : 'final',
-      cm: p.note || ''
-    })) : [];
     if (!groups.has(n)) groups.set(n, []);
-    groups.get(n).push({
-      name: c.name || '',
-      phone: c.phone || '',
-      addr: c.showAddress !== false ? (c.address || '') : '',
-      proj: c.pubProject || '',
-      budget: Number(c.budget) > 0 ? Number(c.budget) : 0,
-      msg: c.pubMsg || '',
-      pct,
-      cal: c.showCal !== false,
-      tasks: ts,
-      svcs,
-      pays
-    });
+    for (const o of objs) {
+      const ts = tasksForObject(c, o.id, tasksList)
+        .filter(t => t.pub !== false)
+        .map(t => ({
+          t: t.title || '',
+          w: t.work || '',
+          e: t.equip || '',
+          d: t.date || '',
+          tm: t.time || '',
+          x: Boolean(t.done),
+          st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
+          pr: Number(t.clientPrice) > 0 ? Number(t.clientPrice) : 0,
+          n: t.pubNote || '',
+          it: Array.isArray(t.items) ? t.items.map(x => ({
+            n: x.name || '',
+            q: Number(x.qty) || 1,
+            p: Number(x.price) || 0,
+            s: x.status || 'pending',
+            dt: x.eta || ''
+          })) : []
+        }));
+      const objIts = Array.isArray(o.items) ? o.items.map(x => ({
+        n: x.name || '',
+        q: Number(x.qty) || 1,
+        p: Number(x.price) || 0,
+        s: x.status || 'pending',
+        dt: x.eta || ''
+      })) : [];
+      const svcs = showFin && Array.isArray(o.services) ? o.services.map(s => ({
+        n: s.name || '',
+        q: Number(s.qty) || 1,
+        p: Number(s.price) || 0,
+        cm: s.note || ''
+      })) : [];
+      const pays = showFin && Array.isArray(o.payments) ? o.payments.map(p => ({
+        d: p.date || '',
+        a: Number(p.amount) || 0,
+        tp: CLI_PAY_TYPES[p.type] ? p.type : 'final',
+        cm: p.note || ''
+      })) : [];
+      groups.get(n).push({
+        name: c.name || '',
+        phone: c.phone || '',
+        addr: c.showAddress !== false ? (o.address || c.address || '') : '',
+        proj: o.name || '',
+        budget: Number(o.budget) > 0 ? Number(o.budget) : 0,
+        msg: o.msg || '',
+        pct: (typeof o.pct === 'number' && Number.isFinite(o.pct)) ? o.pct : null,
+        cal: c.showCal !== false,
+        items: objIts,
+        tasks: ts,
+        svcs,
+        pays
+      });
+    }
   }
 
   const enc = new TextEncoder();
@@ -915,10 +1120,12 @@ async function importJsonFile(file) {
     if (c.showCal !== undefined) docData.showCal = Boolean(c.showCal);
     if (c.showFin !== undefined) docData.showFin = Boolean(c.showFin);
     if (c.pubProject) docData.pubProject = String(c.pubProject).trim();
+    if (Number(c.budget) > 0) docData.budget = Number(c.budget);
     if (c.pubMsg) docData.pubMsg = String(c.pubMsg).trim();
     if (c.pubPct !== undefined && c.pubPct !== '' && c.pubPct !== null && Number.isFinite(Number(c.pubPct))) docData.pubPct = Number(c.pubPct);
-    if (Array.isArray(c.services)) docData.services = c.services.map(s => ({ id: String(s.id || uid()), name: String(s.name || '').trim(), qty: Math.max(1, Number(s.qty) || 1), price: Number(s.price) || 0, note: String(s.note || '').trim() })).filter(s => s.name);
-    if (Array.isArray(c.payments)) docData.payments = c.payments.map(p => ({ id: String(p.id || uid()), date: String(p.date || ''), amount: Number(p.amount) || 0, type: CLI_PAY_TYPES[p.type] ? p.type : 'final', note: String(p.note || '').trim() })).filter(p => p.amount > 0);
+    if (Array.isArray(c.objects) && c.objects.length) docData.objects = getClientObjects(c);
+    if (Array.isArray(c.services)) docData.services = c.services.map(normObjSvc).filter(s => s.name);
+    if (Array.isArray(c.payments)) docData.payments = c.payments.map(normObjPay).filter(p => p.amount > 0);
     ops.push({ col: 'clients', id, doc: docData });
   }
   for (const t of impTasks) {
@@ -927,6 +1134,7 @@ async function importJsonFile(file) {
     const st = isDone ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
     const docData = {
       clientId: String(t.clientId || ''),
+      objectId: String(t.objectId || ''),
       title: String(t.title || '').trim(),
       work: String(t.work || ''),
       equip: String(t.equip || ''),
@@ -937,6 +1145,7 @@ async function importJsonFile(file) {
       done: isDone,
       status: st,
       pub: t.pub !== false,
+      clientPrice: Number(t.clientPrice) > 0 ? Number(t.clientPrice) : 0,
       pubNote: String(t.pubNote || '').trim(),
       assigneeId: String(t.assigneeId || ''),
       staffPay: Number(t.staffPay) > 0 ? Number(t.staffPay) : 0,
@@ -1141,31 +1350,369 @@ function cardHtml(t) {
   const tags = (t.high ? '<span class="tag">Срочно</span>' : '')
     + (inProg ? '<span class="tag prog">В работе</span>' : '')
     + (hiddenPub ? '<span class="tag info">Скрыто</span>' : '');
+  const objLbl = c ? objNameOf(c.id, t.objectId) : '';
+  const cliLine = c ? (c.name + (objLbl && getClientObjects(c).length > 1 ? ' · ' + objLbl : '')) : '';
   return `<div class="tr${t.done ? ' done' : ''}${t.high ? ' hi' : ''}"><button class="chk" data-act="toggle" data-id="${t.id}" aria-label="Отметить выполненной">✓</button><div class="tm">${tm}</div>
-  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${tags}</div>${c ? `<div class="meta">${esc(c.name)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}${itemSummary ? `<div class="meta">${esc(itemSummary)}</div>` : ''}</div>${more}</div></div>`;
+  <div class="main"><div class="head" data-act="open" data-id="${t.id}"><div class="ttl">${esc(t.title)}${tags}</div>${cliLine ? `<div class="meta">${esc(cliLine)}</div>` : ''}${wt ? `<div class="meta">${wt}</div>` : ''}${itemSummary ? `<div class="meta">${esc(itemSummary)}</div>` : ''}</div>${more}</div></div>`;
+}
+
+function findDuplicatePhoneGroups() {
+  const byPh = new Map();
+  for (const c of clients) {
+    const p9 = normPhone(c.phone);
+    if (p9.length < 7) continue;
+    if (!byPh.has(p9)) byPh.set(p9, []);
+    byPh.get(p9).push(c);
+  }
+  return [...byPh.values()].filter(g => g.length > 1);
+}
+
+async function mergeDuplicateClients() {
+  const groups = findDuplicatePhoneGroups();
+  if (!groups.length || !user) return;
+  let mergedCount = 0;
+  for (const grp of groups) {
+    grp.sort((a, b) => (Number(a.created) || 0) - (Number(b.created) || 0));
+    const primary = grp[0];
+    const nextObjs = [...getClientObjects(primary)];
+    const notes = [primary.note].filter(Boolean);
+    const delIds = [];
+    for (const dup of grp.slice(1)) {
+      if (dup.note && !notes.includes(dup.note)) notes.push(dup.note);
+      const dupObjs = getClientObjects(dup);
+      const idMap = new Map();
+      for (const o of dupObjs) {
+        const newId = nextObjs.some(x => x.id === o.id) ? uid() : o.id;
+        idMap.set(o.id, newId);
+        nextObjs.push(Object.assign({}, o, { id: newId }));
+      }
+      const fallbackObjId = idMap.get(dupObjs[0].id);
+      for (const t of tasks.filter(x => x.clientId === dup.id)) {
+        const mappedObj = (t.objectId && idMap.has(t.objectId)) ? idMap.get(t.objectId) : fallbackObjId;
+        const updT = Object.assign({}, t, { clientId: primary.id, objectId: mappedObj });
+        delete updT.id;
+        await setDoc(doc(db, 'tasks', t.id), updT);
+      }
+      delIds.push(dup.id);
+    }
+    const first = nextObjs[0];
+    const updP = Object.assign({}, primary, {
+      note: notes.join('\n---\n'),
+      objects: nextObjs,
+      pubProject: first.name || '',
+      address: first.address || primary.address || '',
+      budget: first.budget || 0,
+      pubMsg: first.msg || '',
+      pubPct: first.pct,
+      services: first.services || [],
+      payments: first.payments || []
+    });
+    delete updP.id;
+    await setDoc(doc(db, 'clients', primary.id), updP);
+    for (const did of delIds) {
+      await deleteDoc(doc(db, 'clients', did));
+      if (activeClientId === did) activeClientId = primary.id;
+      if (clientFilter === did) clientFilter = primary.id;
+      mergedCount++;
+    }
+  }
+  schedulePortal(800);
+  scheduleStaffPortal(1200);
+  toast(`Объединено дубликатов: ${mergedCount}`);
+}
+
+function clientWorkspaceHtml(c) {
+  const finAll = clientFinSummary(c);
+  const objs = finAll.objs;
+  let obj = objs.find(o => o.id === activeObjId);
+  if (!obj) { obj = objs[0]; activeObjId = obj ? obj.id : ''; }
+  const s = objSummary(c, obj);
+  const prodOpts = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'))
+    .map(p => `<option value="${p.id}">${esc(p.name)}${p.price > 0 ? ' (' + fmtAzn(p.price) + ')' : ''}</option>`).join('');
+  const payTypeOpts = Object.entries(CLI_PAY_TYPES).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
+  const svcOpts = CLIENT_SERVICES.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('') + '<option value="__other">Другое…</option>';
+
+  const totBalCls = finAll.bal > 0 ? ' debt' : (finAll.totalBudget > 0 || finAll.paidTotal > 0 ? ' ok' : '');
+  const totBalLbl = finAll.bal > 0 ? 'Остался должен (всего)' : (finAll.bal < 0 ? 'Переплата клиента' : 'Баланс (всего)');
+
+  const objBalCls = s.bal > 0 ? ' owe-staff' : (s.objBudget > 0 || s.paidTotal > 0 ? ' owe-master' : '');
+  const objBalLbl = s.bal > 0
+    ? 'Остался должен по объекту'
+    : (s.bal < 0 ? 'Переплата по объекту' : 'Оплачено полностью (долга нет)');
+
+  const doneW = s.objTasks.length ? (s.doneCnt / s.objTasks.length) * 100 : (s.pct || 0);
+  const progW = s.objTasks.length ? (s.progCnt / s.objTasks.length) * 100 : 0;
+
+  // Goods rows with inline status switcher
+  const itemsTbl = s.allItems.length
+    ? `<table class="ptbl">
+        <thead><tr><th>Товар</th><th class="r">Кол-во / Сумма</th><th class="r">Статус</th><th></th></tr></thead>
+        <tbody>${s.allItems.map(x => {
+          const q = Number(x.qty) || 1;
+          const p = Number(x.price) > 0 ? Number(x.price) : 0;
+          const lineSum = Math.round(q * p * 100) / 100;
+          const stOpts = Object.entries(ITEM_ST).map(([k, l]) => `<option value="${k}"${x.status === k ? ' selected' : ''}>${esc(l)}</option>`).join('');
+          const subNote = [x.source === 'task' ? 'Задача: ' + x.taskTitle : '', x.eta ? 'получение ' + shortDate(x.eta) : ''].filter(Boolean).join(' · ');
+          const selAttrs = x.source === 'obj'
+            ? `data-ch="objitemst" data-cid="${c.id}" data-oid="${esc(obj.id)}" data-iid="${esc(x.id)}"`
+            : `data-ch="taskitemst" data-tid="${esc(x.taskId)}" data-iidx="${x.itemIdx}"`;
+          const delBtn = x.source === 'obj'
+            ? `<button type="button" class="btn d" data-act="delobjitem" data-id="${c.id}" data-oid="${esc(obj.id)}" data-iid="${esc(x.id)}" style="padding:3px 8px;font-size:12px" aria-label="Удалить">×</button>`
+            : `<button type="button" class="btn" data-act="edittask" data-id="${esc(x.taskId)}" style="padding:3px 7px;font-size:11.5px" title="Открыть задачу">✎</button>`;
+          return `<tr>
+            <td><b>${esc(x.name)}</b>${subNote ? `<span class="pnote">${esc(subNote)}</span>` : ''}</td>
+            <td class="r">${p > 0 ? `${q} × ${esc(fmtAzn0(p))}<span class="pnote"><b>${esc(fmtAzn0(lineSum))}</b></span>` : `× ${q}`}</td>
+            <td class="r"><select class="inline-sel st-${esc(x.status || 'pending')}" ${selAttrs}>${stOpts}</select></td>
+            <td class="r">${delBtn}</td>
+          </tr>`;
+        }).join('')}</tbody>
+        <tfoot><tr><td colspan="2">Итого по товарам</td><td class="r" colspan="2">${esc(fmtAzn0(s.itemsSum))}</td></tr></tfoot>
+      </table>`
+    : '<div class="meta" style="text-align:center;padding:12px 0">Товары на этот объект пока не добавлены.</div>';
+
+  // Tasks list with 1-click checkbox + inline status dropdown + price
+  const orderedTasks = [...s.objTasks].sort((a, b) => Number(Boolean(a.done)) - Number(Boolean(b.done)) || ((a.date || '9999') + (a.time || '')).localeCompare((b.date || '9999') + (b.time || '')));
+  const tasksListHtml = orderedTasks.length
+    ? orderedTasks.map(t => {
+        const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
+        const asg = t.assigneeId ? sname(t.assigneeId) : '';
+        const metaStr = [
+          t.date ? shortDate(t.date) + (t.time ? ', ' + t.time : '') : '',
+          t.work,
+          asg ? 'Исп.: ' + asg : '',
+          t.pub === false ? 'Скрыто от клиента' : ''
+        ].filter(Boolean).join(' · ');
+        const pr = Number(t.clientPrice) > 0 ? fmtAzn0(t.clientPrice) : '—';
+        return `<div class="cw-trow${t.done ? ' done' : ''}">
+          <button type="button" class="chk" data-act="toggle" data-id="${t.id}" aria-label="Отметить выполненной" style="${t.done ? 'background:var(--ok);border-color:var(--ok);color:#fff' : ''}">✓</button>
+          <div class="main">
+            <div class="ttl">${esc(t.title)}${t.high ? '<span class="tag">Срочно</span>' : ''}</div>
+            ${metaStr ? `<div class="meta">${esc(metaStr)}</div>` : ''}
+          </div>
+          <div class="cw-tacts">
+            <span class="cw-price">${esc(pr)}</span>
+            <select class="inline-sel ts-${curSt}" data-ch="taskst" data-tid="${t.id}" aria-label="Статус задачи">
+              <option value="todo"${curSt === 'todo' ? ' selected' : ''}>В плане</option>
+              <option value="in_progress"${curSt === 'in_progress' ? ' selected' : ''}>В работе</option>
+              <option value="done"${curSt === 'done' ? ' selected' : ''}>Готово</option>
+            </select>
+            <button type="button" class="btn" data-act="edittask" data-id="${t.id}" style="padding:5px 9px;font-size:12.5px">Изменить</button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<div class="meta" style="text-align:center;padding:12px 0">Задач по этому объекту пока нет.</div>';
+
+  // Payments table for this object
+  const paysTbl = s.pays.length
+    ? `<table class="ptbl">
+        <thead><tr><th>Дата</th><th>За что получено</th><th class="r">Сумма</th><th></th></tr></thead>
+        <tbody>${s.pays.map(p => `<tr>
+          <td>${esc(p.date ? shortDate(p.date) : '—')}</td>
+          <td><b>${esc(CLI_PAY_TYPES[p.type] || p.type)}</b>${p.note ? `<span class="pnote">${esc(p.note)}</span>` : ''}</td>
+          <td class="r"><b>${esc(fmtAzn0(p.amount))}</b></td>
+          <td class="r"><button type="button" class="btn d" data-act="delobjpay" data-id="${c.id}" data-oid="${esc(obj.id)}" data-pid="${esc(p.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
+        </tr>`).join('')}</tbody>
+        <tfoot><tr><td colspan="2">Итого получено по объекту</td><td class="r" colspan="2">${esc(fmtAzn0(s.paidTotal))}</td></tr></tfoot>
+      </table>`
+    : '<div class="meta" style="text-align:center;padding:10px 0">Оплат по этому объекту пока нет.</div>';
+
+  // Optional services table for this object
+  const svcsTbl = s.svcs.length
+    ? `<div class="sec"><div class="sec-t">Дополнительные услуги по объекту</div>
+        <table class="ptbl">
+          <thead><tr><th>Услуга</th><th class="r">Кол-во</th><th class="r">Сумма</th><th></th></tr></thead>
+          <tbody>${s.svcs.map(sv => {
+            const ls = (Number(sv.qty) || 1) * (Number(sv.price) || 0);
+            return `<tr>
+              <td>${esc(sv.name)}${sv.note ? `<span class="pnote">${esc(sv.note)}</span>` : ''}</td>
+              <td class="r">${Number(sv.qty) || 1} × ${esc(fmtAzn0(sv.price))}</td>
+              <td class="r">${esc(fmtAzn0(ls))}</td>
+              <td class="r"><button type="button" class="btn d" data-act="delobjsvc" data-id="${c.id}" data-oid="${esc(obj.id)}" data-sid="${esc(sv.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
+            </tr>`;
+          }).join('')}</tbody>
+          <tfoot><tr><td colspan="2">Итого услуги</td><td class="r" colspan="2">${esc(fmtAzn0(s.svcTotal))}</td></tr></tfoot>
+        </table>
+      </div>`
+    : '';
+
+  return `<div class="cw-wrap">
+    <div class="cw-top">
+      <button type="button" class="btn" data-act="backclients">← Все клиенты</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button type="button" class="btn" data-act="cchat" data-id="${c.id}">Чат</button>
+        <button type="button" class="btn" data-act="editclient" data-id="${c.id}">Данные клиента</button>
+        <button type="button" class="btn d" data-act="delclient" data-id="${c.id}">Удалить клиента</button>
+      </div>
+    </div>
+
+    <div class="cw-head">
+      <div class="cw-title-row">
+        <div>
+          <h3 class="cw-name">${esc(c.name)}</h3>
+          <div class="links meta" style="margin-top:4px">
+            ${c.phone ? `<a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a>` : ''}
+            <span>Объектов: <b>${objs.length}</b></span>
+          </div>
+          ${c.note ? `<div class="meta" style="margin-top:6px;white-space:pre-wrap">📝 ${esc(c.note)}</div>` : ''}
+        </div>
+      </div>
+      <div class="cw-kpi">
+        <div class="ckpi"><div class="ckpi-k">Общий бюджет (${objs.length} об.)</div><div class="ckpi-v">${esc(fmtAzn0(finAll.totalBudget))}</div></div>
+        <div class="ckpi ok"><div class="ckpi-k">Получено от клиента</div><div class="ckpi-v">${esc(fmtAzn0(finAll.paidTotal))}</div></div>
+        <div class="ckpi${totBalCls}"><div class="ckpi-k">${esc(totBalLbl)}</div><div class="ckpi-v">${finAll.bal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(finAll.bal)))}</div></div>
+      </div>
+    </div>
+
+    <div class="obj-bar" role="tablist">
+      ${objs.map(o => {
+        const os = objSummary(c, o);
+        return `<button type="button" class="otab${o.id === obj.id ? ' on' : ''}" data-act="selobj" data-oid="${esc(o.id)}">
+          <span>${esc(o.name)}</span>
+          <span class="cw-pill">${os.pct}%</span>
+        </button>`;
+      }).join('')}
+      <button type="button" class="otab add" data-act="addobj" data-id="${c.id}">+ Добавить объект</button>
+    </div>
+
+    <div class="cw-card">
+      <div class="cw-card-hd">
+        <div>
+          <h3>${esc(obj.name)}<span class="cw-pill">${s.pct}% · ${s.doneCnt}/${s.objTasks.length}</span></h3>
+          ${obj.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(obj.address)}" target="_blank" rel="noopener">${esc(obj.address)}</a></div>` : ''}
+          ${obj.msg ? `<div class="meta">💬 Для клиента: ${esc(obj.msg)}</div>` : ''}
+        </div>
+        <button type="button" class="btn" data-act="editobj" data-id="${c.id}" data-oid="${esc(obj.id)}">Настройки объекта</button>
+      </div>
+      <div class="pbar">
+        <div class="pbar-ok" style="width:${doneW.toFixed(1)}%"></div>
+        <div class="pbar-pr" style="width:${progW.toFixed(1)}%"></div>
+      </div>
+    </div>
+
+    <div class="cw-grid">
+      <div class="cw-card span2">
+        <div class="cw-card-hd">
+          <h3>Товары объекта<span class="cw-pill">${s.allItems.length}</span></h3>
+        </div>
+        ${itemsTbl}
+        <form class="qform" data-qform="additem" data-cid="${c.id}" data-oid="${esc(obj.id)}">
+          <div class="qform-t">Добавить товар на «${esc(obj.name)}»</div>
+          ${prodOpts ? `<div class="it-add" style="margin:0 0 8px">
+            <select id="cwCatSel"><option value="">Выбрать из каталога магазина…</option>${prodOpts}</select>
+            <button type="button" class="btn" data-act="cwfillcat">Подставить</button>
+          </div>` : ''}
+          <div class="qgrid">
+            <input class="full" type="text" name="name" required placeholder="Название товара / модели">
+            <input type="number" name="qty" min="1" step="1" value="1" placeholder="Кол-во">
+            <input type="number" name="price" min="0" step="0.5" placeholder="Цена за шт., ₼">
+            <select name="status">${Object.entries(ITEM_ST).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('')}</select>
+            <input type="date" name="eta" title="Дата получения">
+          </div>
+          <div class="row"><button type="submit" class="btn p">+ Добавить товар</button></div>
+        </form>
+      </div>
+
+      <div class="cw-card span2">
+        <div class="cw-card-hd">
+          <h3>Задачи объекта<span class="cw-pill">${s.objTasks.length}</span></h3>
+          <button type="button" class="btn p" data-act="newobjtask" data-id="${c.id}" data-oid="${esc(obj.id)}">+ Новая задача</button>
+        </div>
+        ${tasksListHtml}
+        <div class="cw-tot"><span>Итого по задачам</span><b>${esc(fmtAzn0(s.tasksSum))}</b></div>
+      </div>
+
+      <div class="cw-card span2">
+        <div class="cw-card-hd">
+          <h3>Финансы и оплаты по объекту</h3>
+          <button type="button" class="btn" data-act="editobj" data-id="${c.id}" data-oid="${esc(obj.id)}">Изменить бюджет</button>
+        </div>
+        <div>
+          <div class="irow"><span>Бюджет объекта (${s.manualBudget > 0 ? 'утверждён вручную' : 'авто: товары + задачи'})</span><b>${esc(fmtAzn0(s.objBudget))}</b></div>
+          <div class="irow"><span>Товары (${s.allItems.length}) · Задачи (${s.objTasks.length})${s.svcTotal > 0 ? ' · Доп. услуги' : ''}</span><b>${esc(fmtAzn0(s.itemsSum))} · ${esc(fmtAzn0(s.tasksSum))}${s.svcTotal > 0 ? ' · ' + esc(fmtAzn0(s.svcTotal)) : ''}</b></div>
+          <div class="irow"><span>Получено от клиента</span><b style="color:var(--ok)">${esc(fmtAzn0(s.paidTotal))}</b></div>
+        </div>
+        <div class="fin-bal${objBalCls}"><span>${esc(objBalLbl)}</span><span>${s.bal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(s.bal)))}</span></div>
+
+        <form class="qform" data-qform="addpay" data-cid="${c.id}" data-oid="${esc(obj.id)}">
+          <div class="qform-t">Записать получение денег от клиента</div>
+          <div class="qgrid">
+            <input type="number" name="amount" min="0.5" step="0.5" required placeholder="Сумма, ₼ (напр. 300)">
+            <input type="date" name="date" value="${today()}" title="Дата получения">
+            <select class="full" name="type">${payTypeOpts}</select>
+            <input class="full" type="text" name="note" maxlength="160" placeholder="За что / способ оплаты (напр., Наличными за камеры и монтаж)">
+          </div>
+          <div class="row"><button type="submit" class="btn p">+ Записать оплату</button></div>
+        </form>
+
+        <div class="sec">
+          <div class="sec-t">История оплат по объекту (видна клиенту)</div>
+          ${paysTbl}
+        </div>
+
+        ${svcsTbl}
+        <details style="margin-top:12px">
+          <summary class="meta" style="cursor:pointer;font-weight:600">+ Добавить доп. услугу в смету объекта</summary>
+          <form class="qform" data-qform="addsvc" data-cid="${c.id}" data-oid="${esc(obj.id)}">
+            <div class="qgrid">
+              <select class="full" name="svcSel" data-ch="svcsel">${svcOpts}</select>
+              <input class="full" type="text" name="svcOther" placeholder="Название услуги" hidden>
+              <input type="number" name="price" min="0" step="0.5" required placeholder="Цена за ед., ₼">
+              <input type="number" name="qty" min="1" step="1" value="1" placeholder="Кол-во">
+              <input class="full" type="text" name="note" maxlength="160" placeholder="Комментарий (необязательно)">
+            </div>
+            <div class="row"><button type="submit" class="btn p">+ Добавить услугу</button></div>
+          </form>
+        </details>
+      </div>
+    </div>
+  </div>`;
 }
 
 function clientsHtml() {
   if (!clients.length) return '<div class="empty">Клиентов пока нет. Нажмите «Новый клиент» или импортируйте данные в меню (⋯).</div>';
-  return [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => {
-    const n = tasks.filter(t => t.clientId === c.id && !t.done).length;
+  if (activeClientId) {
+    const active = clients.find(x => x.id === activeClientId);
+    if (active) return clientWorkspaceHtml(active);
+    activeClientId = '';
+    activeObjId = '';
+  }
+  const dups = findDuplicatePhoneGroups();
+  let banner = '';
+  if (dups.length) {
+    const extraCount = dups.reduce((a, g) => a + g.length - 1, 0);
+    banner = `<div class="dup-banner">
+      <div><b>Найдены дубликаты клиентов (${extraCount})</b> с одинаковым номером телефона. Объедините их в 1 карточку клиента с вложенными объектами — все задачи и оплаты сохранятся.</div>
+      <button type="button" class="btn p" data-act="mergedups">Объединить сейчас</button>
+    </div>`;
+  }
+  return banner + [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => {
     const fin = clientFinSummary(c);
-    const hasFin = fin.svcs.length || fin.pays.length;
+    const hasFin = fin.totalBudget > 0 || fin.paidTotal > 0;
     const balTag = hasFin
       ? (fin.bal > 0 ? `<span class="tag">Долг: ${esc(fmtAzn0(fin.bal))}</span>`
         : fin.bal < 0 ? `<span class="tag ok">Переплата: ${esc(fmtAzn0(Math.abs(fin.bal)))}</span>`
         : '<span class="tag ok">Оплачено</span>')
       : '';
-    const finLine = hasFin ? `<div class="meta">Услуги: ${esc(fmtAzn0(fin.svcTotal))} · Оплачено: ${esc(fmtAzn0(fin.paidTotal))}</div>` : '';
-    const projLine = c.pubProject ? `<div class="meta">Объект: <b>${esc(c.pubProject)}</b>${Number(c.budget) > 0 ? ' · Бюджет: ' + esc(fmtAzn0(c.budget)) : ''}</div>` : (Number(c.budget) > 0 ? `<div class="meta">Бюджет: <b>${esc(fmtAzn0(c.budget))}</b></div>` : '');
-    return `<div class="cl"><div class="main"><div class="ttl">${esc(c.name)}${balTag}</div>
-    ${projLine}
-    <div class="meta">Открытых задач: ${n}</div>
-    ${finLine}
-    ${c.phone ? `<div class="links meta"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
-    ${c.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a></div>` : ''}
-    ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
-    <div class="row"><button class="btn p" data-act="cfin" data-id="${c.id}">Расчёты</button><button class="btn" data-act="addobj" data-id="${c.id}">+ Объект</button><button class="btn" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
+    const finLine = hasFin
+      ? `<div class="meta">Бюджет: <b>${esc(fmtAzn0(fin.totalBudget))}</b> · Получено: <b style="color:var(--ok)">${esc(fmtAzn0(fin.paidTotal))}</b>${fin.bal > 0 ? ' · Остаток: <b style="color:var(--danger)">' + esc(fmtAzn0(fin.bal)) + '</b>' : ''}</div>`
+      : '';
+    const objChips = fin.objs.map(o => `<span class="ochip">${esc(o.name)}</span>`).join('');
+    return `<div class="cl"><div class="main">
+      <div class="head" data-act="openclient" data-id="${c.id}">
+        <div class="ttl">${esc(c.name)}${balTag}</div>
+        <div class="meta">Объектов: <b>${fin.objs.length}</b> · Открытых задач: <b>${fin.openTasks}</b></div>
+        <div class="obj-chips">${objChips}</div>
+        ${finLine}
+      </div>
+      ${c.phone ? `<div class="links meta" style="margin-top:6px"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
+      ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
+      <div class="row">
+        <button class="btn p" data-act="openclient" data-id="${c.id}">Открыть клиента</button>
+        <button class="btn" data-act="addobj" data-id="${c.id}">+ Объект</button>
+        <button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button>
+        <button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button>
+      </div>
+    </div></div>`;
   }).join('');
 }
 
@@ -1355,7 +1902,7 @@ function render() {
   const mb = $('#msgb');
   if (mb) { mb.textContent = unreadMsgs; mb.hidden = unreadMsgs === 0; }
   $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'staff' ? 'Исполнители' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? 'Новый клиент' : view === 'staff' ? 'Новый исполнитель' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? (activeClientId ? '+ Объект' : 'Новый клиент') : view === 'staff' ? 'Новый исполнитель' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
   $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'staff' ? staffHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
 }
 
@@ -1458,52 +2005,144 @@ function openMenu() {
   ov.querySelector('[data-out]').onclick = async () => { ov.remove(); await signOut(auth); };
 }
 
-function openClient(id, prefill) {
-  const c = clients.find(x => x.id === id) || Object.assign({ name: '', phone: '+994 ', address: '', note: '', showAddress: true, showCal: true, pubProject: '', pubMsg: '', pubPct: '', budget: '' }, prefill || {});
-  const pctVal = (c.pubPct !== undefined && c.pubPct !== null && c.pubPct !== '') ? String(c.pubPct) : '';
-  const budVal = Number(c.budget) > 0 ? String(c.budget) : '';
-  const titleTxt = id ? 'Клиент / объект' : (prefill ? 'Новый объект клиента' : 'Новый клиент');
-  const ov = modal(titleTxt, `<label>Имя клиента</label><input type="text" name="name" required value="${esc(c.name)}">
+function openClient(id) {
+  const existing = id ? clients.find(x => x.id === id) : null;
+  const c = existing || { name: '', phone: '+994 ', address: '', note: '', showAddress: true, showCal: true, showFin: true, pubProject: '', budget: '' };
+  const firstObjHtml = !existing ? `<div class="sec">
+    <div class="sec-t">Первый объект клиента</div>
+    <label>Название объекта</label><input type="text" name="objName" placeholder="Например, Дача в Мардакянах — Видеонаблюдение" value="">
+    <label>Адрес объекта</label><input type="text" name="objAddr" placeholder="Улица, район" value="">
+    <label>Бюджет объекта, ₼ (пусто = авто по товарам и задачам)</label><input type="number" name="objBudget" min="0" step="0.5" placeholder="Авто по товарам и задачам" value="">
+  </div>` : '';
+  const ov = modal(existing ? 'Данные клиента' : 'Новый клиент', `<label>Имя клиента</label><input type="text" name="name" required value="${esc(c.name)}">
   <label>Телефон</label><input type="tel" name="phone" value="${esc(c.phone)}">
   <div class="qk"><button type="button" class="btn" data-pick>Из контактов</button><button type="button" class="btn" data-paste>Вставить номер</button></div>
   <div id="chint" class="meta">В «Контактах» нажмите на номер → «Скопировать», затем «Вставить номер».</div>
-  <label>Адрес объекта</label><input type="text" name="address" value="${esc(c.address)}">
   <label>Заметки мастера (личные, клиенту не видны)</label><textarea name="note">${esc(c.note)}</textarea>
+  ${firstObjHtml}
   <div class="sec">
-    <div class="sec-t">Карточка объекта в кабинете клиента</div>
-    <label>Название объекта (видно клиенту на карточке)</label><input type="text" name="pubProject" placeholder="Например, Дача в Мардакянах — Видеонаблюдение" value="${esc(c.pubProject || '')}">
-    <label>Бюджет объекта, ₼ (пусто = авторасчёт по товарам и задачам)</label><input type="number" name="budget" min="0" step="0.5" placeholder="Авто по товарам и задачам" value="${esc(budVal)}">
-    <label>Сообщение для клиента (вверху страницы объекта)</label><textarea name="pubMsg" placeholder="Например, Оборудование заказано, следующий визит в пятницу" style="min-height:68px">${esc(c.pubMsg || '')}</textarea>
-    <label>Прогресс вручную, % (оставьте пустым для авторасчёта)</label><input type="number" name="pubPct" min="0" max="100" step="1" placeholder="Авто по задачам" value="${esc(pctVal)}">
-    <label class="inl"><input type="checkbox" name="showAddress" ${c.showAddress !== false ? 'checked' : ''}> Показывать адрес в кабинете</label>
-    <label class="inl"><input type="checkbox" name="showCal" ${c.showCal !== false ? 'checked' : ''}> Показывать график занятости</label>
-    <label class="inl"><input type="checkbox" name="showFin" ${c.showFin !== false ? 'checked' : ''}> Показывать расчёты и оплаты в кабинете</label>
+    <div class="sec-t">Настройки кабинета клиента</div>
+    <label class="inl"><input type="checkbox" name="showAddress" ${c.showAddress !== false ? 'checked' : ''}> Показывать адреса объектов в кабинете</label>
+    <label class="inl"><input type="checkbox" name="showCal" ${c.showCal !== false ? 'checked' : ''}> Показывать график занятости мастера</label>
+    <label class="inl"><input type="checkbox" name="showFin" ${c.showFin !== false ? 'checked' : ''}> Показывать бюджет, оплаты и остаток долга</label>
   </div>`,
   f => {
-    const pRaw = String(f.pubPct || '').trim();
-    const bRaw = Number(f.budget);
-    const docData = {
-      name: f.name.trim(),
-      phone: f.phone.trim(),
-      address: f.address.trim(),
-      note: f.note.trim(),
-      pubProject: (f.pubProject || '').trim(),
-      budget: (Number.isFinite(bRaw) && bRaw > 0) ? Math.round(bRaw * 100) / 100 : 0,
-      pubMsg: (f.pubMsg || '').trim(),
-      pubPct: pRaw === '' ? null : Math.max(0, Math.min(100, Math.round(Number(pRaw)))),
-      showAddress: !!f.showAddress,
-      showCal: !!f.showCal,
-      showFin: !!f.showFin,
-      services: Array.isArray(c.services) ? c.services : [],
-      payments: Array.isArray(c.payments) ? c.payments : [],
-      created: c.created || Date.now()
-    };
-    return save('clients', id || uid(), docData);
-  }, id ? (() => {
+    const cid = id || uid();
+    if (existing) {
+      const objs = getClientObjects(existing);
+      const first = objs[0];
+      const docData = {
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        address: first.address || existing.address || '',
+        note: f.note.trim(),
+        pubProject: first.name || '',
+        budget: first.budget || 0,
+        pubMsg: first.msg || '',
+        pubPct: first.pct,
+        showAddress: !!f.showAddress,
+        showCal: !!f.showCal,
+        showFin: !!f.showFin,
+        objects: objs,
+        services: first.services || [],
+        payments: first.payments || [],
+        created: existing.created || Date.now()
+      };
+      return save('clients', cid, docData);
+    } else {
+      const bRaw = Number(f.objBudget);
+      const objBudget = (Number.isFinite(bRaw) && bRaw > 0) ? Math.round(bRaw * 100) / 100 : 0;
+      const objName = (f.objName || '').trim() || 'Основной объект';
+      const objAddr = (f.objAddr || '').trim();
+      const objs = [{ id: 'main', name: objName, address: objAddr, budget: objBudget, msg: '', pct: null, items: [], services: [], payments: [] }];
+      return save('clients', cid, {
+        name: f.name.trim(),
+        phone: f.phone.trim(),
+        address: objAddr,
+        note: f.note.trim(),
+        pubProject: objName,
+        budget: objBudget,
+        pubMsg: '',
+        pubPct: null,
+        showAddress: !!f.showAddress,
+        showCal: !!f.showCal,
+        showFin: !!f.showFin,
+        objects: objs,
+        services: [],
+        payments: [],
+        created: Date.now()
+      });
+    }
+  }, existing ? (() => {
     const cnt = tasks.filter(x => x.clientId === id).length;
     return { confirm: cnt ? `Удалить (+${cnt} зад.)?` : 'Точно удалить?', run: () => deleteClientWithTasks(id) };
   })() : null);
   wireContacts(ov);
+}
+
+function openObjectModal(clientId, objId) {
+  const c = clients.find(x => x.id === clientId);
+  if (!c) return;
+  const objs = getClientObjects(c);
+  const existing = objId ? objs.find(o => o.id === objId) : null;
+  const o = existing || { id: uid(), name: '', address: '', budget: 0, msg: '', pct: null, items: [], services: [], payments: [] };
+  const pctVal = (o.pct !== undefined && o.pct !== null && o.pct !== '') ? String(o.pct) : '';
+  const budVal = Number(o.budget) > 0 ? String(o.budget) : '';
+  const canDel = Boolean(existing && objs.length > 1);
+  modal(existing ? 'Настройки объекта' : `Новый объект — ${c.name}`, `
+    <label>Название объекта (видно клиенту на карточке)</label>
+    <input type="text" name="name" required placeholder="Например, Офис на Низами — Сеть и камеры" value="${esc(o.name)}">
+    <label>Адрес объекта</label>
+    <input type="text" name="address" placeholder="Улица, район" value="${esc(o.address || '')}">
+    <label>Бюджет объекта, ₼ (пусто = авто по товарам и задачам)</label>
+    <input type="number" name="budget" min="0" step="0.5" placeholder="Авто по товарам и задачам" value="${esc(budVal)}">
+    <label>Сообщение для клиента (вверху страницы объекта)</label>
+    <textarea name="msg" placeholder="Например, Оборудование заказано, монтаж в пятницу" style="min-height:64px">${esc(o.msg || '')}</textarea>
+    <label>Прогресс вручную, % (оставьте пустым для авторасчёта)</label>
+    <input type="number" name="pct" min="0" max="100" step="1" placeholder="Авто по задачам" value="${esc(pctVal)}">`,
+  async f => {
+    const cur = clients.find(x => x.id === clientId);
+    if (!cur) return;
+    const curObjs = getClientObjects(cur);
+    const bRaw = Number(f.budget);
+    const pRaw = String(f.pct || '').trim();
+    const updatedObj = {
+      id: existing ? existing.id : o.id,
+      name: (f.name || '').trim() || 'Объект',
+      address: (f.address || '').trim(),
+      budget: (Number.isFinite(bRaw) && bRaw > 0) ? Math.round(bRaw * 100) / 100 : 0,
+      msg: (f.msg || '').trim(),
+      pct: pRaw === '' ? null : Math.max(0, Math.min(100, Math.round(Number(pRaw)))),
+      items: existing ? existing.items : [],
+      services: existing ? existing.services : [],
+      payments: existing ? existing.payments : []
+    };
+    const nextObjs = existing
+      ? curObjs.map(x => x.id === existing.id ? updatedObj : x)
+      : [...curObjs, updatedObj];
+    await saveClientObjects(clientId, nextObjs, existing ? 'Объект обновлён' : 'Объект добавлен');
+    if (view === 'clients') {
+      activeClientId = clientId;
+      activeObjId = updatedObj.id;
+      render();
+    }
+  }, canDel ? {
+    confirm: 'Удалить этот объект?',
+    run: async () => {
+      const cur = clients.find(x => x.id === clientId);
+      if (!cur) return;
+      const curObjs = getClientObjects(cur).filter(x => x.id !== existing.id);
+      const fallbackId = curObjs[0] ? curObjs[0].id : 'main';
+      for (const t of tasks.filter(x => x.clientId === clientId && x.objectId === existing.id)) {
+        const updT = Object.assign({}, t, { objectId: fallbackId });
+        delete updT.id;
+        await setDoc(doc(db, 'tasks', t.id), updT);
+      }
+      await saveClientObjects(clientId, curObjs, 'Объект удалён');
+      activeObjId = fallbackId;
+      render();
+    }
+  } : null);
 }
 
 const WORKS = ['Монтаж', 'Настройка', 'Пусконаладка', 'Диагностика', 'Ремонт', 'Обслуживание', 'Замена', 'Прокладка кабеля', 'Демонтаж', 'Консультация'];
@@ -1517,9 +2156,9 @@ function pick(name, label, list, v) {
 
 function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
-  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, assigneeId: staffFilter || '', title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '', items: [], checklist: [], staffNote: '' }, prefill || {});
+  const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, objectId: '', assigneeId: staffFilter || '', title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, clientPrice: 0, pubNote: '', items: [], checklist: [], staffNote: '' }, prefill || {});
   const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
-  const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}${c.pubProject ? ' — ' + esc(c.pubProject) : ''}</option>`).join('');
+  const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
   const staffOpts = [...staff].filter(s => s.active !== false || s.id === t.assigneeId).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'))
     .map(s => `<option value="${s.id}" ${s.id === t.assigneeId ? 'selected' : ''}>${esc(s.name)}${s.role ? ' (' + esc(s.role) + ')' : ''}</option>`).join('');
   const prodOpts = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(p => `<option value="${p.id}">${esc(p.name)}${p.price > 0 ? ' (' + fmtAzn(p.price) + ')' : ''}</option>`).join('');
@@ -1532,7 +2171,8 @@ function openTask(id, clientId, prefill) {
   }));
   let draftChk = (Array.isArray(t.checklist) ? t.checklist : []).map(c => ({ id: c.id || uid(), text: c.text || '', done: Boolean(c.done) }));
 
-  const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId">${opts}</select>
+  const ov = modal(id ? 'Задача' : 'Новая задача', `<label>Клиент</label><select name="clientId" id="taskCliSel">${opts}</select>
+  <label>Объект клиента</label><select name="objectId" id="taskObjSel"></select>
   <label>Исполнитель (делегирование)</label><select name="assigneeId"><option value="">Я сам (не делегировано)</option>${staffOpts}</select>
   <label>Оплата исполнителю за работу, ₼ (видна исполнителю)</label><input type="number" name="staffPay" min="0" step="0.5" placeholder="Например, 150" value="${Number(t.staffPay) > 0 ? esc(t.staffPay) : ''}">
   <label>Что нужно сделать</label><input type="text" name="title" required value="${esc(t.title)}">
@@ -1578,6 +2218,7 @@ function openTask(id, clientId, prefill) {
     const cleanChk = draftChk.map(c => ({ id: c.id || uid(), text: String(c.text || '').trim(), done: Boolean(c.done) })).filter(c => c.text);
     return save('tasks', id || uid(), {
       clientId: f.clientId,
+      objectId: f.objectId || '',
       assigneeId: f.assigneeId || '',
       staffPay: Number(f.staffPay) > 0 ? Number(f.staffPay) : 0,
       title: f.title.trim(),
@@ -1680,6 +2321,14 @@ function openTask(id, clientId, prefill) {
   };
 
   initCal(ov);
+  const cliSel = ov.querySelector('#taskCliSel'), objSel = ov.querySelector('#taskObjSel');
+  function fillObjOpts(selObjId) {
+    const cl = clients.find(x => x.id === cliSel.value);
+    const objs = cl ? getClientObjects(cl) : [];
+    objSel.innerHTML = objs.map(o => `<option value="${esc(o.id)}"${o.id === selObjId ? ' selected' : ''}>${esc(o.name)}</option>`).join('');
+  }
+  fillObjOpts(t.objectId || '');
+  cliSel.onchange = () => fillObjOpts('');
   ['work', 'equip'].forEach(n => {
     const s = ov.querySelector('[name=' + n + ']'), o = ov.querySelector('[name=' + n + 'Other]');
     s.onchange = () => { o.hidden = s.value !== '__other'; if (!o.hidden) o.focus(); };
@@ -1768,9 +2417,15 @@ function openLinkOrder(ordId) {
           name: String(o.name || '').trim(),
           phone: String(o.phone || '').trim(),
           address: '',
+          pubProject: 'Основной объект',
+          budget: 0,
           note: o.comment ? 'Из заказа магазина: ' + o.comment : '',
           showAddress: true,
           showCal: true,
+          showFin: true,
+          objects: [{ id: 'main', name: 'Основной объект', address: '', budget: 0, msg: '', pct: null, items: [], services: [], payments: [] }],
+          services: [],
+          payments: [],
           created: Date.now()
         });
       }
@@ -2312,6 +2967,7 @@ async function deleteClientWithTasks(cid) {
   if (!user || !cid) return;
   const cTasks = tasks.filter(t => t.clientId === cid);
   if (clientFilter === cid) clientFilter = '';
+  if (activeClientId === cid) { activeClientId = ''; activeObjId = ''; }
   portalDirty = true;
   schedulePortal(3000);
   try {
@@ -2333,6 +2989,7 @@ async function acceptRequest(reqId) {
   const p9 = normPhone(r.phone);
   const existing = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
   const noteBlock = reqNoteText(r);
+  const firstObjName = fmtReqList(r.objects, REQ_OBJ, r.objectsOther) || 'Основной объект';
   let cid;
   if (existing) {
     cid = existing.id;
@@ -2342,6 +2999,7 @@ async function acceptRequest(reqId) {
       phone: existing.phone || r.phone || '',
       address: existing.address || '',
       note: mergedNote,
+      objects: getClientObjects(existing),
       created: existing.created || Date.now()
     });
     delete updatedClient.id;
@@ -2353,9 +3011,15 @@ async function acceptRequest(reqId) {
       name: String(r.name || '').trim(),
       phone: String(r.phone || '').trim(),
       address: '',
+      pubProject: firstObjName,
+      budget: 0,
       note: noteBlock,
       showAddress: true,
       showCal: true,
+      showFin: true,
+      objects: [{ id: 'main', name: firstObjName, address: '', budget: 0, msg: '', pct: null, items: [], services: [], payments: [] }],
+      services: [],
+      payments: [],
       created: Date.now()
     });
     toast('Клиент создан из заявки');
@@ -2368,10 +3032,14 @@ async function acceptRequest(reqId) {
 document.addEventListener('click', async e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
   const a = el.dataset.act, id = el.dataset.id;
-  if (a === 'tab') { view = el.dataset.v; render(); }
+  if (a === 'tab') {
+    if (el.dataset.v === 'clients') { activeClientId = ''; activeObjId = ''; }
+    view = el.dataset.v;
+    render();
+  }
   else if (a === 'fab') {
     if (view === 'tasks') openTask();
-    else if (view === 'clients') openClient();
+    else if (view === 'clients') { if (activeClientId) openObjectModal(activeClientId, null); else openClient(); }
     else if (view === 'staff') openStaff();
     else if (view === 'messages') openNewChatModal();
     else if (view === 'requests') copyUrl('register.html', 'Ссылка на анкету');
@@ -2455,9 +3123,55 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'edittask') openTask(id);
   else if (a === 'newtask') openTask(null, id);
-  else if (a === 'addobj') { const bc = clients.find(x => x.id === id); if (bc) openClient(null, { name: bc.name, phone: bc.phone }); }
+  else if (a === 'newobjtask') openTask(null, id, { objectId: el.dataset.oid || '' });
+  else if (a === 'openclient') { activeClientId = id; activeObjId = ''; view = 'clients'; render(); window.scrollTo(0, 0); }
+  else if (a === 'backclients') { activeClientId = ''; activeObjId = ''; render(); window.scrollTo(0, 0); }
+  else if (a === 'selobj') { activeObjId = el.dataset.oid || ''; render(); }
+  else if (a === 'addobj') openObjectModal(id, null);
+  else if (a === 'editobj') openObjectModal(id, el.dataset.oid || '');
+  else if (a === 'mergedups') { await mergeDuplicateClients(); }
+  else if (a === 'cchat') {
+    const c = clients.find(x => x.id === id);
+    if (!c || normPhone(c.phone).length < 7) { toast('У клиента не указан телефон'); return; }
+    toast('Открываем чат…');
+    try {
+      const saltB64 = await ensurePortalSalt();
+      const { id: chId } = await deriveForPhone(normPhone(c.phone), saltB64);
+      openAdminChat(chId, c.name, c.phone, 'client');
+    } catch (ex) { toast('Не удалось открыть чат'); }
+  }
+  else if (a === 'cwfillcat') {
+    const form = el.closest('form');
+    const sel = form && form.querySelector('#cwCatSel');
+    const p = sel && products.find(x => x.id === sel.value);
+    if (!p) { toast('Выберите товар из списка'); return; }
+    form.querySelector('[name=name]').value = p.name;
+    form.querySelector('[name=price]').value = p.price > 0 ? p.price : '';
+    form.querySelector('[name=qty]').focus();
+  }
+  else if (a === 'delobjitem') {
+    const cur = clients.find(x => x.id === id);
+    const oid = el.dataset.oid, iid = el.dataset.iid;
+    if (!cur) return;
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { items: (o.items || []).filter(x => x.id !== iid) }) : o);
+    await saveClientObjects(id, nextObjs, 'Товар удалён');
+  }
+  else if (a === 'delobjpay') {
+    const cur = clients.find(x => x.id === id);
+    const oid = el.dataset.oid, pid = el.dataset.pid;
+    if (!cur) return;
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { payments: (o.payments || []).filter(p => p.id !== pid) }) : o);
+    await saveClientObjects(id, nextObjs, 'Оплата удалена');
+  }
+  else if (a === 'delobjsvc') {
+    const cur = clients.find(x => x.id === id);
+    const oid = el.dataset.oid, sid = el.dataset.sid;
+    if (!cur) return;
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { services: (o.services || []).filter(s => s.id !== sid) }) : o);
+    await saveClientObjects(id, nextObjs, 'Услуга удалена');
+  }
   else if (a === 'editclient') openClient(id);
-  else if (a === 'cfin') openClientFinance(id);
+  else if (a === 'cfin') { activeClientId = id; activeObjId = ''; view = 'clients'; render(); window.scrollTo(0, 0); }
   else if (a === 'ctasks') { clientFilter = id; filter = 'all'; view = 'tasks'; render(); }
   else if (a === 'accreq') { await acceptRequest(id); }
   else if (a === 'reqtask') {
@@ -2484,6 +3198,73 @@ document.addEventListener('click', async e => {
   }
 });
 
+document.addEventListener('change', async e => {
+  const el = e.target.closest('[data-ch]'); if (!el) return;
+  const ch = el.dataset.ch;
+  if (ch === 'objitemst') {
+    const cid = el.dataset.cid, oid = el.dataset.oid, iid = el.dataset.iid;
+    const st = ITEM_ST[el.value] ? el.value : 'pending';
+    const cur = clients.find(x => x.id === cid);
+    if (!cur) return;
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid
+      ? Object.assign({}, o, { items: (o.items || []).map(x => x.id === iid ? Object.assign({}, x, { status: st }) : x) })
+      : o);
+    await saveClientObjects(cid, nextObjs, 'Статус товара обновлён');
+  } else if (ch === 'taskitemst') {
+    const tid = el.dataset.tid, idx = Number(el.dataset.iidx);
+    const st = ITEM_ST[el.value] ? el.value : 'pending';
+    const t = tasks.find(x => x.id === tid);
+    if (!t || !Array.isArray(t.items) || !t.items[idx]) return;
+    const nextItems = t.items.map((x, i) => i === idx ? Object.assign({}, x, { status: st }) : x);
+    const d = Object.assign({}, t, { items: nextItems, staffSyncTs: Date.now() });
+    delete d.id;
+    await save('tasks', tid, d);
+    toast('Статус товара обновлён');
+  } else if (ch === 'taskst') {
+    const tid = el.dataset.tid;
+    const st = el.value === 'done' ? 'done' : (el.value === 'in_progress' ? 'in_progress' : 'todo');
+    const t = tasks.find(x => x.id === tid);
+    if (!t) return;
+    const d = Object.assign({}, t, { status: st, done: st === 'done', staffSyncTs: Date.now() });
+    delete d.id;
+    await save('tasks', tid, d);
+    toast('Статус задачи обновлён');
+  } else if (ch === 'svcsel') {
+    const form = el.closest('form');
+    const oth = form && form.querySelector('[name=svcOther]');
+    if (oth) { oth.hidden = el.value !== '__other'; if (!oth.hidden) oth.focus(); }
+  }
+});
+
+document.addEventListener('submit', async e => {
+  const form = e.target.closest('form[data-qform]'); if (!form) return;
+  e.preventDefault();
+  const qf = form.dataset.qform, cid = form.dataset.cid, oid = form.dataset.oid;
+  const cur = clients.find(x => x.id === cid);
+  if (!cur) return;
+  const fd = new FormData(form);
+  if (qf === 'additem') {
+    const name = String(fd.get('name') || '').trim();
+    if (!name) return;
+    const item = normObjItem({ id: uid(), name, qty: fd.get('qty'), price: fd.get('price'), status: fd.get('status'), eta: fd.get('eta') });
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { items: [...(o.items || []), item] }) : o);
+    await saveClientObjects(cid, nextObjs, 'Товар добавлен на объект');
+  } else if (qf === 'addpay') {
+    const amount = Number(fd.get('amount'));
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    const rec = normObjPay({ id: uid(), date: fd.get('date') || today(), amount, type: fd.get('type'), note: fd.get('note') });
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { payments: [...(o.payments || []), rec] }) : o);
+    await saveClientObjects(cid, nextObjs, 'Оплата записана');
+  } else if (qf === 'addsvc') {
+    const name = fd.get('svcSel') === '__other' ? String(fd.get('svcOther') || '').trim() : String(fd.get('svcSel') || '').trim();
+    const price = Number(fd.get('price'));
+    if (!name || !Number.isFinite(price) || price < 0) return;
+    const rec = normObjSvc({ id: uid(), name, qty: fd.get('qty'), price, note: fd.get('note') });
+    const nextObjs = getClientObjects(cur).map(o => o.id === oid ? Object.assign({}, o, { services: [...(o.services || []), rec] }) : o);
+    await saveClientObjects(cid, nextObjs, 'Услуга добавлена');
+  }
+});
+
 // --- Auth & Firestore subscriptions ---
 render();
 onAuthStateChanged(auth, u => {
@@ -2507,6 +3288,8 @@ onAuthStateChanged(auth, u => {
   chatErr = false;
   staffErr = false;
   openChatId = null;
+  activeClientId = '';
+  activeObjId = '';
   staffSalt = null;
   staffDirty = false;
   staffChecked = false;

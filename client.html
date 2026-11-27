@@ -1103,6 +1103,9 @@ function getObjMetrics(c) {
   const progShare = hasManualPct ? 0 : (total ? inProg.length / total : 0);
 
   const allItems = [];
+  if (Array.isArray(c.items)) {
+    for (const x of c.items) allItems.push(Object.assign({ taskTitle: '' }, x));
+  }
   for (const t of allTasks) {
     if (Array.isArray(t.it)) {
       for (const x of t.it) allItems.push(Object.assign({ taskTitle: t.t }, x));
@@ -1192,12 +1195,12 @@ function renderCabinet() {
             <div class="ostat-v accent">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div>
           </div>
           <div class="ostat">
-            <div class="ostat-k">${esc(L.kpiGoods)}</div>
-            <div class="ostat-v">${m.allItems.length}${m.itemsSum > 0 ? ' · ' + esc(fmtAzn0(m.itemsSum)) : ''}</div>
+            <div class="ostat-k">${esc(L.kpiPaid)}</div>
+            <div class="ostat-v" style="${m.fin.paidTotal > 0 ? 'color:var(--ok)' : ''}">${esc(fmtAzn0(m.fin.paidTotal))}</div>
           </div>
           <div class="ostat">
-            <div class="ostat-k">${esc(L.kpiTasks)}</div>
-            <div class="ostat-v">${m.total}${m.tasksSum > 0 ? ' · ' + esc(fmtAzn0(m.tasksSum)) : ''}</div>
+            <div class="ostat-k">${esc((m.objBudget - m.fin.paidTotal) > 0 ? L.kpiDebt : ((m.objBudget - m.fin.paidTotal) < 0 ? L.kpiOver : L.kpiZero))}</div>
+            <div class="ostat-v" style="${(m.objBudget - m.fin.paidTotal) > 0 ? 'color:var(--danger)' : (m.objBudget > 0 ? 'color:var(--ok)' : '')}">${m.objBudget > 0 || m.fin.paidTotal > 0 ? esc(fmtAzn0(Math.abs(Math.round((m.objBudget - m.fin.paidTotal) * 100) / 100))) : '—'}</div>
           </div>
         </div>
       </button>`;
@@ -1310,8 +1313,8 @@ function renderCabinet() {
         <div class="bstat"><div class="bstat-k">${esc(L.kpiGoods)}</div><div class="bstat-v">${esc(fmtAzn0(m.itemsSum))}</div></div>
         <div class="bstat"><div class="bstat-k">${esc(L.kpiTasks)}</div><div class="bstat-v">${esc(fmtAzn0(m.tasksSum))}</div></div>
         ${m.fin.svcTotal > 0 ? `<div class="bstat"><div class="bstat-k">${esc(L.kpiSvcs)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.svcTotal))}</div></div>` : ''}
-        ${m.fin.paidTotal > 0 ? `<div class="bstat ok"><div class="bstat-k">${esc(L.kpiPaid)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.paidTotal))}</div></div>` : ''}
-        ${m.fin.paidTotal > 0 && m.objBudget > 0 ? `<div class="bstat${remainBal > 0 ? ' debt' : ' ok'}"><div class="bstat-k">${esc(remainBal > 0 ? L.kpiDebt : (remainBal < 0 ? L.kpiOver : L.kpiZero))}</div><div class="bstat-v">${remainBal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(remainBal)))}</div></div>` : ''}
+        ${(m.objBudget > 0 || m.fin.paidTotal > 0) ? `<div class="bstat ok"><div class="bstat-k">${esc(L.kpiPaid)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.paidTotal))}</div></div>` : ''}
+        ${(m.objBudget > 0 || m.fin.paidTotal > 0) ? `<div class="bstat${remainBal > 0 ? ' debt' : ' ok'}"><div class="bstat-k">${esc(remainBal > 0 ? L.kpiDebt : (remainBal < 0 ? L.kpiOver : L.kpiZero))}</div><div class="bstat-v">${remainBal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(remainBal)))}</div></div>` : ''}
       </div>
     </section>`;
 
