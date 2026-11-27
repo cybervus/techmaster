@@ -34,6 +34,7 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .icbtn{position:relative;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;flex:none;transition:border-color .15s,background .15s}
 .icbtn svg{width:19px;height:19px;display:block}
 .icbtn.chat-ic{background:var(--soft);border-color:transparent;color:var(--accent)}
+.icbtn.call-ic{background:var(--gbg);border-color:transparent;color:var(--ok);text-decoration:none}
 .icdot{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
 .lang{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--bg);flex:none;padding:2px}
 .lang button{display:inline-flex;align-items:center;gap:4px;border:0;background:none;color:var(--muted);padding:4px 8px;border-radius:16px;font:inherit;font-size:11.5px;font-weight:600;cursor:pointer}
@@ -67,11 +68,74 @@ input[type=tel]{width:100%;font:inherit;font-size:17px;color:var(--text);backgro
 input[type=tel]:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(229,37,32,.12)}
 .btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:11px;padding:10px 15px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:var(--on);box-shadow:0 3px 10px rgba(229,37,32,.24)}
+.btn.call{background:linear-gradient(135deg,#00b578,#059669);border-color:transparent;color:#fff;box-shadow:0 3px 10px rgba(0,181,120,.24)}
 .btn.d{background:var(--soft);border-color:transparent;color:var(--danger)}
 .btn.full{width:100%}
 .btn:disabled{opacity:.55;cursor:default}
+.btn svg{width:17px;height:17px;flex:none}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .cbadge{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:#fff;color:var(--accent);font-size:11.5px;font-weight:700}
+
+/* Master Contact Bar (Chat + Call side by side) */
+.contact-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.contact-bar .btn{padding:12px 12px;font-size:14px;border-radius:13px}
+.sub-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sub-acts .btn{flex:1;min-width:150px;background:var(--card);box-shadow:var(--sh)}
+
+/* Objects Home Grid */
+.objs-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:2px 0 12px}
+.objs-hd h2{margin:0;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.objs-hd .pill{font-size:12px;font-weight:700;color:var(--accent);background:var(--soft);padding:2px 9px;border-radius:10px}
+.objs-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.obj-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.ocard{position:relative;display:flex;flex-direction:column;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--sh);cursor:pointer;color:inherit;font:inherit;transition:border-color .16s,transform .16s,box-shadow .16s}
+.ocard:active{transform:scale(.99)}
+.ocard-top{display:flex;align-items:flex-start;gap:12px}
+.ocard-ic{width:42px;height:42px;border-radius:12px;background:var(--soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+.ocard-ic svg{width:22px;height:22px;display:block}
+.ocard-main{flex:1;min-width:0}
+.ocard-title{font-size:16px;font-weight:700;line-height:1.28;color:var(--text);word-break:break-word}
+.ocard-addr{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.35}
+.ocard-go{color:var(--muted);font-size:22px;line-height:1;flex:none;padding-left:4px;margin-top:4px}
+.ocard-prog-hd{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:5px}
+.ocard-prog-hd b{color:var(--text);font-size:12.5px}
+.ocard .bar-wrap{margin-top:0}
+.ocard-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:11px;border-top:1px solid var(--line)}
+.ostat{min-width:0}
+.ostat-k{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ostat-v{font-size:13.5px;font-weight:700;color:var(--text);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ostat-v.accent{color:var(--accent)}
+
+/* Object Detail Page */
+.det-top{display:flex;align-items:flex-start;gap:10px;margin:0 0 12px}
+.back-btn{flex:none;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:8px 12px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:var(--sh)}
+.det-head{flex:1;min-width:0}
+.det-title{margin:0;font-size:18px;font-weight:700;line-height:1.25;word-break:break-word}
+.det-addr{font-size:12.5px;color:var(--muted);margin-top:2px}
+.det-grid{display:flex;flex-direction:column;gap:12px}
+.det-grid>.panel{margin-top:0}
+
+/* Dedicated Object Budget Row */
+.budget-panel{border-left:4px solid var(--accent)}
+.budget-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-radius:12px;background:var(--soft);margin-bottom:10px}
+.budget-lbl{font-size:14px;font-weight:700;color:var(--text)}
+.budget-hint{font-size:11.5px;color:var(--muted);margin-top:2px}
+.budget-val{font-size:21px;font-weight:700;color:var(--accent);white-space:nowrap}
+.budget-sub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.bstat{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:9px 11px;min-width:0}
+.bstat-k{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bstat-v{font-size:14.5px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bstat.ok{background:var(--gbg);border-color:transparent;color:var(--ok)}
+.bstat.ok .bstat-k{color:var(--ok);opacity:.85}
+.bstat.debt{background:var(--rbg);border-color:transparent;color:var(--danger)}
+.bstat.debt .bstat-k{color:var(--danger);opacity:.85}
+
+/* Task Price & Section Total */
+.tprice{flex:none;font-size:13.5px;font-weight:700;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:3px 9px;white-space:nowrap;align-self:flex-start}
+.tprice.empty{color:var(--muted);font-weight:500}
+.sec-total{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:2px solid var(--line);font-size:14.5px;font-weight:700}
+.sec-total-v{font-size:16px;color:var(--accent);white-space:nowrap}
+.brand.clickable{cursor:pointer}
 
 /* Master message banner */
 .msg-banner{margin-bottom:12px;padding:12px 14px;background:var(--blue-bg);color:var(--text);border-left:3px solid var(--blue);border-radius:12px;font-size:13.5px;white-space:pre-wrap}
@@ -228,6 +292,9 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
   .kpi{padding:9px 8px}
   .kpi-v{font-size:14.5px}
   .qacts{grid-template-columns:1fr}
+  .contact-bar{gap:7px}
+  .contact-bar .btn{padding:10px 8px;font-size:12.5px}
+  .budget-val{font-size:18px}
   .ptbl{font-size:12px}
   .ptbl th,.ptbl td{padding:7px 4px}
   .d{height:36px;font-size:13px}
@@ -235,8 +302,11 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 /* Responsive: hover feedback on desktop/mouse */
 @media (hover:hover){
   .btn:not(:disabled):hover{filter:brightness(.96)}
-  .btn.p:not(:disabled):hover{filter:brightness(1.05)}
+  .btn.p:not(:disabled):hover,.btn.call:not(:disabled):hover{filter:brightness(1.06)}
   .icbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .icbtn.call-ic:hover{border-color:var(--ok);color:var(--ok);filter:brightness(.97)}
+  .ocard:hover{border-color:rgba(229,37,32,.42);transform:translateY(-2px);box-shadow:0 8px 24px rgba(15,23,42,.08)}
+  .back-btn:hover{border-color:var(--accent);color:var(--accent)}
   .ntab:not(.on):hover{color:var(--text);background:var(--bg)}
   .chip:hover,.otab:hover{border-color:var(--accent);color:var(--accent)}
   .titem.exp:hover,.fin-card-btn:hover{border-color:rgba(229,37,32,.35)}
@@ -245,12 +315,17 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 /* Responsive: wider mobile / small tablet */
 @media (min-width:600px){
   .hs{grid-template-columns:repeat(5,1fr)}
+  .budget-sub{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 /* Responsive: tablets (768px - 1023px) */
 @media (min-width:768px){
   body{max-width:960px;padding:12px 24px 56px}
   header{margin:0 0 14px;padding:13px 18px;border-radius:16px;border:1px solid var(--line);top:12px}
   .nav-tabs{max-width:640px;margin:0 auto 16px}
+  .obj-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .obj-grid.single{grid-template-columns:minmax(0,640px)}
+  .det-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+  .det-grid>.span2{grid-column:1 / -1}
   .ov-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
   .ov-grid>.span2{grid-column:1 / -1}
   .tlist.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
@@ -271,6 +346,7 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 /* Responsive: wide desktop monitors (1520px+) */
 @media (min-width:1520px){
   body{max-width:1420px}
+  .obj-grid:not(.single){grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
   .tlist.grid2{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
   .fin-wrap{max-width:960px}
 }
@@ -432,7 +508,7 @@ body.auth-mode header,body.auth-mode main{position:relative;z-index:2}
   </svg>
 </div>
 <header>
-  <div class="brand">
+  <div class="brand" id="hdrBrand">
     <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
     <div class="btxt">
       <h1 id="htitle">Личный кабинет</h1>
@@ -445,6 +521,9 @@ body.auth-mode header,body.auth-mode main{position:relative;z-index:2}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span class="icdot" id="hdrChatBadge" hidden></span>
       </button>
+      <a class="icbtn call-ic" id="hdrCallBtn" href="tel:+994774668190" aria-label="Позвонить мастеру" title="Позвонить мастеру">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </a>
       <button type="button" class="icbtn" id="hdrProfBtn" aria-label="Мои данные" title="Мои данные">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       </button>
@@ -538,9 +617,7 @@ body.auth-mode header,body.auth-mode main{position:relative;z-index:2}
   </section>
 
   <section id="view" hidden>
-    <div id="objTabs" class="obj-tabs" hidden></div>
-    <nav id="mainTabs" class="nav-tabs" role="tablist"></nav>
-    <div id="tabBody"></div>
+    <div id="cabBody"></div>
     <section id="calSec" class="panel" hidden>
       <h2 id="calTitle">График занятости мастера</h2>
       <div class="leg" id="calLeg"></div>
@@ -625,12 +702,34 @@ const I18N = {
     etaLbl: 'Получение',
     ist: { pending: 'К заказу', ordered: 'Заказано', bought: 'Куплено', received: 'Получено' },
     chatBtn: 'Чат с мастером',
+    callBtn: 'Позвонить мастеру',
     chatTitle: 'Чат с мастером',
     chatPh: 'Напишите сообщение…',
     chatSend: 'Отправить',
     chatEmpty: 'Напишите мастеру — вся переписка сохранится в вашем кабинете.',
     chatMaster: 'Мастер',
     chatErr: 'Не удалось отправить сообщение. Проверьте подключение.',
+    myObjects: 'Мои объекты',
+    objDef: 'Объект',
+    objsCount: 'Объектов',
+    backObjects: 'Мои объекты',
+    objDoneBadge: 'Завершён',
+    objPlanBadge: 'В плане',
+    objProgress: 'Прогресс по объекту',
+    objBudget: 'Бюджет объекта',
+    budgetApproved: 'Утверждённый бюджет',
+    budgetAuto: 'Товары + задачи',
+    objGoodsTitle: 'Товары для объекта',
+    objGoodsEmpty: 'Товары для этого объекта пока не добавлены.',
+    objTasksTitle: 'Задачи по объекту',
+    tasksTotal: 'Итого по задачам',
+    thItem: 'Товар',
+    extraSvcsTitle: 'Дополнительные услуги',
+    paysTitle: 'История оплат',
+    showCalBtn: 'График мастера',
+    hideCalBtn: 'Скрыть график',
+    kpiGoods: 'Товары',
+    kpiTasks: 'Задачи',
     finCardTitle: 'Финансы и расчёты',
     finDetailsBtn: 'Подробнее →',
     kpiSvcs: 'Услуги',
@@ -722,12 +821,34 @@ const I18N = {
     etaLbl: 'Təhvil',
     ist: { pending: 'Sifariş gözləyir', ordered: 'Sifariş edilib', bought: 'Alınıb', received: 'Təhvil alınıb' },
     chatBtn: 'Usta ilə çat',
+    callBtn: 'Ustaya zəng et',
     chatTitle: 'Usta ilə çat',
     chatPh: 'Mesaj yazın…',
     chatSend: 'Göndər',
     chatEmpty: 'Ustaya yazın — bütün yazışma şəxsi kabinetinizdə saxlanılacaq.',
     chatMaster: 'Usta',
     chatErr: 'Mesajı göndərmək mümkün olmadı. İnternet bağlantısını yoxlayın.',
+    myObjects: 'Obyektlərim',
+    objDef: 'Obyekt',
+    objsCount: 'Obyekt sayı',
+    backObjects: 'Obyektlərim',
+    objDoneBadge: 'Hazırdır',
+    objPlanBadge: 'Planda',
+    objProgress: 'Obyekt üzrə gedişat',
+    objBudget: 'Obyektin büdcəsi',
+    budgetApproved: 'Təsdiqlənmiş büdcə',
+    budgetAuto: 'Avadanlıq + tapşırıqlar',
+    objGoodsTitle: 'Obyekt üçün alınan avadanlıq',
+    objGoodsEmpty: 'Bu obyekt üçün hələ avadanlıq əlavə olunmayıb.',
+    objTasksTitle: 'Obyekt üzrə tapşırıqlar',
+    tasksTotal: 'Tapşırıqlar üzrə cəmi',
+    thItem: 'Məhsul',
+    extraSvcsTitle: 'Əlavə xidmətlər',
+    paysTitle: 'Ödəniş tarixçəsi',
+    showCalBtn: 'Ustanın qrafiki',
+    hideCalBtn: 'Qrafiki gizlət',
+    kpiGoods: 'Avadanlıq',
+    kpiTasks: 'Tapşırıqlar',
     finCardTitle: 'Maliyyə və hesablaşma',
     finDetailsBtn: 'Ətraflı →',
     kpiSvcs: 'Xidmətlər',
@@ -757,6 +878,7 @@ const I18N = {
 };
 
 let lang = 'az';
+const MASTER_PHONE = '+994774668190';
 
 let D = null;
 let loadPromise = null;
@@ -764,9 +886,9 @@ let wh = [9, 18];
 let N = 9;
 let unlocked = null;
 let activeIdx = 0;
-let activeTab = 'overview'; // overview | works | finance | schedule
+let cabView = 'objects';    // objects | detail
 let workFilter = 'all';     // all | in_progress | todo | done
-let finSub = null;          // svcs | pays | items
+let showCalPanel = false;
 const openedTasks = new Set();
 
 let chatId = null;
@@ -847,6 +969,8 @@ function applyLangStatic() {
   $('#htitle').textContent = L.pageTitle;
   $('#hdrChatBtn').title = L.chatBtn;
   $('#hdrChatBtn').setAttribute('aria-label', L.chatBtn);
+  $('#hdrCallBtn').title = L.callBtn;
+  $('#hdrCallBtn').setAttribute('aria-label', L.callBtn);
   $('#hdrProfBtn').title = L.myData;
   $('#hdrProfBtn').setAttribute('aria-label', L.myData);
   $('#btn-ru').classList.toggle('on', lang === 'ru');
@@ -863,7 +987,7 @@ function applyLangStatic() {
 
 function updateChatBadges() {
   const u = (chatData && Number(chatData.unreadClient)) || 0;
-  ['#hdrChatBadge', '#ovChatBadge'].forEach(selId => {
+  ['#hdrChatBadge', '#ovChatBadge', '#dtChatBadge'].forEach(selId => {
     const el = $(selId);
     if (el) { el.textContent = u; el.hidden = u === 0; }
   });
@@ -903,7 +1027,7 @@ function taskKey(t, idx) {
   return `${activeIdx}:${t.d || ''}:${t.tm || ''}:${t.t || ''}:${idx}`;
 }
 
-function compactTaskHtml(t, kind, key, expandable = true) {
+function compactTaskHtml(t, kind, key, expandable = true, showPrice = false) {
   const L = I18N[lang];
   const meta = [fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w].filter(Boolean).join(' · ');
   const ic = kind === 'done'
@@ -919,6 +1043,10 @@ function compactTaskHtml(t, kind, key, expandable = true) {
     + (canOpen ? ' exp' : '')
     + (isOpen ? ' open' : '');
   const badge = kind === 'in_progress' ? `<span class="badge">${esc(L.inProgBadge)}</span>` : '';
+  const priceNum = Number(t.pr) > 0 ? Number(t.pr) : 0;
+  const priceHtml = showPrice
+    ? `<span class="tprice${priceNum > 0 ? '' : ' empty'}">${priceNum > 0 ? esc(fmtAzn0(priceNum)) : '—'}</span>`
+    : '';
 
   let ind = '';
   if (hasDetails && !isOpen) {
@@ -946,6 +1074,7 @@ function compactTaskHtml(t, kind, key, expandable = true) {
         ${meta ? `<div class="tm">${esc(meta)}</div>` : ''}
         ${ind}
       </div>
+      ${priceHtml}
       ${canOpen ? '<span class="tchev" aria-hidden="true">▾</span>' : ''}
     </div>
     ${body}
@@ -961,34 +1090,7 @@ function getClientFin(c) {
   return { svcs, pays, svcTotal, paidTotal, bal };
 }
 
-function renderCabinet() {
-  if (!unlocked || !unlocked.clients || !unlocked.clients.length) return;
-  const L = I18N[lang];
-  const list = unlocked.clients;
-  if (activeIdx >= list.length) activeIdx = 0;
-  const c = list[activeIdx];
-
-  // Header subtitle shows active project or client name
-  $('#hsub').textContent = c.proj || c.name || 'Techmaster IT Solutions';
-  $('#hdrActs').hidden = false;
-
-  // Multi-object selector when multiple clients share a phone number
-  const objTabsEl = $('#objTabs');
-  if (list.length > 1) {
-    objTabsEl.hidden = false;
-    objTabsEl.innerHTML = list.map((x, i) => `<button type="button" class="otab${i === activeIdx ? ' on' : ''}" data-cidx="${i}">${esc(x.proj || x.name)}</button>`).join('');
-    objTabsEl.querySelectorAll('[data-cidx]').forEach(b => b.onclick = () => {
-      activeIdx = Number(b.dataset.cidx);
-      finSub = null;
-      const s = loadSession();
-      if (s && s.phone) saveSession(s.phone, activeIdx);
-      renderCabinet();
-    });
-  } else {
-    objTabsEl.hidden = true;
-  }
-
-  // Compute task groups
+function getObjMetrics(c) {
   const allTasks = Array.isArray(c.tasks) ? c.tasks : [];
   const inProg = allTasks.filter(t => taskStatus(t) === 'in_progress').sort(cmp);
   const todo = allTasks.filter(t => taskStatus(t) === 'todo').sort(cmp);
@@ -1000,194 +1102,323 @@ function renderCabinet() {
   const doneShare = hasManualPct ? (pct / 100) : (total ? done.length / total : 0);
   const progShare = hasManualPct ? 0 : (total ? inProg.length / total : 0);
 
-  // Calendar dates for client's open tasks
-  mine.clear();
-  for (const t of [...inProg, ...todo]) { if (t.d) mine.add(t.d); }
-  const showCal = c.cal !== false;
-  if (!showCal && activeTab === 'schedule') activeTab = 'overview';
-
-  // Finance & equipment summary
-  const fin = getClientFin(c);
-  const hasFin = fin.svcs.length > 0 || fin.pays.length > 0;
   const allItems = [];
   for (const t of allTasks) {
     if (Array.isArray(t.it)) {
       for (const x of t.it) allItems.push(Object.assign({ taskTitle: t.t }, x));
     }
   }
-  const itemsSum = allItems.reduce((acc, x) => acc + (Number(x.p) > 0 ? Number(x.p) * (Number(x.q) || 1) : 0), 0);
+  const itemsSum = Math.round(allItems.reduce((acc, x) => acc + (Number(x.p) > 0 ? Number(x.p) * (Number(x.q) || 1) : 0), 0) * 100) / 100;
+  const tasksSum = Math.round(allTasks.reduce((acc, t) => acc + (Number(t.pr) > 0 ? Number(t.pr) : 0), 0) * 100) / 100;
 
-  // Main 4 top tabs
-  const tabs = [
-    { id: 'overview', lbl: L.tabOv },
-    { id: 'works', lbl: L.tabWorks, cnt: inProg.length + todo.length },
-    { id: 'finance', lbl: L.tabFin, dot: hasFin && fin.bal > 0 }
-  ];
-  if (showCal) tabs.push({ id: 'schedule', lbl: L.tabCal });
+  const fin = getClientFin(c);
+  const factTotal = Math.round((itemsSum + tasksSum + fin.svcTotal) * 100) / 100;
+  const manualBudget = Number(c.budget) > 0 ? Math.round(Number(c.budget) * 100) / 100 : 0;
+  const objBudget = manualBudget > 0 ? manualBudget : factTotal;
 
-  $('#mainTabs').innerHTML = tabs.map(tb => {
-    const extra = tb.cnt ? `<span class="cnt">${tb.cnt}</span>` : (tb.dot ? '<span class="ddot"></span>' : '');
-    return `<button type="button" role="tab" aria-selected="${activeTab === tb.id}" class="ntab${activeTab === tb.id ? ' on' : ''}" data-mtab="${tb.id}">${esc(tb.lbl)}${extra}</button>`;
-  }).join('');
-  $('#mainTabs').querySelectorAll('[data-mtab]').forEach(b => b.onclick = () => {
-    activeTab = b.dataset.mtab;
-    renderCabinet();
-  });
+  return { allTasks, inProg, todo, done, total, pct, doneShare, progShare, allItems, itemsSum, tasksSum, fin, factTotal, manualBudget, objBudget };
+}
 
-  const bodyEl = $('#tabBody');
+const CHAT_IC_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+const CALL_IC_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+const OBJ_IC_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h1"/><path d="M14 9h1"/><path d="M9 13h1"/><path d="M14 13h1"/><path d="M10 21v-4h4v4"/></svg>';
+
+function contactBarHtml(chatBtnId, badgeId) {
+  const L = I18N[lang];
+  const unreadC = (chatData && Number(chatData.unreadClient)) || 0;
+  return `<div class="contact-bar">
+    <button type="button" class="btn p" id="${chatBtnId}">${CHAT_IC_SVG}<span>${esc(L.chatBtn)}</span><span class="cbadge" id="${badgeId}"${unreadC ? '' : ' hidden'}>${unreadC}</span></button>
+    <a class="btn call" href="tel:${MASTER_PHONE}">${CALL_IC_SVG}<span>${esc(L.callBtn)}</span></a>
+  </div>`;
+}
+
+function renderCabinet() {
+  if (!unlocked || !unlocked.clients || !unlocked.clients.length) return;
+  const L = I18N[lang];
+  const list = unlocked.clients;
+  if (activeIdx >= list.length) activeIdx = 0;
+
+  const bodyEl = $('#cabBody');
   const calSec = $('#calSec');
-  calSec.hidden = true;
+  $('#hdrActs').hidden = false;
+  $('#hdrBrand').classList.toggle('clickable', cabView === 'detail');
 
-  if (activeTab === 'overview') {
-    const unreadC = (chatData && Number(chatData.unreadClient)) || 0;
-    const balCls = fin.bal > 0 ? ' debt' : ' ok';
-    const balLbl = fin.bal > 0 ? L.kpiDebt : (fin.bal < 0 ? L.kpiOver : L.kpiZero);
-    const balVal = fin.bal === 0 ? '0 ₼' : fmtAzn0(Math.abs(fin.bal));
+  if (cabView === 'objects') {
+    const first = list[0];
+    $('#hsub').textContent = first.name || 'Techmaster IT Solutions';
 
-    // Nearest active or upcoming task (max 2)
-    const featured = inProg.length ? inProg.slice(0, 2) : todo.slice(0, 1);
+    // Aggregate calendar dates across all client objects if master schedule is visible
+    mine.clear();
+    let anyCal = false;
+    for (const x of list) {
+      if (x.cal !== false) anyCal = true;
+      for (const t of (Array.isArray(x.tasks) ? x.tasks : [])) {
+        if (taskStatus(t) !== 'done' && t.d) mine.add(t.d);
+      }
+    }
+    if (!anyCal) showCalPanel = false;
 
-    let html = '';
+    const cardsHtml = list.map((x, i) => {
+      const m = getObjMetrics(x);
+      const title = x.proj || x.name || (L.objDef + ' #' + (i + 1));
+      const stBadge = m.inProg.length > 0
+        ? `<span class="badge" style="margin-left:0">${esc(L.inProgBadge)}</span>`
+        : (m.total > 0 && m.pct >= 100
+          ? `<span class="badge ok" style="margin-left:0">${esc(L.objDoneBadge)}</span>`
+          : `<span class="badge info" style="margin-left:0">${esc(L.objPlanBadge)}</span>`);
+      return `<button type="button" class="ocard" data-open-obj="${i}">
+        <div class="ocard-top">
+          <div class="ocard-ic">${OBJ_IC_SVG}</div>
+          <div class="ocard-main">
+            <div class="ocard-title">${esc(title)}</div>
+            ${x.addr ? `<div class="ocard-addr">${esc(x.addr)}</div>` : ''}
+            <div style="margin-top:6px">${stBadge}</div>
+          </div>
+          <span class="ocard-go" aria-hidden="true">›</span>
+        </div>
+        <div>
+          <div class="ocard-prog-hd">
+            <span>${esc(L.progressTitle)}</span>
+            <b>${m.pct}% <span style="font-weight:500;color:var(--muted)">(${m.done.length}/${m.total})</span></b>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-ok" style="width:${(m.doneShare * 100).toFixed(1)}%"></div>
+            <div class="bar-pr" style="width:${(m.progShare * 100).toFixed(1)}%"></div>
+          </div>
+        </div>
+        <div class="ocard-stats">
+          <div class="ostat">
+            <div class="ostat-k">${esc(L.objBudget)}</div>
+            <div class="ostat-v accent">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div>
+          </div>
+          <div class="ostat">
+            <div class="ostat-k">${esc(L.kpiGoods)}</div>
+            <div class="ostat-v">${m.allItems.length}${m.itemsSum > 0 ? ' · ' + esc(fmtAzn0(m.itemsSum)) : ''}</div>
+          </div>
+          <div class="ostat">
+            <div class="ostat-k">${esc(L.kpiTasks)}</div>
+            <div class="ostat-v">${m.total}${m.tasksSum > 0 ? ' · ' + esc(fmtAzn0(m.tasksSum)) : ''}</div>
+          </div>
+        </div>
+      </button>`;
+    }).join('');
+
+    let html = `<div class="objs-hd">
+      <div>
+        <h2>${esc(L.myObjects)}<span class="pill">${list.length}</span></h2>
+        ${first.name ? `<div class="objs-sub">${esc(first.name)}</div>` : ''}
+      </div>
+    </div>`;
+
+    html += contactBarHtml('ovChatBtn', 'ovChatBadge');
+    html += `<div class="obj-grid${list.length === 1 ? ' single' : ''}">${cardsHtml}</div>`;
+    html += `<div class="sub-acts">
+      <a class="btn" href="shop.html">${esc(L.openShop)}</a>
+      ${anyCal ? `<button type="button" class="btn" id="toggleCalBtn">${esc(showCalPanel ? L.hideCalBtn : L.showCalBtn)}</button>` : ''}
+    </div>`;
+
+    bodyEl.innerHTML = html;
+    $('#ovChatBtn').onclick = openChat;
+    if ($('#toggleCalBtn')) {
+      $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
+    }
+    bodyEl.querySelectorAll('[data-open-obj]').forEach(el => {
+      el.onclick = () => {
+        activeIdx = Number(el.dataset.openObj);
+        cabView = 'detail';
+        workFilter = 'all';
+        showCalPanel = false;
+        const s = loadSession();
+        if (s && s.phone) saveSession(s.phone, activeIdx);
+        renderCabinet();
+        window.scrollTo(0, 0);
+      };
+    });
+
+    if (showCalPanel && anyCal) {
+      calSec.hidden = false;
+      drawCal();
+      drawHours();
+    } else {
+      calSec.hidden = true;
+    }
+  } else {
+    // Object Detail Page
+    const c = list[activeIdx];
+    const m = getObjMetrics(c);
+    const title = c.proj || c.name || (L.objDef + ' #' + (activeIdx + 1));
+    $('#hsub').textContent = title;
+
+    mine.clear();
+    for (const t of [...m.inProg, ...m.todo]) { if (t.d) mine.add(t.d); }
+    const showCal = c.cal !== false;
+    if (!showCal) showCalPanel = false;
+
+    const orderedAll = [...m.inProg, ...m.todo, ...m.done];
+    const filters = [
+      ['all', L.fAll, orderedAll.length],
+      ['in_progress', L.fProg, m.inProg.length],
+      ['todo', L.fTodo, m.todo.length],
+      ['done', L.fDone, m.done.length]
+    ];
+    const shownTasks = workFilter === 'all' ? orderedAll : (workFilter === 'in_progress' ? m.inProg : (workFilter === 'todo' ? m.todo : m.done));
+
+    const remainBal = Math.round((m.objBudget - m.fin.paidTotal) * 100) / 100;
+    const budgetHint = m.manualBudget > 0 ? L.budgetApproved : L.budgetAuto;
+
+    let html = `<div class="det-top">
+      <button type="button" class="back-btn" id="backObjsBtn">← ${esc(L.backObjects)}</button>
+      <div class="det-head">
+        <h2 class="det-title">${esc(title)}</h2>
+        ${c.addr ? `<div class="det-addr">${esc(c.addr)}</div>` : ''}
+      </div>
+    </div>`;
+
     if (c.msg) {
       html += `<div class="msg-banner"><b>${esc(L.masterNote)}</b>${esc(c.msg)}</div>`;
     }
 
-    html += '<div class="ov-grid">';
+    html += '<div class="det-grid">';
 
-    // Progress summary card
+    // 1. Object Progress Card
     html += `<section class="panel">
-      <h2>${esc(L.progressTitle)}<span class="pill">${done.length} / ${total}</span></h2>
+      <h2>${esc(L.objProgress)}<span class="pill">${m.done.length} / ${m.total}</span></h2>
       <div class="prog-box">
-        ${donutSvg(pct, doneShare, progShare)}
+        ${donutSvg(m.pct, m.doneShare, m.progShare)}
         <div class="stats">
-          <div class="st-row"><span class="st-l"><i class="dot ok"></i>${esc(L.stDone)}</span><span class="st-v">${done.length}</span></div>
-          <div class="st-row"><span class="st-l"><i class="dot pr"></i>${esc(L.stProg)}</span><span class="st-v">${inProg.length}</span></div>
-          <div class="st-row"><span class="st-l"><i class="dot td"></i>${esc(L.stTodo)}</span><span class="st-v">${todo.length}</span></div>
+          <div class="st-row"><span class="st-l"><i class="dot ok"></i>${esc(L.stDone)}</span><span class="st-v">${m.done.length}</span></div>
+          <div class="st-row"><span class="st-l"><i class="dot pr"></i>${esc(L.stProg)}</span><span class="st-v">${m.inProg.length}</span></div>
+          <div class="st-row"><span class="st-l"><i class="dot td"></i>${esc(L.stTodo)}</span><span class="st-v">${m.todo.length}</span></div>
         </div>
       </div>
       <div class="bar-wrap">
-        <div class="bar-ok" style="width:${(doneShare * 100).toFixed(1)}%"></div>
-        <div class="bar-pr" style="width:${(progShare * 100).toFixed(1)}%"></div>
+        <div class="bar-ok" style="width:${(m.doneShare * 100).toFixed(1)}%"></div>
+        <div class="bar-pr" style="width:${(m.progShare * 100).toFixed(1)}%"></div>
       </div>
     </section>`;
 
-    // Finance summary card (clickable -> Finance tab)
-    html += `<section class="panel fin-card-btn" id="ovFinCard">
-      <h2>${esc(L.finCardTitle)}<button type="button" class="link-act" data-jump="finance">${esc(L.finDetailsBtn)}</button></h2>
-      ${hasFin
-        ? `<div class="kpi3">
-            <div class="kpi"><div class="kpi-k">${esc(L.kpiSvcs)}</div><div class="kpi-v">${esc(fmtAzn0(fin.svcTotal))}</div></div>
-            <div class="kpi"><div class="kpi-k">${esc(L.kpiPaid)}</div><div class="kpi-v">${esc(fmtAzn0(fin.paidTotal))}</div></div>
-            <div class="kpi${balCls}"><div class="kpi-k">${esc(balLbl)}</div><div class="kpi-v">${esc(balVal)}</div></div>
-          </div>`
-        : `<div class="muted">${esc(L.itemsTitle)}: <b>${allItems.length}</b>${itemsSum > 0 ? ' · ' + esc(fmtAzn(itemsSum)) : ''}</div>`}
-    </section>`;
-
-    // Nearest / active task card
-    html += `<section class="panel span2">
-      <h2>${esc(L.nearTitle)}<button type="button" class="link-act" data-jump="works">${esc(L.allWorksBtn)}</button></h2>
-      ${featured.length
-        ? `<div class="tlist">${featured.map((t, i) => compactTaskHtml(t, taskStatus(t), 'ov:' + taskKey(t, i), true)).join('')}</div>`
-        : `<div class="empty-s">${esc(L.noTasksYet)}</div>`}
-    </section>`;
-
-    // Quick actions (Chat + Shop)
-    html += `<div class="qacts span2">
-      <button type="button" class="btn p" id="ovChatBtn">${esc(L.chatBtn)}<span class="cbadge" id="ovChatBadge"${unreadC ? '' : ' hidden'}>${unreadC}</span></button>
-      <a class="btn" href="shop.html">${esc(L.openShop)}</a>
-    </div>`;
-
-    html += '</div>';
-    bodyEl.innerHTML = html;
-
-    $('#ovChatBtn').onclick = openChat;
-    $('#ovFinCard').onclick = e => { if (!e.target.closest('button')) { activeTab = 'finance'; renderCabinet(); } };
-    bodyEl.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => { activeTab = b.dataset.jump; renderCabinet(); });
-    bindTaskExpand(bodyEl);
-  } else if (activeTab === 'works') {
-    const orderedAll = [...inProg, ...todo, ...done];
-    const filters = [
-      ['all', L.fAll, orderedAll.length],
-      ['in_progress', L.fProg, inProg.length],
-      ['todo', L.fTodo, todo.length],
-      ['done', L.fDone, done.length]
-    ];
-    const shown = workFilter === 'all' ? orderedAll : (workFilter === 'in_progress' ? inProg : (workFilter === 'todo' ? todo : done));
-
-    let html = `<div class="chips">${filters.map(([id, lb, cnt]) =>
-      `<button type="button" class="chip${workFilter === id ? ' on' : ''}" data-wf="${id}">${esc(lb)}<b>${cnt}</b></button>`
-    ).join('')}</div>`;
-
-    if (shown.length) {
-      html += `<div class="tlist grid2">${shown.map((t, i) => compactTaskHtml(t, taskStatus(t), taskKey(t, i), true)).join('')}</div>`;
-    } else {
-      html += `<section class="panel"><div class="empty-s">${esc(allTasks.length ? L.noTasksFilter : L.noTasksYet)}</div></section>`;
-    }
-
-    bodyEl.innerHTML = html;
-    bodyEl.querySelectorAll('[data-wf]').forEach(b => b.onclick = () => { workFilter = b.dataset.wf; renderCabinet(); });
-    bindTaskExpand(bodyEl);
-  } else if (activeTab === 'finance') {
-    if (!finSub) finSub = fin.svcs.length ? 'svcs' : (fin.pays.length ? 'pays' : 'items');
-    const balCls = fin.bal > 0 ? ' debt' : ' ok';
-    const balLbl = fin.bal > 0 ? L.kpiDebt : (fin.bal < 0 ? L.kpiOver : L.kpiZero);
-    const balVal = fin.bal === 0 ? '0 ₼' : fmtAzn0(Math.abs(fin.bal));
-
-    let html = '<div class="fin-wrap">';
-    if (hasFin) {
-      html += `<section class="panel" style="margin-bottom:12px">
-        <div class="kpi3">
-          <div class="kpi"><div class="kpi-k">${esc(L.kpiSvcs)}</div><div class="kpi-v">${esc(fmtAzn0(fin.svcTotal))}</div></div>
-          <div class="kpi"><div class="kpi-k">${esc(L.kpiPaid)}</div><div class="kpi-v">${esc(fmtAzn0(fin.paidTotal))}</div></div>
-          <div class="kpi${balCls}"><div class="kpi-k">${esc(balLbl)}</div><div class="kpi-v">${esc(balVal)}</div></div>
+    // 2. Dedicated Object Budget Row + Summary
+    html += `<section class="panel budget-panel">
+      <div class="budget-row">
+        <div>
+          <div class="budget-lbl">${esc(L.objBudget)}</div>
+          <div class="budget-hint">${esc(budgetHint)}</div>
         </div>
+        <div class="budget-val">${m.objBudget > 0 ? esc(fmtAzn0(m.objBudget)) : '—'}</div>
+      </div>
+      <div class="budget-sub">
+        <div class="bstat"><div class="bstat-k">${esc(L.kpiGoods)}</div><div class="bstat-v">${esc(fmtAzn0(m.itemsSum))}</div></div>
+        <div class="bstat"><div class="bstat-k">${esc(L.kpiTasks)}</div><div class="bstat-v">${esc(fmtAzn0(m.tasksSum))}</div></div>
+        ${m.fin.svcTotal > 0 ? `<div class="bstat"><div class="bstat-k">${esc(L.kpiSvcs)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.svcTotal))}</div></div>` : ''}
+        ${m.fin.paidTotal > 0 ? `<div class="bstat ok"><div class="bstat-k">${esc(L.kpiPaid)}</div><div class="bstat-v">${esc(fmtAzn0(m.fin.paidTotal))}</div></div>` : ''}
+        ${m.fin.paidTotal > 0 && m.objBudget > 0 ? `<div class="bstat${remainBal > 0 ? ' debt' : ' ok'}"><div class="bstat-k">${esc(remainBal > 0 ? L.kpiDebt : (remainBal < 0 ? L.kpiOver : L.kpiZero))}</div><div class="bstat-v">${remainBal === 0 ? '0 ₼' : esc(fmtAzn0(Math.abs(remainBal)))}</div></div>` : ''}
+      </div>
+    </section>`;
+
+    // 3. Goods / Equipment Purchased for This Object (with prices & total sum at the bottom)
+    html += `<section class="panel span2">
+      <h2>${esc(L.objGoodsTitle)}<span class="pill">${m.allItems.length}</span></h2>
+      ${m.allItems.length
+        ? `<table class="ptbl">
+            <thead><tr><th>${esc(L.thItem)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
+            <tbody>${m.allItems.map(x => {
+              const q = Number(x.q) || 1;
+              const p = Number(x.p) > 0 ? Number(x.p) : 0;
+              const lineSum = Math.round(q * p * 100) / 100;
+              const stLbl = (L.ist && L.ist[x.s]) || L.ist.pending;
+              const stCls = IST_CLS[x.s] !== undefined ? IST_CLS[x.s] : 'info';
+              const eta = x.dt ? `${L.etaLbl}: ${fmtShortDate(x.dt)}` : '';
+              const subNote = [x.taskTitle, eta].filter(Boolean).join(' · ');
+              return `<tr>
+                <td>
+                  <b>${esc(x.n)}</b> <span class="badge ${stCls}" style="margin-left:4px">${esc(stLbl)}</span>
+                  ${subNote ? `<span class="pnote">${esc(subNote)}</span>` : ''}
+                </td>
+                <td class="r">${p > 0 ? `${q} × ${esc(fmtAzn0(p))}` : `× ${q}`}</td>
+                <td class="r"><b>${lineSum > 0 ? esc(fmtAzn0(lineSum)) : '—'}</b></td>
+              </tr>`;
+            }).join('')}</tbody>
+            <tfoot><tr><td colspan="2">${esc(L.itemsTotal)}</td><td class="r">${esc(fmtAzn0(m.itemsSum))}</td></tr></tfoot>
+          </table>`
+        : `<div class="empty-s">${esc(L.objGoodsEmpty)}</div>`}
+      <div class="shop-foot">
+        <span class="muted">${m.allItems.length ? '' : ''}</span>
+        <a class="btn" href="shop.html">${esc(L.openShop)}</a>
+      </div>
+    </section>`;
+
+    // 4. Tasks Linked to This Object (with prices & total sum at the bottom)
+    html += `<section class="panel span2">
+      <h2>${esc(L.objTasksTitle)}<span class="pill">${m.total}</span></h2>
+      ${m.total > 0 ? `<div class="chips">${filters.map(([id, lb, cnt]) =>
+        `<button type="button" class="chip${workFilter === id ? ' on' : ''}" data-wf="${id}">${esc(lb)}<b>${cnt}</b></button>`
+      ).join('')}</div>` : ''}
+      ${shownTasks.length
+        ? `<div class="tlist">${shownTasks.map((t, i) => compactTaskHtml(t, taskStatus(t), taskKey(t, i), true, true)).join('')}</div>`
+        : `<div class="empty-s">${esc(m.total ? L.noTasksFilter : L.noTasksYet)}</div>`}
+      <div class="sec-total">
+        <span>${esc(L.tasksTotal)}</span>
+        <span class="sec-total-v">${esc(fmtAzn0(m.tasksSum))}</span>
+      </div>
+    </section>`;
+
+    // Optional: Additional services table (if any exist in legacy/finance calculation)
+    if (m.fin.svcs.length) {
+      html += `<section class="panel span2">
+        <h2>${esc(L.extraSvcsTitle)}<span class="pill">${m.fin.svcs.length}</span></h2>
+        <table class="ptbl">
+          <thead><tr><th>${esc(L.thSvc)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
+          <tbody>${m.fin.svcs.map(s => {
+            const q = Number(s.q) || 1, p = Number(s.p) || 0;
+            return `<tr><td>${esc(s.n)}${s.cm ? `<span class="pnote">${esc(s.cm)}</span>` : ''}</td><td class="r">${q} × ${esc(fmtAzn0(p))}</td><td class="r">${esc(fmtAzn0(q * p))}</td></tr>`;
+          }).join('')}</tbody>
+          <tfoot><tr><td colspan="2">${esc(L.totSvc)}</td><td class="r">${esc(fmtAzn0(m.fin.svcTotal))}</td></tr></tfoot>
+        </table>
       </section>`;
     }
 
-    html += `<div class="sub-seg" role="tablist">
-      <button type="button" class="sseg${finSub === 'svcs' ? ' on' : ''}" data-fsub="svcs">${esc(L.subSvcs)}<b>${fin.svcs.length}</b></button>
-      <button type="button" class="sseg${finSub === 'pays' ? ' on' : ''}" data-fsub="pays">${esc(L.subPays)}<b>${fin.pays.length}</b></button>
-      <button type="button" class="sseg${finSub === 'items' ? ' on' : ''}" data-fsub="items">${esc(L.subItems)}<b>${allItems.length}</b></button>
-    </div>`;
-
-    html += '<section class="panel">';
-    if (finSub === 'svcs') {
-      if (fin.svcs.length) {
-        html += `<table class="ptbl"><thead><tr><th>${esc(L.thSvc)}</th><th class="r">${esc(L.thQty)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>`
-          + fin.svcs.map(s => {
-            const q = Number(s.q) || 1, p = Number(s.p) || 0;
-            return `<tr><td>${esc(s.n)}${s.cm ? `<span class="pnote">${esc(s.cm)}</span>` : ''}</td><td class="r">${q} × ${esc(fmtAzn0(p))}</td><td class="r">${esc(fmtAzn0(q * p))}</td></tr>`;
-          }).join('')
-          + `</tbody><tfoot><tr><td colspan="2">${esc(L.totSvc)}</td><td class="r">${esc(fmtAzn0(fin.svcTotal))}</td></tr></tfoot></table>`;
-      } else {
-        html += `<div class="empty-s">${esc(L.noSvcs)}</div>`;
-      }
-    } else if (finSub === 'pays') {
-      if (fin.pays.length) {
-        html += `<table class="ptbl"><thead><tr><th>${esc(L.thDate)}</th><th>${esc(L.thType)}</th><th class="r">${esc(L.thSum)}</th></tr></thead><tbody>`
-          + fin.pays.map(p => `<tr><td>${esc(p.d ? fmtShortDate(p.d) : '—')}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.cm ? `<span class="pnote">${esc(p.cm)}</span>` : ''}</td><td class="r">${esc(fmtAzn0(p.a))}</td></tr>`).join('')
-          + `</tbody><tfoot><tr><td colspan="2">${esc(L.totPaid)}</td><td class="r">${esc(fmtAzn0(fin.paidTotal))}</td></tr></tfoot></table>`;
-      } else {
-        html += `<div class="empty-s">${esc(L.noPays)}</div>`;
-      }
-    } else {
-      html += allItems.length
-        ? `<div class="sub-its">${allItems.map(x => itemSubRowHtml(x, true)).join('')}</div>`
-        : `<div class="empty-s">${esc(L.itemsEmpty)}</div>`;
-      html += `<div class="shop-foot">
-        <span>${itemsSum > 0 ? `${esc(L.itemsTotal)}: <b>${esc(fmtAzn(itemsSum))}</b>` : ''}</span>
-        <a class="btn p" href="shop.html">${esc(L.openShop)}</a>
-      </div>`;
+    // Optional: Payments table (if any payments recorded)
+    if (m.fin.pays.length) {
+      html += `<section class="panel span2">
+        <h2>${esc(L.paysTitle)}<span class="pill">${m.fin.pays.length}</span></h2>
+        <table class="ptbl">
+          <thead><tr><th>${esc(L.thDate)}</th><th>${esc(L.thType)}</th><th class="r">${esc(L.thSum)}</th></tr></thead>
+          <tbody>${m.fin.pays.map(p => `<tr><td>${esc(p.d ? fmtShortDate(p.d) : '—')}</td><td>${esc((L.ptypes && L.ptypes[p.tp]) || p.tp)}${p.cm ? `<span class="pnote">${esc(p.cm)}</span>` : ''}</td><td class="r">${esc(fmtAzn0(p.a))}</td></tr>`).join('')}</tbody>
+          <tfoot><tr><td colspan="2">${esc(L.totPaid)}</td><td class="r">${esc(fmtAzn0(m.fin.paidTotal))}</td></tr></tfoot>
+        </table>
+      </section>`;
     }
-    html += '</section></div>';
+
+    html += '</div>'; // end det-grid
+
+    // Master Contact Bar (Chat + Call) & optional Schedule toggle
+    html += contactBarHtml('dtChatBtn', 'dtChatBadge');
+    if (showCal) {
+      html += `<div class="sub-acts"><button type="button" class="btn" id="toggleCalBtn">${esc(showCalPanel ? L.hideCalBtn : L.showCalBtn)}</button></div>`;
+    }
 
     bodyEl.innerHTML = html;
-    bodyEl.querySelectorAll('[data-fsub]').forEach(b => b.onclick = () => { finSub = b.dataset.fsub; renderCabinet(); });
-  } else if (activeTab === 'schedule' && showCal) {
-    bodyEl.innerHTML = '';
-    calSec.hidden = false;
-    drawCal();
-    drawHours();
+
+    $('#backObjsBtn').onclick = () => {
+      cabView = 'objects';
+      showCalPanel = false;
+      renderCabinet();
+      window.scrollTo(0, 0);
+    };
+    $('#dtChatBtn').onclick = openChat;
+    if ($('#toggleCalBtn')) {
+      $('#toggleCalBtn').onclick = () => { showCalPanel = !showCalPanel; renderCabinet(); };
+    }
+    bodyEl.querySelectorAll('[data-wf]').forEach(b => b.onclick = () => { workFilter = b.dataset.wf; renderCabinet(); });
+    bindTaskExpand(bodyEl);
+
+    if (showCalPanel && showCal) {
+      calSec.hidden = false;
+      drawCal();
+      drawHours();
+    } else {
+      calSec.hidden = true;
+    }
   }
 
   $('#upd').textContent = L.updText(D && D.upd);
@@ -1220,8 +1451,9 @@ function openProfile() {
     <div>
       <div class="info-row"><span class="info-k">${esc(L.kName)}</span><span class="info-v">${esc(c.name || '—')}</span></div>
       ${phoneShow ? `<div class="info-row"><span class="info-k">${esc(L.kPhone)}</span><span class="info-v">${esc(phoneShow)}</span></div>` : ''}
-      ${c.proj ? `<div class="info-row"><span class="info-k">${esc(L.kProj)}</span><span class="info-v">${esc(c.proj)}</span></div>` : ''}
-      ${c.addr ? `<div class="info-row"><span class="info-k">${esc(L.kAddr)}</span><span class="info-v">${esc(c.addr)}</span></div>` : ''}
+      <div class="info-row"><span class="info-k">${esc(L.objsCount)}</span><span class="info-v">${unlocked.clients.length}</span></div>
+      ${cabView === 'detail' && c.proj ? `<div class="info-row"><span class="info-k">${esc(L.kProj)}</span><span class="info-v">${esc(c.proj)}</span></div>` : ''}
+      ${cabView === 'detail' && c.addr ? `<div class="info-row"><span class="info-k">${esc(L.kAddr)}</span><span class="info-v">${esc(c.addr)}</span></div>` : ''}
     </div>
     ${c.msg ? `<div class="msg-banner" style="margin:12px 0 0"><b>${esc(L.masterNote)}</b>${esc(c.msg)}</div>` : ''}
     <div class="muted" style="margin-top:12px">${esc(L.updText(D && D.upd))}</div>
@@ -1591,14 +1823,15 @@ function doLogout() {
   clearSession();
   stopChatSub();
   unlocked = null;
-  activeTab = 'overview';
+  cabView = 'objects';
   workFilter = 'all';
-  finSub = null;
+  showCalPanel = false;
   openedTasks.clear();
   clearPhoneBoxes();
   showAuthOverlay(null);
   $('#loginCard').classList.remove('exiting');
   $('#view').classList.remove('cab-enter');
+  $('#hdrBrand').classList.remove('clickable');
   $('#hsub').textContent = 'Techmaster IT Solutions';
   $('#hdrActs').hidden = true;
   $('#view').hidden = true;
@@ -1650,9 +1883,9 @@ async function login() {
 
     unlocked = data;
     activeIdx = 0;
-    activeTab = 'overview';
+    cabView = 'objects';
     workFilter = 'all';
-    finSub = null;
+    showCalPanel = false;
     openedTasks.clear();
     saveSession(full, 0);
     startChatSub(data._chatId);
@@ -1724,6 +1957,14 @@ async function restoreSession() {
 
 $('#hdrChatBtn').onclick = openChat;
 $('#hdrProfBtn').onclick = openProfile;
+$('#hdrBrand').onclick = () => {
+  if (unlocked && cabView === 'detail') {
+    cabView = 'objects';
+    showCalPanel = false;
+    renderCabinet();
+    window.scrollTo(0, 0);
+  }
+};
 
 document.querySelectorAll('[data-lang]').forEach(btn => {
   btn.onclick = () => {

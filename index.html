@@ -554,6 +554,7 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
         tm: t.time || '',
         x: Boolean(t.done),
         st: t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo'),
+        pr: Number(t.clientPrice) > 0 ? Number(t.clientPrice) : 0,
         n: t.pubNote || '',
         it: Array.isArray(t.items) ? t.items.map(x => ({
           n: x.name || '',
@@ -586,6 +587,7 @@ async function buildPortalPayload(clientsList, tasksList, saltB64) {
       phone: c.phone || '',
       addr: c.showAddress !== false ? (c.address || '') : '',
       proj: c.pubProject || '',
+      budget: Number(c.budget) > 0 ? Number(c.budget) : 0,
       msg: c.pubMsg || '',
       pct,
       cal: c.showCal !== false,
@@ -1155,13 +1157,15 @@ function clientsHtml() {
         : '<span class="tag ok">Оплачено</span>')
       : '';
     const finLine = hasFin ? `<div class="meta">Услуги: ${esc(fmtAzn0(fin.svcTotal))} · Оплачено: ${esc(fmtAzn0(fin.paidTotal))}</div>` : '';
+    const projLine = c.pubProject ? `<div class="meta">Объект: <b>${esc(c.pubProject)}</b>${Number(c.budget) > 0 ? ' · Бюджет: ' + esc(fmtAzn0(c.budget)) : ''}</div>` : (Number(c.budget) > 0 ? `<div class="meta">Бюджет: <b>${esc(fmtAzn0(c.budget))}</b></div>` : '');
     return `<div class="cl"><div class="main"><div class="ttl">${esc(c.name)}${balTag}</div>
+    ${projLine}
     <div class="meta">Открытых задач: ${n}</div>
     ${finLine}
     ${c.phone ? `<div class="links meta"><a href="tel:${esc(tel(c.phone))}">${esc(c.phone)}</a></div>` : ''}
     ${c.address ? `<div class="links meta"><a href="https://maps.apple.com/?q=${encodeURIComponent(c.address)}" target="_blank" rel="noopener">${esc(c.address)}</a></div>` : ''}
     ${c.note ? `<div class="meta" style="white-space:pre-wrap">${esc(c.note)}</div>` : ''}
-    <div class="row"><button class="btn p" data-act="cfin" data-id="${c.id}">Расчёты</button><button class="btn" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
+    <div class="row"><button class="btn p" data-act="cfin" data-id="${c.id}">Расчёты</button><button class="btn" data-act="addobj" data-id="${c.id}">+ Объект</button><button class="btn" data-act="ctasks" data-id="${c.id}">Задачи</button><button class="btn" data-act="newtask" data-id="${c.id}">Новая задача</button><button class="btn" data-act="editclient" data-id="${c.id}">Изменить</button><button class="btn d" data-act="delclient" data-id="${c.id}">Удалить</button></div></div></div>`;
   }).join('');
 }
 
@@ -1454,19 +1458,22 @@ function openMenu() {
   ov.querySelector('[data-out]').onclick = async () => { ov.remove(); await signOut(auth); };
 }
 
-function openClient(id) {
-  const c = clients.find(x => x.id === id) || { name: '', phone: '', address: '', note: '', showAddress: true, showCal: true, pubProject: '', pubMsg: '', pubPct: '' };
+function openClient(id, prefill) {
+  const c = clients.find(x => x.id === id) || Object.assign({ name: '', phone: '+994 ', address: '', note: '', showAddress: true, showCal: true, pubProject: '', pubMsg: '', pubPct: '', budget: '' }, prefill || {});
   const pctVal = (c.pubPct !== undefined && c.pubPct !== null && c.pubPct !== '') ? String(c.pubPct) : '';
-  const ov = modal(id ? 'Клиент' : 'Новый клиент', `<label>Название / имя</label><input type="text" name="name" required value="${esc(c.name)}">
+  const budVal = Number(c.budget) > 0 ? String(c.budget) : '';
+  const titleTxt = id ? 'Клиент / объект' : (prefill ? 'Новый объект клиента' : 'Новый клиент');
+  const ov = modal(titleTxt, `<label>Имя клиента</label><input type="text" name="name" required value="${esc(c.name)}">
   <label>Телефон</label><input type="tel" name="phone" value="${esc(c.phone)}">
   <div class="qk"><button type="button" class="btn" data-pick>Из контактов</button><button type="button" class="btn" data-paste>Вставить номер</button></div>
   <div id="chint" class="meta">В «Контактах» нажмите на номер → «Скопировать», затем «Вставить номер».</div>
   <label>Адрес объекта</label><input type="text" name="address" value="${esc(c.address)}">
   <label>Заметки мастера (личные, клиенту не видны)</label><textarea name="note">${esc(c.note)}</textarea>
   <div class="sec">
-    <div class="sec-t">Личный кабинет клиента</div>
-    <label>Название проекта / объекта (видно клиенту)</label><input type="text" name="pubProject" placeholder="Например, Видеонаблюдение и Wi-Fi" value="${esc(c.pubProject || '')}">
-    <label>Сообщение для клиента (вверху кабинета)</label><textarea name="pubMsg" placeholder="Например, Оборудование заказано, следующий визит в пятницу" style="min-height:68px">${esc(c.pubMsg || '')}</textarea>
+    <div class="sec-t">Карточка объекта в кабинете клиента</div>
+    <label>Название объекта (видно клиенту на карточке)</label><input type="text" name="pubProject" placeholder="Например, Дача в Мардакянах — Видеонаблюдение" value="${esc(c.pubProject || '')}">
+    <label>Бюджет объекта, ₼ (пусто = авторасчёт по товарам и задачам)</label><input type="number" name="budget" min="0" step="0.5" placeholder="Авто по товарам и задачам" value="${esc(budVal)}">
+    <label>Сообщение для клиента (вверху страницы объекта)</label><textarea name="pubMsg" placeholder="Например, Оборудование заказано, следующий визит в пятницу" style="min-height:68px">${esc(c.pubMsg || '')}</textarea>
     <label>Прогресс вручную, % (оставьте пустым для авторасчёта)</label><input type="number" name="pubPct" min="0" max="100" step="1" placeholder="Авто по задачам" value="${esc(pctVal)}">
     <label class="inl"><input type="checkbox" name="showAddress" ${c.showAddress !== false ? 'checked' : ''}> Показывать адрес в кабинете</label>
     <label class="inl"><input type="checkbox" name="showCal" ${c.showCal !== false ? 'checked' : ''}> Показывать график занятости</label>
@@ -1474,12 +1481,14 @@ function openClient(id) {
   </div>`,
   f => {
     const pRaw = String(f.pubPct || '').trim();
+    const bRaw = Number(f.budget);
     const docData = {
       name: f.name.trim(),
       phone: f.phone.trim(),
       address: f.address.trim(),
       note: f.note.trim(),
       pubProject: (f.pubProject || '').trim(),
+      budget: (Number.isFinite(bRaw) && bRaw > 0) ? Math.round(bRaw * 100) / 100 : 0,
       pubMsg: (f.pubMsg || '').trim(),
       pubPct: pRaw === '' ? null : Math.max(0, Math.min(100, Math.round(Number(pRaw)))),
       showAddress: !!f.showAddress,
@@ -1510,7 +1519,7 @@ function openTask(id, clientId, prefill) {
   if (!clients.length) { toast('Сначала добавьте клиента'); view = 'clients'; render(); return openClient(); }
   const t = tasks.find(x => x.id === id) || Object.assign({ clientId: clientId || clientFilter || clients[0].id, assigneeId: staffFilter || '', title: '', date: today(), time: '', details: '', high: false, done: false, status: 'todo', pub: true, pubNote: '', items: [], checklist: [], staffNote: '' }, prefill || {});
   const curSt = t.done ? 'done' : (t.status === 'in_progress' ? 'in_progress' : 'todo');
-  const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+  const opts = [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => `<option value="${c.id}" ${c.id === t.clientId ? 'selected' : ''}>${esc(c.name)}${c.pubProject ? ' — ' + esc(c.pubProject) : ''}</option>`).join('');
   const staffOpts = [...staff].filter(s => s.active !== false || s.id === t.assigneeId).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru'))
     .map(s => `<option value="${s.id}" ${s.id === t.assigneeId ? 'selected' : ''}>${esc(s.name)}${s.role ? ' (' + esc(s.role) + ')' : ''}</option>`).join('');
   const prodOpts = [...products].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ru')).map(p => `<option value="${p.id}">${esc(p.name)}${p.price > 0 ? ' (' + fmtAzn(p.price) + ')' : ''}</option>`).join('');
@@ -1557,6 +1566,7 @@ function openTask(id, clientId, prefill) {
   <div class="sec">
     <div class="sec-t">Отображение в кабинете клиента</div>
     <label class="inl" style="margin-top:4px"><input type="checkbox" name="pub" ${t.pub !== false ? 'checked' : ''}> Показывать эту задачу клиенту</label>
+    <label>Стоимость задачи для клиента, ₼ (видна клиенту в объекте)</label><input type="number" name="clientPrice" min="0" step="0.5" placeholder="Например, 120" value="${Number(t.clientPrice) > 0 ? esc(t.clientPrice) : ''}">
     <label>Комментарий для клиента (виден в кабинете)</label><textarea name="pubNote" placeholder="Например, Кабели проложены, настраиваем регистратор" style="min-height:64px">${esc(t.pubNote || '')}</textarea>
   </div>
   <label class="inl"><input type="checkbox" name="high" ${t.high ? 'checked' : ''}> Срочно</label>`,
@@ -1580,6 +1590,7 @@ function openTask(id, clientId, prefill) {
       done: st === 'done',
       status: st,
       pub: !!f.pub,
+      clientPrice: Number(f.clientPrice) > 0 ? Math.round(Number(f.clientPrice) * 100) / 100 : 0,
       pubNote: (f.pubNote || '').trim(),
       items: cleanItems,
       checklist: cleanChk,
@@ -2444,6 +2455,7 @@ document.addEventListener('click', async e => {
   }
   else if (a === 'edittask') openTask(id);
   else if (a === 'newtask') openTask(null, id);
+  else if (a === 'addobj') { const bc = clients.find(x => x.id === id); if (bc) openClient(null, { name: bc.name, phone: bc.phone }); }
   else if (a === 'editclient') openClient(id);
   else if (a === 'cfin') openClientFinance(id);
   else if (a === 'ctasks') { clientFilter = id; filter = 'all'; view = 'tasks'; render(); }
