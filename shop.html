@@ -33,6 +33,7 @@ h1{font-size:17px;font-weight:700;margin:0;line-height:1.2;white-space:nowrap;ov
 .icbtn{position:relative;height:36px;min-width:36px;padding:0 9px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;text-decoration:none;font:inherit;font-size:12.5px;font-weight:600;flex:none;transition:border-color .15s,color .15s}
 .icbtn svg{width:18px;height:18px;display:block;flex:none}
 .icbtn.accent-soft{background:var(--soft);border-color:transparent;color:var(--accent)}
+.icbtn.call-ic{background:var(--ok-bg);border-color:transparent;color:var(--ok)}
 .icbtn .ic-lbl{display:none}
 .icdot{position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
 .lang{display:flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--bg);flex:none;padding:2px}
@@ -316,6 +317,9 @@ label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       <span class="ic-lbl" id="hdrCustomLbl">Свой товар</span>
     </button>
+    <a class="icbtn call-ic" href="tel:+994774668190" id="hdrCallBtn" aria-label="Позвонить мастеру" title="Позвонить мастеру">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </a>
     <a class="icbtn" href="client.html" id="hdrCabLink" aria-label="Личный кабинет" title="Личный кабинет">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </a>
@@ -385,6 +389,7 @@ const I18N = {
     pageTitle: 'Магазин оборудования',
     itemsCount: n => `В каталоге: ${n}`,
     hdrCustom: 'Свой товар',
+    callMaster: 'Позвонить мастеру',
     lnkCab: 'Личный кабинет',
     lnkReg: 'Анкета клиента',
     cartLbl: 'Корзина',
@@ -595,6 +600,7 @@ const I18N = {
     pageTitle: 'Avadanlıq mağazası',
     itemsCount: n => `Kataloqda: ${n}`,
     hdrCustom: 'Öz məhsul',
+    callMaster: 'Ustaya zəng et',
     lnkCab: 'Şəxsi kabinet',
     lnkReg: 'Müştəri anketi',
     cartLbl: 'Səbət',
@@ -1629,6 +1635,7 @@ function applyLangStatic() {
   $('#hdrCartBtn').setAttribute('aria-label', L.cartLbl);
   $('#lnkCab').textContent = L.lnkCab;
   $('#lnkReg').textContent = L.lnkReg;
+  if ($('#hdrCallBtn')) { $('#hdrCallBtn').title = L.callMaster; $('#hdrCallBtn').setAttribute('aria-label', L.callMaster); }
   $('#btn-ru').classList.toggle('on', lang === 'ru');
   $('#btn-az').classList.toggle('on', lang === 'az');
   $('#openCartBtn').textContent = L.checkout;

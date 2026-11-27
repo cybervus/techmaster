@@ -40,8 +40,12 @@ h1{font-size:18px;font-weight:700;margin:0;line-height:1.2}
 label.fld{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 6px}
 input[type=tel],input[type=text]{width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
 input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(229,37,32,.12)}
-.btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:9px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.btn{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:9px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
 .btn.p{background:linear-gradient(135deg,#f03e38,#d61c17);border-color:transparent;color:var(--on);box-shadow:0 3px 8px rgba(229,37,32,.22)}
+.btn.call{background:linear-gradient(135deg,#00b578,#059669);border-color:transparent;color:#fff;box-shadow:0 3px 8px rgba(0,181,120,.24)}
+.btn svg{width:17px;height:17px;flex:none}
+.contact-bar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.contact-bar .btn{padding:11px 10px;font-size:13.5px}
 .btn.ok{background:var(--ok);border-color:transparent;color:#fff}
 .btn.sm{padding:6px 12px;font-size:13px}
 .btn.full{width:100%}
@@ -454,6 +458,7 @@ const I18N = {
     kRole: 'Роль',
     kPhone: 'Телефон',
     chatBtn: 'Чат с мастером',
+    callBtn: 'Позвонить мастеру',
     chatTitle: 'Чат с мастером',
     chatMaster: 'Мастер',
     chatPh: 'Напишите мастеру…',
@@ -529,6 +534,7 @@ const I18N = {
     kRole: 'Vəzifə',
     kPhone: 'Telefon',
     chatBtn: 'Usta ilə çat',
+    callBtn: 'Ustaya zəng et',
     chatTitle: 'Usta ilə çat',
     chatMaster: 'Usta',
     chatPh: 'Ustaya mesaj yazın…',
@@ -586,6 +592,9 @@ const I18N = {
 };
 
 let lang = 'az';
+const MASTER_PHONE = '+994774668190';
+const CHAT_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+const CALL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -835,8 +844,9 @@ function renderAll() {
       ${st.role ? `<div class="info-row"><span class="info-k">${esc(L.kRole)}</span><span class="info-v">${esc(st.role)}</span></div>` : ''}
       ${st.phone ? `<div class="info-row"><span class="info-k">${esc(L.kPhone)}</span><span class="info-v">${esc(st.phone)}</span></div>` : ''}
     </div>
-    <div class="row">
-      <button type="button" class="btn p full" id="openChatBtn">${esc(L.chatBtn)}<span class="cbadge" id="chatBadge"${unread ? '' : ' hidden'}>${unread}</span></button>
+    <div class="contact-bar">
+      <button type="button" class="btn p" id="openChatBtn">${CHAT_SVG}<span>${esc(L.chatBtn)}</span><span class="cbadge" id="chatBadge"${unread ? '' : ' hidden'}>${unread}</span></button>
+      <a class="btn call" href="tel:${MASTER_PHONE}">${CALL_SVG}<span>${esc(L.callBtn)}</span></a>
     </div>
   </section>`;
   $('#openChatBtn').onclick = openChat;
@@ -862,6 +872,7 @@ function renderAll() {
         + (t.x ? `<span class="tag ok">${esc(L.stDone)}</span>` : '')
         + (Number(t.pay) > 0 ? `<span class="tag ok">${esc(L.payLbl)}: ${esc(fmtAzn(t.pay))}</span>` : '');
       const meta = [fmtD(t.d) + (t.tm ? ', ' + t.tm : ''), t.w, t.e].filter(Boolean).join(' · ');
+      const clLine = [t.cl, t.obj].filter(Boolean).join(' · ');
       const addrHtml = t.addr ? `<div class="tm"><a href="https://maps.apple.com/?q=${encodeURIComponent(t.addr)}" target="_blank" rel="noopener">${esc(t.addr)}</a></div>` : '';
       const chkHtml = t.chk.length ? `<div class="chk-list">${t.chk.map(c =>
         `<label class="chk-item${c.x ? ' x' : ''}"><input type="checkbox" data-tid="${esc(t.id)}" data-cid="${esc(c.id)}" ${c.x ? 'checked' : ''}><span>${esc(c.t)}</span></label>`).join('')}</div>` : '';
@@ -871,7 +882,7 @@ function renderAll() {
         : `<button type="button" class="btn sm${t.st === 'in_progress' ? '' : ' p'}" data-st="${t.st === 'in_progress' ? 'todo' : 'in_progress'}" data-tid="${esc(t.id)}">${esc(t.st === 'in_progress' ? L.btnStop : L.btnStart)}</button><button type="button" class="btn sm ok" data-st="done" data-tid="${esc(t.id)}">${esc(L.btnDone)}</button>`;
       return `<div class="tcard${cls}">
         <div class="tt">${esc(t.t)}${tags}</div>
-        ${t.cl ? `<div class="tm">${esc(t.cl)}</div>` : ''}
+        ${clLine ? `<div class="tm"><b>${esc(clLine)}</b></div>` : ''}
         ${addrHtml}
         ${meta ? `<div class="tm">${esc(meta)}</div>` : ''}
         ${t.dtls ? `<div class="tdtls">${esc(t.dtls)}</div>` : ''}

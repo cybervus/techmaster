@@ -173,6 +173,14 @@ nav button.on::before{content:'';position:absolute;top:0;width:24px;height:3px;b
 .obj-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .ochip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:9px;background:var(--bg);border:1px solid var(--line);color:var(--text)}
 .dup-banner{grid-column:1 / -1;background:var(--warn-bg);border:1px solid var(--warn);border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13.5px}
+.sbar{grid-column:1 / -1;position:relative;display:flex;align-items:center}
+.sbar svg{position:absolute;left:12px;width:17px;height:17px;color:var(--muted);pointer-events:none}
+.sbar input{width:100%;height:42px;padding:0 36px 0 38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:14.5px;box-shadow:var(--sh)}
+.sbar .sclr{position:absolute;right:6px;width:28px;height:28px;border:0;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+.fin-kpi4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:768px){.fin-kpi4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.fin-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.fin-row:last-child{border-bottom:0}
 @media (max-width:520px){
   .cw-kpi{grid-template-columns:1fr}
   .qgrid{grid-template-columns:1fr}
@@ -315,6 +323,7 @@ textarea{min-height:84px;resize:vertical}
 <nav id="nav" hidden>
   <button data-act="tab" data-v="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Задачи</span></button>
   <button data-act="tab" data-v="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Клиенты</span></button>
+  <button data-act="tab" data-v="finance"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M16 12h2"/><path d="M2 10h20"/></svg><span>Финансы</span></button>
   <button data-act="tab" data-v="staff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Исполнители</span></button>
   <button data-act="tab" data-v="messages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Сообщения</span><span id="msgb" class="nbadge" hidden></span></button>
   <button data-act="tab" data-v="requests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Заявки</span><span id="reqb" class="nbadge" hidden></span></button>
@@ -361,7 +370,7 @@ const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(
 let clients = [], tasks = [], requests = [], products = [], orders = [], chats = [], staff = [];
 let reqErr = false, prodErr = false, ordErr = false, chatErr = false, staffErr = false;
 let view = 'tasks', filter = 'today', shopTab = 'orders', msgFilter = 'all', clientFilter = '', staffFilter = '';
-let activeClientId = '', activeObjId = '';
+let activeClientId = '', activeObjId = '', clientQuery = '', taskQuery = '';
 let user = null, authReady = false, ready = 0, armed = null, unsubs = [], catTimer = null, staffTimer = null, openChatId = null, openChatMeta = null;
 const staffKeyCache = new Map();
 let staffSalt = null, staffRunning = false, staffDirty = false, staffChecked = false;
@@ -949,11 +958,14 @@ async function rebuildStaffPortal(notify = false) {
         .filter(t => t.assigneeId === s.id)
         .map(t => {
           const cl = clients.find(c => c.id === t.clientId);
+          const objs = cl ? getClientObjects(cl) : [];
+          const obj = objs.find(o => o.id === t.objectId) || objs[0] || null;
           return {
             id: t.id,
             t: t.title || '',
             cl: cl ? (cl.name || '') : '',
-            addr: cl ? (cl.address || '') : '',
+            obj: obj ? (obj.name || '') : '',
+            addr: (obj && obj.address) ? obj.address : (cl ? (cl.address || '') : ''),
             w: t.work || '',
             e: t.equip || '',
             d: t.date || '',
@@ -1289,23 +1301,39 @@ function wireLoginForm() {
   };
 }
 
+function searchBarHtml(id, val, ph) {
+  return `<div class="sbar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" id="${id}" data-search="${id}" placeholder="${esc(ph)}" value="${esc(val)}">
+    ${val ? `<button type="button" class="sclr" data-act="clrsearch" data-id="${id}" aria-label="Очистить">×</button>` : ''}
+  </div>`;
+}
+
 function tasksHtml() {
   const t0 = today();
+  const q = taskQuery.trim().toLowerCase();
   const pass = {
     today: t => !t.done && t.date && t.date <= t0,
     later: t => !t.done && (!t.date || t.date > t0),
     all: t => !t.done,
     done: t => t.done
   };
-  const matchF = t => (!clientFilter || t.clientId === clientFilter) && (!staffFilter || t.assigneeId === staffFilter);
+  const matchQ = t => {
+    if (!q) return true;
+    const c = clients.find(x => x.id === t.clientId);
+    const hay = [t.title, t.work, t.equip, t.details, c && c.name, c && objNameOf(c.id, t.objectId), t.assigneeId && sname(t.assigneeId)].filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  };
+  const matchF = t => (!clientFilter || t.clientId === clientFilter) && (!staffFilter || t.assigneeId === staffFilter) && matchQ(t);
   const cnt = k => tasks.filter(t => matchF(t) && pass[k](t)).length;
-  let h = '<div class="chips">' + [['today', 'Сегодня'], ['later', 'Позже'], ['all', 'Все'], ['done', 'Готово']].map(([k, l]) =>
+  let h = searchBarHtml('taskSearch', taskQuery, 'Поиск по задачам, клиентам, объектам…');
+  h += '<div class="chips">' + [['today', 'Сегодня'], ['later', 'Позже'], ['all', 'Все'], ['done', 'Готово']].map(([k, l]) =>
     `<button class="chip ${filter === k ? 'on' : ''}" data-act="filter" data-f="${k}">${l}<b>${cnt(k)}</b></button>`).join('') + '</div>';
   if (clientFilter) h += `<div class="bar"><span>Клиент: <b>${esc(cname(clientFilter))}</b></span><button class="btn" data-act="clearc">Сбросить</button></div>`;
   if (staffFilter) h += `<div class="bar"><span>Исполнитель: <b>${esc(sname(staffFilter) || '—')}</b></span><button class="btn" data-act="clears">Сбросить</button></div>`;
   const list = tasks.filter(t => matchF(t) && pass[filter](t))
     .sort((a, b) => ((a.date || '9999') + (a.time || '99:99')).localeCompare((b.date || '9999') + (b.time || '99:99')));
-  if (!list.length) return h + `<div class="empty">${tasks.length || clients.length ? 'Здесь пока пусто.' : 'Начните с вкладки «Клиенты» или импортируйте данные в меню (⋯).'}</div>`;
+  if (!list.length) return h + `<div class="empty">${q ? 'По запросу ничего не найдено.' : (tasks.length || clients.length ? 'Здесь пока пусто.' : 'Начните с вкладки «Клиенты» или импортируйте данные в меню (⋯).')}</div>`;
   const gs = [];
   for (const t of list) {
     const lb = filter === 'done' ? 'Выполнено' : dayLabel(t.date), g = gs[gs.length - 1];
@@ -1677,15 +1705,25 @@ function clientsHtml() {
     activeObjId = '';
   }
   const dups = findDuplicatePhoneGroups();
-  let banner = '';
+  let banner = searchBarHtml('clientSearch', clientQuery, 'Поиск по имени, телефону, адресу или объекту…');
   if (dups.length) {
     const extraCount = dups.reduce((a, g) => a + g.length - 1, 0);
-    banner = `<div class="dup-banner">
+    banner += `<div class="dup-banner">
       <div><b>Найдены дубликаты клиентов (${extraCount})</b> с одинаковым номером телефона. Объедините их в 1 карточку клиента с вложенными объектами — все задачи и оплаты сохранятся.</div>
       <button type="button" class="btn p" data-act="mergedups">Объединить сейчас</button>
     </div>`;
   }
-  return banner + [...clients].sort((a, b) => a.name.localeCompare(b.name, 'ru')).map(c => {
+  const q = clientQuery.trim().toLowerCase();
+  const filtered = [...clients]
+    .filter(c => {
+      if (!q) return true;
+      const objs = getClientObjects(c);
+      const hay = [c.name, c.phone, c.address, c.note, ...objs.map(o => o.name + ' ' + (o.address || ''))].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+  if (!filtered.length) return banner + '<div class="empty">По запросу клиенты не найдены.</div>';
+  return banner + filtered.map(c => {
     const fin = clientFinSummary(c);
     const hasFin = fin.totalBudget > 0 || fin.paidTotal > 0;
     const balTag = hasFin
@@ -1876,6 +1914,107 @@ function messagesHtml() {
   }).join('');
 }
 
+function financeHtml() {
+  const ymNow = today().slice(0, 7);
+  let totBudget = 0, totReceived = 0, monthReceived = 0, totCliDebt = 0;
+  const debtors = [];
+  const allPays = [];
+  for (const c of clients) {
+    const fin = clientFinSummary(c);
+    totBudget += fin.totalBudget;
+    totReceived += fin.paidTotal;
+    if (fin.bal > 0) {
+      totCliDebt += fin.bal;
+      debtors.push({ c, fin });
+    }
+    for (const o of fin.objs) {
+      for (const p of (o.payments || [])) {
+        if ((p.date || '').slice(0, 7) === ymNow) monthReceived += Number(p.amount) || 0;
+        allPays.push({ date: p.date || '', amount: Number(p.amount) || 0, type: p.type, note: p.note || '', clientId: c.id, clientName: c.name, objId: o.id, objName: o.name });
+      }
+    }
+  }
+  debtors.sort((a, b) => b.fin.bal - a.fin.bal);
+  allPays.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  let totStaffPaid = 0, totStaffDebt = 0;
+  const staffRows = [];
+  for (const s of staff) {
+    const sf = staffFinSummary(s);
+    totStaffPaid += sf.totalPaid;
+    if (sf.bal > 0) totStaffDebt += sf.bal;
+    if (sf.earnedDone > 0 || sf.totalPaid > 0 || sf.plannedPay > 0) staffRows.push({ s, sf });
+  }
+  staffRows.sort((a, b) => b.sf.bal - a.sf.bal);
+
+  const netCash = Math.round((totReceived - totStaffPaid) * 100) / 100;
+  const monthLabel = new Date(ymNow + '-15T12:00:00').toLocaleDateString('ru-RU', { month: 'long' });
+
+  const debtorsHtml = debtors.length
+    ? debtors.map(({ c, fin }) => `<div class="fin-row">
+        <div>
+          <div class="ttl">${esc(c.name)}</div>
+          <div class="meta">Объектов: ${fin.objs.length} · Бюджет: ${esc(fmtAzn0(fin.totalBudget))} · Получено: ${esc(fmtAzn0(fin.paidTotal))}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <b style="color:var(--danger);white-space:nowrap">${esc(fmtAzn0(fin.bal))}</b>
+          <button type="button" class="btn" data-act="openclient" data-id="${c.id}">Открыть</button>
+        </div>
+      </div>`).join('')
+    : '<div class="meta" style="text-align:center;padding:12px 0">Долгов у клиентов нет.</div>';
+
+  const staffHtmlList = staffRows.length
+    ? staffRows.map(({ s, sf }) => `<div class="fin-row">
+        <div>
+          <div class="ttl">${esc(s.name)}</div>
+          <div class="meta">Начислено: ${esc(fmtAzn0(sf.earnedDone))} · Выплачено: ${esc(fmtAzn0(sf.totalPaid))}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <b style="color:${sf.bal > 0 ? 'var(--danger)' : 'var(--ok)'};white-space:nowrap">${sf.bal > 0 ? 'Долг: ' + esc(fmtAzn0(sf.bal)) : (sf.bal < 0 ? 'Аванс: ' + esc(fmtAzn0(Math.abs(sf.bal))) : 'Закрыто')}</b>
+          <button type="button" class="btn" data-act="spays" data-id="${s.id}">Выплаты</button>
+        </div>
+      </div>`).join('')
+    : '<div class="meta" style="text-align:center;padding:12px 0">Начислений и выплат исполнителям пока нет.</div>';
+
+  const recentPaysHtml = allPays.length
+    ? `<table class="ptbl">
+        <thead><tr><th>Дата</th><th>Клиент / за что</th><th class="r">Сумма</th></tr></thead>
+        <tbody>${allPays.slice(0, 20).map(p => `<tr>
+          <td>${esc(p.date ? shortDate(p.date) : '—')}</td>
+          <td><b>${esc(p.clientName)}</b> · ${esc(p.objName)}<span class="pnote">${esc(CLI_PAY_TYPES[p.type] || p.type)}${p.note ? ' — ' + esc(p.note) : ''}</span></td>
+          <td class="r"><b style="color:var(--ok)">+${esc(fmtAzn0(p.amount))}</b></td>
+        </tr>`).join('')}</tbody>
+      </table>`
+    : '<div class="meta" style="text-align:center;padding:12px 0">Оплат от клиентов пока не записано.</div>';
+
+  return `<div class="cw-wrap">
+    <div class="cw-card">
+      <div class="cw-card-hd"><h3>Общая сводка</h3><span class="cw-pill">Бюджет всех объектов: ${esc(fmtAzn0(totBudget))}</span></div>
+      <div class="fin-kpi4">
+        <div class="ckpi ok"><div class="ckpi-k">Получено (${esc(monthLabel)})</div><div class="ckpi-v">${esc(fmtAzn0(monthReceived))}</div></div>
+        <div class="ckpi"><div class="ckpi-k">Получено всего</div><div class="ckpi-v">${esc(fmtAzn0(totReceived))}</div></div>
+        <div class="ckpi${totCliDebt > 0 ? ' debt' : ' ok'}"><div class="ckpi-k">Должны клиенты</div><div class="ckpi-v">${esc(fmtAzn0(totCliDebt))}</div></div>
+        <div class="ckpi${netCash >= 0 ? ' ok' : ' debt'}"><div class="ckpi-k">Чистый остаток</div><div class="ckpi-v">${esc(fmtAzn0(netCash))}</div></div>
+      </div>
+      <div class="meta" style="margin-top:10px">Выплачено исполнителям: <b>${esc(fmtAzn0(totStaffPaid))}</b> · Ваш долг исполнителям: <b style="color:${totStaffDebt > 0 ? 'var(--danger)' : 'var(--ok)'}">${esc(fmtAzn0(totStaffDebt))}</b></div>
+    </div>
+    <div class="cw-grid">
+      <div class="cw-card">
+        <div class="cw-card-hd"><h3>Долги клиентов<span class="cw-pill">${debtors.length}</span></h3></div>
+        ${debtorsHtml}
+      </div>
+      <div class="cw-card">
+        <div class="cw-card-hd"><h3>Исполнители<span class="cw-pill">${staffRows.length}</span></h3></div>
+        ${staffHtmlList}
+      </div>
+      <div class="cw-card span2">
+        <div class="cw-card-hd"><h3>Последние поступления от клиентов<span class="cw-pill">${allPays.length}</span></h3></div>
+        ${recentPaysHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
 function render() {
   armed = null;
   $('#date').textContent = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -1901,9 +2040,9 @@ function render() {
   const unreadMsgs = chats.reduce((acc, c) => acc + (Number(c.unreadAdmin) || 0), 0);
   const mb = $('#msgb');
   if (mb) { mb.textContent = unreadMsgs; mb.hidden = unreadMsgs === 0; }
-  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'staff' ? 'Исполнители' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
-  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? (activeClientId ? '+ Объект' : 'Новый клиент') : view === 'staff' ? 'Новый исполнитель' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
-  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'staff' ? staffHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
+  $('#ttl').textContent = view === 'tasks' ? 'Задачи' : view === 'clients' ? 'Клиенты' : view === 'finance' ? 'Финансы' : view === 'staff' ? 'Исполнители' : view === 'messages' ? 'Сообщения' : view === 'requests' ? 'Заявки' : 'Магазин';
+  $('#add').textContent = view === 'tasks' ? 'Новая задача' : view === 'clients' ? (activeClientId ? '+ Объект' : 'Новый клиент') : view === 'finance' ? 'Клиенты' : view === 'staff' ? 'Новый исполнитель' : view === 'messages' ? 'Написать' : view === 'requests' ? 'Ссылка на анкету' : (shopTab === 'catalog' ? 'Новый товар' : 'Ссылка на магазин');
+  $('#app').innerHTML = ready < 2 ? '<div class="empty">Загрузка…</div>' : (view === 'tasks' ? tasksHtml() : view === 'clients' ? clientsHtml() : view === 'finance' ? financeHtml() : view === 'staff' ? staffHtml() : view === 'messages' ? messagesHtml() : view === 'requests' ? requestsHtml() : shopHtml());
 }
 
 // --- Modals ---
@@ -2383,34 +2522,75 @@ function openLinkOrder(ordId) {
   if (!o) return;
   const p9 = normPhone(o.phone);
   const matchedClient = p9.length >= 7 ? clients.find(c => normPhone(c.phone) === p9) : null;
+  const sortedClients = [...clients].sort((a, b) => {
+    const am = matchedClient && a.id === matchedClient.id ? 0 : 1;
+    const bm = matchedClient && b.id === matchedClient.id ? 0 : 1;
+    return am - bm || a.name.localeCompare(b.name, 'ru');
+  });
+  const objOpts = sortedClients.flatMap(c =>
+    getClientObjects(c).map(ob => `<option value="obj:${c.id}:${esc(ob.id)}">${esc(c.name)} · ${esc(ob.name)}</option>`)
+  ).join('');
   const openTasks = [...tasks].filter(t => !t.done).sort((a, b) => {
     const am = matchedClient && a.clientId === matchedClient.id ? 0 : 1;
     const bm = matchedClient && b.clientId === matchedClient.id ? 0 : 1;
     return am - bm || (a.date || '9999').localeCompare(b.date || '9999');
   });
-  const taskOpts = openTasks.map(t => `<option value="${t.id}">${esc(cname(t.clientId))} — ${esc(t.title)}</option>`).join('');
-  modal('Привязать заказ к задаче', `
+  const taskOpts = openTasks.map(t => `<option value="task:${t.id}">${esc(cname(t.clientId))} — ${esc(t.title)}</option>`).join('');
+  modal('Привязать заказ к объекту или задаче', `
     <div class="meta">Клиент: <b>${esc(o.name)}</b> (${esc(o.phone)}) · позиций: ${(o.items || []).length}</div>
     <label>Куда добавить товары</label>
-    <select name="targetTask">
-      <option value="__new">+ Создать новую задачу${matchedClient ? ' для ' + esc(matchedClient.name) : ' и клиента'}</option>
-      ${taskOpts}
+    <select name="target">
+      ${objOpts ? `<optgroup label="Прямо в товары объекта клиента">${objOpts}</optgroup>` : ''}
+      <optgroup label="Новая запись">
+        <option value="__new_obj">+ Создать клиента и добавить товары на его объект</option>
+        <option value="__new_task">+ Создать новую задачу${matchedClient ? ' для ' + esc(matchedClient.name) : ' и клиента'}</option>
+      </optgroup>
+      ${taskOpts ? `<optgroup label="В существующую задачу">${taskOpts}</optgroup>` : ''}
     </select>
     <div class="two">
       <div><label>Статус закупки</label><select name="ist">${Object.entries(ITEM_ST).map(([k, l]) => `<option value="${k}"${k === 'ordered' ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
       <div><label>Дата получения</label><input type="date" name="eta"></div>
     </div>`,
   async f => {
-    const newItems = (o.items || []).map(x => ({
-      name: String(x.name || '').trim(),
-      qty: Math.max(1, Number(x.qty) || 1),
-      price: Number(x.price) || 0,
+    const newItems = (o.items || []).map(x => normObjItem({
+      id: uid(),
+      name: x.name,
+      qty: x.qty,
+      price: x.price,
       status: ITEM_ST[f.ist] ? f.ist : 'ordered',
       eta: f.eta || ''
     })).filter(x => x.name);
 
-    if (f.targetTask === '__new') {
+    const tgt = String(f.target || '');
+    if (tgt.startsWith('obj:')) {
+      const parts = tgt.split(':');
+      const cid = parts[1], oid = parts.slice(2).join(':');
+      const cur = clients.find(x => x.id === cid);
+      if (cur) {
+        const nextObjs = getClientObjects(cur).map(ob => ob.id === oid ? Object.assign({}, ob, { items: [...(ob.items || []), ...newItems] }) : ob);
+        await saveClientObjects(cid, nextObjs, 'Товары заказа добавлены на объект');
+      }
+    } else if (tgt === '__new_obj') {
+      const cid = uid();
+      await save('clients', cid, {
+        name: String(o.name || '').trim(),
+        phone: String(o.phone || '').trim(),
+        address: '',
+        pubProject: 'Основной объект',
+        budget: 0,
+        note: o.comment ? 'Из заказа магазина: ' + o.comment : '',
+        showAddress: true,
+        showCal: true,
+        showFin: true,
+        objects: [{ id: 'main', name: 'Основной объект', address: '', budget: 0, msg: '', pct: null, items: newItems, services: [], payments: [] }],
+        services: [],
+        payments: [],
+        created: Date.now()
+      });
+      toast('Клиент создан, товары добавлены на объект');
+    } else if (tgt === '__new_task') {
       let cid = matchedClient ? matchedClient.id : null;
+      let firstObjId = matchedClient ? (getClientObjects(matchedClient)[0]?.id || 'main') : 'main';
       if (!cid) {
         cid = uid();
         await save('clients', cid, {
@@ -2431,6 +2611,7 @@ function openLinkOrder(ordId) {
       }
       await save('tasks', uid(), {
         clientId: cid,
+        objectId: firstObjId,
         title: 'Закупка оборудования (заказ)',
         work: 'Монтаж',
         equip: '',
@@ -2441,13 +2622,15 @@ function openLinkOrder(ordId) {
         done: false,
         status: 'todo',
         pub: true,
+        clientPrice: 0,
         pubNote: '',
         items: newItems,
         created: Date.now()
       });
       toast('Создана задача с товарами заказа');
-    } else {
-      const t = tasks.find(x => x.id === f.targetTask);
+    } else if (tgt.startsWith('task:')) {
+      const tid = tgt.slice(5);
+      const t = tasks.find(x => x.id === tid);
       if (t) {
         const merged = [...(Array.isArray(t.items) ? t.items : []), ...newItems];
         const updTask = Object.assign({}, t, { items: merged });
@@ -2537,7 +2720,7 @@ function renderAdminChatLog() {
 }
 
 function openStaff(id) {
-  const s = staff.find(x => x.id === id) || { name: '', phone: '', role: '', note: '', active: true };
+  const s = staff.find(x => x.id === id) || { name: '', phone: '+994 ', role: '', note: '', active: true };
   const ov = modal(id ? 'Исполнитель' : 'Новый исполнитель', `
     <label>Имя и фамилия</label><input type="text" name="name" required value="${esc(s.name)}">
     <label>Телефон (для входа в кабинет исполнителя)</label><input type="tel" name="phone" required placeholder="+994 50 123 45 67" value="${esc(s.phone)}">
@@ -2571,167 +2754,6 @@ function openStaff(id) {
       } catch (e) { toast('Не удалось удалить'); }
     }
   } : null);
-}
-
-function openClientFinance(clientId) {
-  const ov = document.createElement('div');
-  ov.className = 'ov';
-  ov.id = 'cfinOv';
-
-  function draw() {
-    const c = clients.find(x => x.id === clientId);
-    if (!c) { ov.remove(); return; }
-    const fin = clientFinSummary(c);
-    const balCls = fin.bal > 0 ? ' owe-staff' : (fin.bal < 0 ? ' owe-master' : '');
-    const balLbl = fin.bal > 0
-      ? 'Долг клиента вам (к оплате)'
-      : (fin.bal < 0 ? 'Переплата клиента (ваш долг клиенту)' : 'Оплачено полностью (долга нет)');
-
-    const svcOpts = CLIENT_SERVICES.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('') + '<option value="__other">Другое…</option>';
-    const payTypeOpts = Object.entries(CLI_PAY_TYPES).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
-
-    const svcTbl = fin.svcs.length
-      ? `<table class="ptbl"><thead><tr><th>Услуга</th><th class="r">Кол-во</th><th class="r">Сумма</th><th></th></tr></thead><tbody>`
-        + fin.svcs.map(s => {
-          const lineSum = (Number(s.qty) || 1) * (Number(s.price) || 0);
-          return `<tr>
-            <td>${esc(s.name)}${s.note ? `<span class="pnote">${esc(s.note)}</span>` : ''}</td>
-            <td class="r">${Number(s.qty) || 1} × ${esc(fmtAzn0(s.price))}</td>
-            <td class="r">${esc(fmtAzn0(lineSum))}</td>
-            <td class="r"><button type="button" class="btn d" data-sdel="${esc(s.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
-          </tr>`;
-        }).join('')
-        + `</tbody><tfoot><tr><td colspan="2">Итого по услугам</td><td class="r">${esc(fmtAzn0(fin.svcTotal))}</td><td></td></tr></tfoot></table>`
-      : '<div class="meta" style="text-align:center;padding:8px 0">Услуги пока не добавлены.</div>';
-
-    const payTbl = fin.pays.length
-      ? `<table class="ptbl"><thead><tr><th>Дата</th><th>Тип оплаты</th><th class="r">Сумма</th><th></th></tr></thead><tbody>`
-        + fin.pays.map(p => `<tr>
-            <td>${esc(p.date ? shortDate(p.date) : '—')}</td>
-            <td>${esc(CLI_PAY_TYPES[p.type] || p.type)}${p.note ? `<span class="pnote">${esc(p.note)}</span>` : ''}</td>
-            <td class="r">${esc(fmtAzn0(p.amount))}</td>
-            <td class="r"><button type="button" class="btn d" data-cpdel="${esc(p.id)}" style="padding:2px 7px;font-size:12px" aria-label="Удалить">×</button></td>
-          </tr>`).join('')
-        + `</tbody><tfoot><tr><td colspan="2">Итого оплачено</td><td class="r">${esc(fmtAzn0(fin.paidTotal))}</td><td></td></tr></tfoot></table>`
-      : '<div class="meta" style="text-align:center;padding:8px 0">Оплат от клиента пока нет.</div>';
-
-    ov.innerHTML = `<div class="sheet">
-      <h3>Расчёты — ${esc(c.name)}</h3>
-      <div>
-        <div class="irow"><span>Итого по услугам</span><b>${esc(fmtAzn0(fin.svcTotal))}</b></div>
-        <div class="irow"><span>Всего оплачено клиентом</span><b>${esc(fmtAzn0(fin.paidTotal))}</b></div>
-      </div>
-      <div class="fin-bal${balCls}"><span>${esc(balLbl)}</span><span>${esc(fmtAzn0(Math.abs(fin.bal)))}</span></div>
-
-      <form id="addSvcForm" class="sec">
-        <div class="sec-t">Добавить услугу в смету</div>
-        <label>Услуга</label>
-        <select name="svcSel" id="svcSel">${svcOpts}</select>
-        <input type="text" name="svcOther" id="svcOther" placeholder="Укажите название услуги" style="margin-top:6px" hidden>
-        <div class="two">
-          <div><label>Стоимость за ед., ₼</label><input type="number" name="price" min="0" step="0.5" required placeholder="100"></div>
-          <div><label>Количество</label><input type="number" name="qty" min="1" step="1" value="1"></div>
-        </div>
-        <label>Комментарий (необязательно)</label>
-        <input type="text" name="note" maxlength="160" placeholder="Например, 4 камеры на фасаде">
-        <div class="row"><button type="submit" class="btn p">+ Добавить услугу</button></div>
-      </form>
-
-      <div class="sec">
-        <div class="sec-t">Таблица услуг</div>
-        ${svcTbl}
-      </div>
-
-      <form id="addCliPayForm" class="sec">
-        <div class="sec-t">Добавить оплату от клиента</div>
-        <div class="two">
-          <div><label>Сумма, ₼</label><input type="number" name="amount" min="0.5" step="0.5" required placeholder="150"></div>
-          <div><label>Дата</label><input type="date" name="date" value="${today()}"></div>
-        </div>
-        <label>Тип оплаты</label>
-        <select name="type">${payTypeOpts}</select>
-        <label>Комментарий (необязательно)</label>
-        <input type="text" name="note" maxlength="160" placeholder="Например, наличными / перевод на карту">
-        <div class="row">
-          <button type="submit" class="btn p">+ Добавить оплату</button>
-          <button type="button" class="btn" data-x>Закрыть</button>
-        </div>
-      </form>
-
-      <div class="sec">
-        <div class="sec-t">График и история выплат</div>
-        ${payTbl}
-      </div>
-    </div>`;
-
-    ov.querySelector('[data-x]').onclick = () => ov.remove();
-    const sel = ov.querySelector('#svcSel'), oth = ov.querySelector('#svcOther');
-    sel.onchange = () => { oth.hidden = sel.value !== '__other'; if (!oth.hidden) oth.focus(); };
-
-    ov.querySelector('#addSvcForm').onsubmit = async e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const name = fd.get('svcSel') === '__other' ? String(fd.get('svcOther') || '').trim() : String(fd.get('svcSel') || '').trim();
-      const price = Number(fd.get('price'));
-      const qty = Math.max(1, Math.round(Number(fd.get('qty')) || 1));
-      if (!name || !Number.isFinite(price) || price < 0) return;
-      const cur = clients.find(x => x.id === clientId);
-      if (!cur) return;
-      const rec = { id: uid(), name, qty, price: Math.round(price * 100) / 100, note: String(fd.get('note') || '').trim() };
-      const upd = Object.assign({}, cur, { services: [...(Array.isArray(cur.services) ? cur.services : []), rec] });
-      delete upd.id;
-      await save('clients', clientId, upd);
-      toast('Услуга добавлена');
-      draw();
-    };
-
-    ov.querySelectorAll('[data-sdel]').forEach(b => b.onclick = async () => {
-      const sid = b.dataset.sdel;
-      const cur = clients.find(x => x.id === clientId);
-      if (!cur) return;
-      const upd = Object.assign({}, cur, { services: (Array.isArray(cur.services) ? cur.services : []).filter(s => s.id !== sid) });
-      delete upd.id;
-      await save('clients', clientId, upd);
-      toast('Услуга удалена');
-      draw();
-    });
-
-    ov.querySelector('#addCliPayForm').onsubmit = async e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const amount = Number(fd.get('amount'));
-      if (!Number.isFinite(amount) || amount <= 0) return;
-      const cur = clients.find(x => x.id === clientId);
-      if (!cur) return;
-      const rec = {
-        id: uid(),
-        date: String(fd.get('date') || today()),
-        amount: Math.round(amount * 100) / 100,
-        type: CLI_PAY_TYPES[fd.get('type')] ? String(fd.get('type')) : 'final',
-        note: String(fd.get('note') || '').trim()
-      };
-      const upd = Object.assign({}, cur, { payments: [...(Array.isArray(cur.payments) ? cur.payments : []), rec] });
-      delete upd.id;
-      await save('clients', clientId, upd);
-      toast('Оплата добавлена');
-      draw();
-    };
-
-    ov.querySelectorAll('[data-cpdel]').forEach(b => b.onclick = async () => {
-      const pid = b.dataset.cpdel;
-      const cur = clients.find(x => x.id === clientId);
-      if (!cur) return;
-      const upd = Object.assign({}, cur, { payments: (Array.isArray(cur.payments) ? cur.payments : []).filter(p => p.id !== pid) });
-      delete upd.id;
-      await save('clients', clientId, upd);
-      toast('Оплата удалена');
-      draw();
-    });
-  }
-
-  document.body.appendChild(ov);
-  ov.onclick = e => { if (e.target === ov) ov.remove(); };
-  draw();
 }
 
 function openStaffPayments(staffId) {
@@ -3040,11 +3062,19 @@ document.addEventListener('click', async e => {
   else if (a === 'fab') {
     if (view === 'tasks') openTask();
     else if (view === 'clients') { if (activeClientId) openObjectModal(activeClientId, null); else openClient(); }
+    else if (view === 'finance') { view = 'clients'; activeClientId = ''; render(); }
     else if (view === 'staff') openStaff();
     else if (view === 'messages') openNewChatModal();
     else if (view === 'requests') copyUrl('register.html', 'Ссылка на анкету');
     else if (shopTab === 'catalog') openProduct();
     else copyUrl('shop.html', 'Ссылка на магазин');
+  }
+  else if (a === 'clrsearch') {
+    if (id === 'clientSearch') clientQuery = '';
+    else if (id === 'taskSearch') taskQuery = '';
+    render();
+    const inp = $('#' + id);
+    if (inp) inp.focus();
   }
   else if (a === 'clears') { staffFilter = ''; render(); }
   else if (a === 'copystaff') { copyUrl('staff.html', 'Ссылка для исполнителей'); }
@@ -3196,6 +3226,18 @@ document.addEventListener('click', async e => {
     armed = null;
     try { await deleteDoc(doc(db, 'requests', id)); } catch (ex) { toast('Не удалось удалить'); }
   }
+});
+
+document.addEventListener('input', e => {
+  const inp = e.target.closest('input[data-search]'); if (!inp) return;
+  const sid = inp.dataset.search;
+  const pos = inp.selectionStart;
+  if (sid === 'clientSearch') clientQuery = inp.value;
+  else if (sid === 'taskSearch') taskQuery = inp.value;
+  else return;
+  render();
+  const next = $('#' + sid);
+  if (next) { next.focus(); if (pos !== null) try { next.setSelectionRange(pos, pos); } catch (ex) {} }
 });
 
 document.addEventListener('change', async e => {
