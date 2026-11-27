@@ -140,7 +140,6 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 @media (min-width:768px){
   body{max-width:980px;padding:12px 24px 56px}
   header{margin:0 0 16px;padding:14px 20px;border-radius:16px;border:1px solid var(--line);top:12px}
-  #login,#loading{max-width:480px;margin:36px auto 0}
   #tasksBox{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
   #tasksBox>.chips,#tasksBox>.muted{grid-column:1 / -1}
   #tasksBox>.tcard{margin-bottom:0}
@@ -175,14 +174,148 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
   body{max-width:2200px;font-size:18px}
   #tasksBox{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 }
+
+/* ===== Cinematic Login Screen (Hik-Connect Glass & Animated Tech BG) ===== */
+body.auth-mode{background:#0c0f16;color:#f3f5f9;min-height:100dvh;padding-bottom:28px}
+body.auth-mode header{background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;border:0;box-shadow:none;padding-top:14px;padding-bottom:6px}
+body.auth-mode header .btxt{display:none}
+body.auth-mode .lang{background:rgba(20,24,35,.62);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-color:rgba(255,255,255,.15)}
+body.auth-mode .lang button{color:rgba(255,255,255,.72)}
+body.auth-mode .lang button.on{background:var(--accent);color:#fff}
+
+.login-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:radial-gradient(ellipse 80% 60% at 15% 15%,rgba(229,37,32,.22),transparent 65%),radial-gradient(ellipse 75% 65% at 88% 82%,rgba(37,99,235,.18),transparent 65%),linear-gradient(155deg,#0b0e15 0%,#141520 48%,#0f0d14 100%);transition:opacity .45s ease}
+.login-bg.fade-out{opacity:0}
+.login-bg svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
+.bg-orb{position:absolute;border-radius:50%;filter:blur(54px);opacity:.26;will-change:transform}
+.bg-orb.o1{width:340px;height:340px;background:#e52520;top:-90px;left:-80px;-webkit-animation:orbFloat1 15s ease-in-out infinite;animation:orbFloat1 15s ease-in-out infinite}
+.bg-orb.o2{width:380px;height:380px;background:#2563eb;bottom:-110px;right:-90px;-webkit-animation:orbFloat2 18s ease-in-out infinite;animation:orbFloat2 18s ease-in-out infinite}
+@-webkit-keyframes orbFloat1{0%,100%{-webkit-transform:translate3d(0,0,0) scale(1)}50%{-webkit-transform:translate3d(55px,42px,0) scale(1.12)}}
+@keyframes orbFloat1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(55px,42px,0) scale(1.12)}}
+@-webkit-keyframes orbFloat2{0%,100%{-webkit-transform:translate3d(0,0,0) scale(1)}50%{-webkit-transform:translate3d(-50px,-38px,0) scale(1.1)}}
+@keyframes orbFloat2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-50px,-38px,0) scale(1.1)}}
+
+body.auth-mode header,body.auth-mode main{position:relative;z-index:2}
+.auth-stage{min-height:calc(100dvh - 104px);display:flex;align-items:center;justify-content:center;padding:12px 0}
+.auth-card{position:relative;width:100%;max-width:460px;background:rgba(20,24,35,.74);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);border:1px solid rgba(255,255,255,.13);border-radius:22px;padding:28px 22px 24px;box-shadow:0 24px 64px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.14);color:#f3f5f9;overflow:hidden;-webkit-animation:authIn .45s cubic-bezier(.22,.9,.32,1) both;animation:authIn .45s cubic-bezier(.22,.9,.32,1) both}
+.auth-card::before{content:'';position:absolute;left:18%;right:18%;top:0;height:2px;background:linear-gradient(90deg,transparent,#f03e38,transparent);opacity:.9}
+.auth-card.exiting{-webkit-animation:authExit .42s cubic-bezier(.4,0,.2,1) forwards;animation:authExit .42s cubic-bezier(.4,0,.2,1) forwards}
+@-webkit-keyframes authIn{from{opacity:0;-webkit-transform:translate3d(0,20px,0) scale(.97)}to{opacity:1;-webkit-transform:translate3d(0,0,0) scale(1)}}
+@keyframes authIn{from{opacity:0;transform:translate3d(0,20px,0) scale(.97)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@-webkit-keyframes authExit{to{opacity:0;-webkit-transform:translate3d(0,-16px,0) scale(1.04)}}
+@keyframes authExit{to{opacity:0;transform:translate3d(0,-16px,0) scale(1.04)}}
+
+.auth-emblem{width:62px;height:62px;margin:0 auto 14px;border-radius:18px;background:linear-gradient(135deg,#f03e38,#b81410);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(229,37,32,.42);position:relative}
+.auth-emblem svg{width:34px;height:34px;display:block}
+.auth-card h2{margin:0 0 22px;text-align:center;font-size:21px;font-weight:700;color:#ffffff;justify-content:center}
+.auth-lbl{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.58);margin:0 0 8px}
+
+/* +994 prefix + Operator dropdown */
+.ph-top{display:flex;gap:8px;align-items:stretch;margin-bottom:12px}
+.ph-prefix{flex:none;display:inline-flex;align-items:center;gap:6px;padding:0 13px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#ffffff;font-weight:700;font-size:15.5px;letter-spacing:.02em}
+.ph-op-sel{flex:1;height:44px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#ffffff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;outline:none;transition:border-color .15s,box-shadow .15s}
+.ph-op-sel option{background:#181c26;color:#f3f5f9}
+.ph-op-sel:focus,.ph-top input.ph-op-c:focus{border-color:#f03e38;box-shadow:0 0 0 3px rgba(240,62,56,.28)}
+.ph-top input.ph-op-c{flex:none;width:68px;height:44px;padding:0 8px;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font:inherit;font-size:16px;font-weight:700;text-align:center;outline:none}
+
+/* 7 Glowing Mini Digit Boxes (3 - 2 - 2) */
+.digits-row{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.digits-row.shake{-webkit-animation:loginShake .42s ease;animation:loginShake .42s ease}
+@-webkit-keyframes loginShake{0%,100%{-webkit-transform:translateX(0)}20%,60%{-webkit-transform:translateX(-7px)}40%,80%{-webkit-transform:translateX(7px)}}
+@keyframes loginShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.d-sep{width:6px;height:2px;border-radius:2px;background:rgba(255,255,255,.25);flex:none}
+.digits-row input.dbox{width:100%;min-width:0;flex:1;height:52px;padding:0;border-radius:12px;border:1.5px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#ffffff;font:inherit;font-size:21px;font-weight:700;text-align:center;caret-color:#f03e38;outline:none;transition:transform .16s cubic-bezier(.22,.9,.32,1),border-color .16s,box-shadow .16s,background .16s;-webkit-appearance:none;appearance:none}
+.digits-row input.dbox:focus{border-color:#f03e38;background:rgba(240,62,56,.16);box-shadow:0 0 0 4px rgba(240,62,56,.28),0 6px 18px rgba(229,37,32,.25);-webkit-transform:translateY(-2px) scale(1.05);transform:translateY(-2px) scale(1.05);z-index:2}
+.digits-row input.dbox.filled{border-color:rgba(240,62,56,.68);background:rgba(255,255,255,.13)}
+.digits-row input.dbox.pop{-webkit-animation:dPop .2s ease;animation:dPop .2s ease}
+@-webkit-keyframes dPop{0%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.1)}100%{-webkit-transform:scale(1)}}
+@keyframes dPop{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+.digits-row.ok input.dbox{border-color:#10c988;background:rgba(16,201,136,.18);box-shadow:0 0 14px rgba(16,201,136,.28)}
+.auth-err{color:#ff6b6b;font-size:13px;font-weight:500;text-align:center;margin-top:12px;min-height:19px}
+
+/* In-card Loading & Welcome Overlay */
+.auth-ov{position:absolute;inset:0;z-index:5;background:rgba(15,19,28,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;-webkit-animation:authOvIn .22s ease both;animation:authOvIn .22s ease both}
+@-webkit-keyframes authOvIn{from{opacity:0}to{opacity:1}}
+@keyframes authOvIn{from{opacity:0}to{opacity:1}}
+.auth-spin{width:68px;height:68px;display:flex;align-items:center;justify-content:center}
+.auth-spin svg{width:68px;height:68px;display:block}
+.auth-st-title{font-size:17px;font-weight:700;color:#ffffff}
+.auth-st-sub{font-size:13.5px;color:rgba(255,255,255,.68);max-width:300px}
+
+/* Dramatic Cabinet Reveal Transition */
+#view.cab-enter{-webkit-animation:cabEnter .5s cubic-bezier(.22,.9,.32,1) both;animation:cabEnter .5s cubic-bezier(.22,.9,.32,1) both}
+@-webkit-keyframes cabEnter{from{opacity:0;-webkit-transform:translate3d(0,22px,0) scale(.985)}to{opacity:1;-webkit-transform:translate3d(0,0,0) scale(1)}}
+@keyframes cabEnter{from{opacity:0;transform:translate3d(0,22px,0) scale(.985)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+
+@media (max-width:420px){
+  .auth-card{padding:22px 14px 18px;border-radius:18px}
+  .auth-card h2{font-size:19px}
+  .digits-row{gap:4px}
+  .d-sep{width:4px}
+  .digits-row input.dbox{height:46px;font-size:19px;border-radius:10px}
+}
+@media (min-width:1920px){
+  .auth-card{max-width:540px;padding:36px 32px 28px}
+  .digits-row input.dbox{height:58px;font-size:24px}
+}
 </style>
 </head>
-<body>
+<body class="auth-mode">
+<div class="login-bg" id="loginBg" aria-hidden="true">
+  <div class="bg-orb o1"></div>
+  <div class="bg-orb o2"></div>
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" fill="none">
+    <defs>
+      <linearGradient id="bgRed" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#f03e38" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#2563eb" stop-opacity="0.3"/>
+      </linearGradient>
+    </defs>
+    <g stroke="url(#bgRed)" stroke-width="1.2">
+      <circle cx="600" cy="400" r="170" stroke-dasharray="10 14" opacity="0.55">
+        <animateTransform attributeName="transform" type="rotate" from="0 600 400" to="360 600 400" dur="38s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="600" cy="400" r="290" stroke-dasharray="18 22" opacity="0.42">
+        <animateTransform attributeName="transform" type="rotate" from="360 600 400" to="0 600 400" dur="54s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="600" cy="400" r="430" stroke-dasharray="6 18" opacity="0.3">
+        <animateTransform attributeName="transform" type="rotate" from="0 600 400" to="360 600 400" dur="76s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    <g stroke="#f03e38" stroke-width="1.4" opacity="0.55">
+      <path d="M-40 160 L260 160 L340 240 L600 240" stroke-dasharray="8 14">
+        <animate attributeName="stroke-dashoffset" from="132" to="0" dur="4.2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M1240 620 L920 620 L830 530 L600 530" stroke-dasharray="8 14">
+        <animate attributeName="stroke-dashoffset" from="0" to="132" dur="4.8s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <g stroke="#60a5fa" stroke-width="1.3" opacity="0.48">
+      <path d="M-40 640 L220 640 L310 550 L490 550" stroke-dasharray="6 16">
+        <animate attributeName="stroke-dashoffset" from="132" to="0" dur="5.2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M1240 190 L960 190 L870 280 L710 280" stroke-dasharray="6 16">
+        <animate attributeName="stroke-dashoffset" from="0" to="132" dur="5.6s" repeatCount="indefinite"/>
+      </path>
+    </g>
+    <g fill="#f03e38">
+      <circle cx="260" cy="160" r="4"><animate attributeName="opacity" values="0.35;1;0.35" dur="2.6s" repeatCount="indefinite"/></circle>
+      <circle cx="260" cy="160" r="4" fill="none" stroke="#f03e38" stroke-width="1.4"><animate attributeName="r" values="4;22" dur="3.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.75;0" dur="3.2s" repeatCount="indefinite"/></circle>
+      <circle cx="920" cy="620" r="4"><animate attributeName="opacity" values="0.35;1;0.35" dur="2.9s" repeatCount="indefinite"/></circle>
+      <circle cx="920" cy="620" r="4" fill="none" stroke="#f03e38" stroke-width="1.4"><animate attributeName="r" values="4;24" dur="3.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0" dur="3.6s" repeatCount="indefinite"/></circle>
+    </g>
+    <g fill="#60a5fa">
+      <circle cx="960" cy="190" r="3.5"><animate attributeName="opacity" values="0.3;0.95;0.3" dur="3.1s" repeatCount="indefinite"/></circle>
+      <circle cx="960" cy="190" r="3.5" fill="none" stroke="#60a5fa" stroke-width="1.3"><animate attributeName="r" values="4;20" dur="3.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.65;0" dur="3.8s" repeatCount="indefinite"/></circle>
+      <circle cx="220" cy="640" r="3.5"><animate attributeName="opacity" values="0.3;0.95;0.3" dur="2.7s" repeatCount="indefinite"/></circle>
+      <circle cx="220" cy="640" r="3.5" fill="none" stroke="#60a5fa" stroke-width="1.3"><animate attributeName="r" values="4;20" dur="3.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.65;0" dur="3.4s" repeatCount="indefinite"/></circle>
+    </g>
+  </svg>
+</div>
 <header>
   <div class="brand">
     <div class="logo"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/><circle cx="20" cy="20" r="8.8"/><path d="M20 20V14.2M20 20l4.2 2.4"/></svg></div>
-    <div>
-      <h1 id="htitle">Кабинет исполнителя</h1>
+    <div class="btxt">
+      <h1 id="htitle">İcraçı kabineti</h1>
       <div class="sub">Techmaster IT Solutions</div>
     </div>
   </div>
@@ -199,17 +332,73 @@ h3.dayh{font-size:14px;font-weight:700;margin:12px 0 6px;text-transform:capitali
 </header>
 
 <main>
-  <section id="loading" class="panel" hidden>
-    <div class="muted" id="loadTxt" style="text-align:center;padding:18px 0">Загрузка кабинета…</div>
+  <section id="loading" class="auth-stage" hidden>
+    <div class="auth-card" style="text-align:center;padding:38px 24px">
+      <div class="auth-spin" style="margin:0 auto 14px">
+        <svg viewBox="0 0 68 68" fill="none">
+          <circle cx="34" cy="34" r="28" stroke="rgba(255,255,255,0.12)" stroke-width="4"/>
+          <circle cx="34" cy="34" r="28" stroke="#f03e38" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 130">
+            <animateTransform attributeName="transform" type="rotate" from="0 34 34" to="360 34 34" dur="0.95s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      </div>
+      <div class="auth-st-title" id="loadTxt">Kabinet yüklənir…</div>
+    </div>
   </section>
 
-  <section id="login" class="panel">
-    <h2 id="lTitle">Вход для сотрудников</h2>
-    <div class="muted" id="lHint">Введите ваш номер телефона, добавленный мастером.</div>
-    <label class="fld" for="ph" id="lPhLbl">Номер телефона</label>
-    <input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="+994 50 123 45 67">
-    <div id="err" class="err"></div>
-    <div class="row"><button id="go" class="btn p full">Войти</button></div>
+  <section id="login" class="auth-stage">
+    <div class="auth-card" id="loginCard">
+      <div class="auth-emblem" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M16.09 6.35 L16.57 2.33 L23.43 2.33 L23.91 6.35 A14.2 14.2 0 0 1 29.86 9.79 L33.58 8.19 L37.02 14.14 L33.78 16.56 A14.2 14.2 0 0 1 33.78 23.44 L37.02 25.86 L33.58 31.81 L29.86 30.21 A14.2 14.2 0 0 1 23.91 33.65 L23.43 37.67 L16.57 37.67 L16.09 33.65 A14.2 14.2 0 0 1 10.14 30.21 L6.42 31.81 L2.98 25.86 L6.22 23.44 A14.2 14.2 0 0 1 6.22 16.56 L2.98 14.14 L6.42 8.19 L10.14 9.79 A14.2 14.2 0 0 1 16.09 6.35 Z"/>
+          <circle cx="20" cy="20" r="8.8"/>
+          <line x1="20" y1="20" x2="20" y2="13.6" stroke-width="1.9">
+            <animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="4.5s" repeatCount="indefinite"/>
+          </line>
+          <line x1="20" y1="20" x2="24.2" y2="22.4" stroke-width="2.1">
+            <animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="24s" repeatCount="indefinite"/>
+          </line>
+          <circle cx="20" cy="20" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <h2 id="lTitle">Əməkdaşlar üçün giriş</h2>
+      <input id="ph" type="hidden" value="">
+      <label class="auth-lbl" for="phOp" id="lPhLbl">Mobil nömrə</label>
+      <div class="ph-top">
+        <div class="ph-prefix">
+          <svg class="flag" viewBox="0 0 18 12" aria-hidden="true"><rect width="18" height="4" fill="#00b5e2"/><rect y="4" width="18" height="4" fill="#ef3340"/><rect y="8" width="18" height="4" fill="#509e2f"/><circle cx="8.7" cy="6" r="1.45" fill="#ffffff"/><circle cx="9.15" cy="6" r="1.15" fill="#ef3340"/><circle cx="10.4" cy="6" r=".48" fill="#ffffff"/></svg>
+          <span>+994</span>
+        </div>
+        <select id="phOp" class="ph-op-sel" aria-label="Operator kodu">
+          <option value="50">050 · Azercell</option>
+          <option value="51">051 · Azercell</option>
+          <option value="55">055 · Bakcell</option>
+          <option value="99">099 · Bakcell</option>
+          <option value="70">070 · Nar</option>
+          <option value="77">077 · Nar</option>
+          <option value="10">010 · Azercell</option>
+          <option value="__other" id="opOtherOpt">Digər kod…</option>
+        </select>
+        <input id="phOpC" class="ph-op-c" type="tel" inputmode="numeric" maxlength="2" placeholder="XX" hidden>
+      </div>
+      <div class="digits-row" id="digitsRow" aria-label="7 rəqəm">
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="0" aria-label="1">
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="1" aria-label="2">
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="2" aria-label="3">
+        <span class="d-sep" aria-hidden="true"></span>
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="3" aria-label="4">
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="4" aria-label="5">
+        <span class="d-sep" aria-hidden="true"></span>
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="5" aria-label="6">
+        <input class="dbox" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" data-di="6" aria-label="7">
+      </div>
+      <div id="err" class="auth-err"></div>
+      <div class="auth-ov" id="authOv" hidden>
+        <div class="auth-spin" id="authSpin"></div>
+        <div class="auth-st-title" id="authStTitle"></div>
+        <div class="auth-st-sub" id="authStSub"></div>
+      </div>
+    </div>
   </section>
 
   <section id="view" hidden>
@@ -248,12 +437,14 @@ const I18N = {
     locale: 'ru-RU',
     pageTitle: 'Кабинет исполнителя',
     loginTitle: 'Вход для сотрудников',
-    loginHint: 'Введите ваш номер телефона, добавленный мастером.',
-    phoneLabel: 'Номер телефона',
-    enter: 'Войти',
-    checking: 'Проверяем…',
+    phoneLabel: 'Мобильный номер',
+    otherOp: 'Другой код…',
+    checking: 'Проверяем доступ…',
+    checkingSub: 'Загружаем ваши задачи и расчёт',
+    welcome: n => `Добро пожаловать, ${n}!`,
+    welcomeSub: 'Открываем кабинет исполнителя…',
     loadingCab: 'Загрузка кабинета…',
-    errShort: 'Введите номер телефона полностью.',
+    errShort: 'Введите все 7 цифр номера и код оператора.',
     errCrypto: 'Этот браузер не поддерживает безопасную проверку номера.',
     errNoData: 'Данные для сотрудников пока не опубликованы.',
     errNotFound: 'Сотрудник с таким номером не найден. Обратитесь к мастеру.',
@@ -321,12 +512,14 @@ const I18N = {
     locale: 'az-AZ',
     pageTitle: 'İcraçı kabineti',
     loginTitle: 'Əməkdaşlar üçün giriş',
-    loginHint: 'Usta tərəfindən əlavə edilmiş telefon nömrənizi daxil edin.',
-    phoneLabel: 'Telefon nömrəsi',
-    enter: 'Daxil ol',
-    checking: 'Yoxlanılır…',
+    phoneLabel: 'Mobil nömrə',
+    otherOp: 'Digər kod…',
+    checking: 'Giriş yoxlanılır…',
+    checkingSub: 'Görüləcək işlər və hesablaşma yüklənir',
+    welcome: n => `Xoş gəlmisiniz, ${n}!`,
+    welcomeSub: 'İcraçı kabineti açılır…',
     loadingCab: 'Kabinet yüklənir…',
-    errShort: 'Telefon nömrəsini tam daxil edin.',
+    errShort: 'Nömrənin 7 rəqəmini və operator kodunu tam daxil edin.',
     errCrypto: 'Bu brauzer təhlükəsiz nömrə yoxlanışını dəstəkləmir.',
     errNoData: 'Əməkdaş məlumatları hələ dərc olunmayıb.',
     errNotFound: 'Bu nömrə ilə əməkdaş tapılmadı. Usta ilə əlaqə saxlayın.',
@@ -546,10 +739,9 @@ function applyLangStatic() {
   $('#btn-ru').classList.toggle('on', lang === 'ru');
   $('#btn-az').classList.toggle('on', lang === 'az');
   $('#lTitle').textContent = L.loginTitle;
-  $('#lHint').textContent = L.loginHint;
   $('#lPhLbl').textContent = L.phoneLabel;
+  if ($('#opOtherOpt')) $('#opOtherOpt').textContent = L.otherOp;
   $('#loadTxt').textContent = L.loadingCab;
-  if (!$('#go').disabled) $('#go').textContent = L.enter;
   $('#tasksTitle').textContent = L.tasksTitle;
   $('#finTitle').textContent = L.finTitle;
   $('#calTitle').textContent = L.calTitle;
@@ -844,52 +1036,259 @@ async function fetchStaffPortal() {
   return D;
 }
 
+/* ===== 7-Digit Azerbaijan Phone Input & Dramatic Auth Transitions ===== */
+const OP_CODES = ['50', '51', '55', '99', '70', '77', '10'];
+const dBoxes = [...document.querySelectorAll('.dbox')];
+let loginBusy = false;
+
+function getOpCode() {
+  const selOp = $('#phOp').value;
+  return selOp === '__other' ? ($('#phOpC').value || '').replace(/\D/g, '').slice(0, 2) : selOp;
+}
+
+function getDigits7() {
+  return dBoxes.map(b => (b.value || '').replace(/\D/g, '').slice(0, 1)).join('');
+}
+
+function syncHiddenPhone() {
+  const op = getOpCode();
+  const d7 = getDigits7();
+  const formatted = d7.length === 7 ? `+994 ${op} ${d7.slice(0, 3)} ${d7.slice(3, 5)} ${d7.slice(5)}` : (op + d7);
+  $('#ph').value = formatted;
+  return { op, d7, full: formatted };
+}
+
+function fillPhoneFromRaw(raw, autoGo = false) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  let d7 = '';
+  if (digits.length >= 9) {
+    const last9 = digits.slice(-9);
+    const p2 = last9.slice(0, 2);
+    d7 = last9.slice(2);
+    if (OP_CODES.includes(p2)) {
+      $('#phOp').value = p2;
+      $('#phOpC').hidden = true;
+    } else {
+      $('#phOp').value = '__other';
+      $('#phOpC').hidden = false;
+      $('#phOpC').value = p2;
+    }
+  } else {
+    d7 = digits.slice(0, 7);
+  }
+  dBoxes.forEach((b, i) => {
+    b.value = d7[i] || '';
+    b.classList.toggle('filled', Boolean(d7[i]));
+  });
+  syncHiddenPhone();
+  if (autoGo && getOpCode().length === 2 && d7.length === 7) {
+    dBoxes[6].blur();
+    login();
+  }
+}
+
+function clearPhoneBoxes() {
+  dBoxes.forEach(b => { b.value = ''; b.classList.remove('filled', 'pop'); });
+  $('#digitsRow').classList.remove('ok', 'shake');
+  $('#ph').value = '';
+}
+
+function setAuthMode(on) {
+  document.body.classList.toggle('auth-mode', on);
+  $('#loginBg').hidden = !on;
+  if (on) $('#loginBg').classList.remove('fade-out');
+}
+
+const SPIN_SVG = `<svg viewBox="0 0 68 68" fill="none">
+  <circle cx="34" cy="34" r="28" stroke="rgba(255,255,255,0.12)" stroke-width="4"/>
+  <circle cx="34" cy="34" r="28" stroke="#f03e38" stroke-width="4" stroke-linecap="round" stroke-dasharray="56 125">
+    <animateTransform attributeName="transform" type="rotate" from="0 34 34" to="360 34 34" dur="0.9s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="34" cy="34" r="19" stroke="rgba(96,165,250,0.65)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="28 96">
+    <animateTransform attributeName="transform" type="rotate" from="360 34 34" to="0 34 34" dur="1.4s" repeatCount="indefinite"/>
+  </circle>
+</svg>`;
+
+const OK_SVG = `<svg viewBox="0 0 68 68" fill="none">
+  <circle cx="34" cy="34" r="28" fill="rgba(16,201,136,0.16)" stroke="#10c988" stroke-width="3.5">
+    <animate attributeName="r" values="24;28" dur="0.3s" fill="freeze"/>
+  </circle>
+  <path d="M22 34.5 L30.5 43 L46.5 26" stroke="#10c988" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="42" stroke-dashoffset="42">
+    <animate attributeName="stroke-dashoffset" from="42" to="0" dur="0.35s" fill="freeze"/>
+  </path>
+</svg>`;
+
+function showAuthOverlay(state, title, sub) {
+  const ov = $('#authOv');
+  if (!state) { ov.hidden = true; return; }
+  $('#authSpin').innerHTML = state === 'ok' ? OK_SVG : SPIN_SVG;
+  $('#authStTitle').textContent = title || '';
+  $('#authStSub').textContent = sub || '';
+  ov.hidden = false;
+}
+
+function shakeDigits() {
+  const row = $('#digitsRow');
+  row.classList.remove('shake');
+  void row.offsetWidth;
+  row.classList.add('shake');
+}
+
+$('#phOp').onchange = () => {
+  const isOth = $('#phOp').value === '__other';
+  $('#phOpC').hidden = !isOth;
+  syncHiddenPhone();
+  if (isOth) $('#phOpC').focus();
+  else {
+    const firstEmpty = dBoxes.find(b => !b.value) || dBoxes[0];
+    firstEmpty.focus();
+    if (getDigits7().length === 7) login();
+  }
+};
+
+$('#phOpC').oninput = () => {
+  $('#phOpC').value = $('#phOpC').value.replace(/\D/g, '').slice(0, 2);
+  syncHiddenPhone();
+  if ($('#phOpC').value.length === 2) {
+    const firstEmpty = dBoxes.find(b => !b.value) || dBoxes[0];
+    firstEmpty.focus();
+    if (getDigits7().length === 7) login();
+  }
+};
+
+dBoxes.forEach((box, idx) => {
+  box.addEventListener('focus', () => {
+    setTimeout(() => { try { box.select(); } catch (e) {} }, 0);
+  });
+  box.addEventListener('input', () => {
+    $('#err').textContent = '';
+    const digits = (box.value || '').replace(/\D/g, '');
+    if (digits.length > 1) {
+      fillPhoneFromRaw(digits, true);
+      return;
+    }
+    box.value = digits;
+    box.classList.toggle('filled', Boolean(digits));
+    if (digits) {
+      box.classList.remove('pop');
+      void box.offsetWidth;
+      box.classList.add('pop');
+      syncHiddenPhone();
+      if (idx < 6) {
+        dBoxes[idx + 1].focus();
+      } else if (getOpCode().length === 2 && getDigits7().length === 7) {
+        box.blur();
+        login();
+      }
+    } else {
+      syncHiddenPhone();
+    }
+  });
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Backspace') {
+      if (!box.value && idx > 0) {
+        e.preventDefault();
+        dBoxes[idx - 1].value = '';
+        dBoxes[idx - 1].classList.remove('filled');
+        dBoxes[idx - 1].focus();
+        syncHiddenPhone();
+      }
+    } else if (e.key === 'ArrowLeft' && idx > 0) {
+      e.preventDefault(); dBoxes[idx - 1].focus();
+    } else if (e.key === 'ArrowRight' && idx < 6) {
+      e.preventDefault(); dBoxes[idx + 1].focus();
+    } else if (e.key === 'Enter') {
+      e.preventDefault(); login();
+    }
+  });
+  box.addEventListener('paste', e => {
+    const txt = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+    const d = txt.replace(/\D/g, '');
+    if (d.length >= 2) {
+      e.preventDefault();
+      fillPhoneFromRaw(d, true);
+    }
+  });
+});
+
 async function login() {
+  if (loginBusy) return;
   const L = I18N[lang];
-  const err = m => { $('#err').textContent = m; }, btn = $('#go');
-  const rawPhone = $('#ph').value.trim();
-  if (norm(rawPhone).length < 7) { err(L.errShort); return; }
+  const err = m => { $('#err').textContent = m; };
+  const { op, d7, full } = syncHiddenPhone();
+  if (op.length !== 2 || d7.length !== 7) {
+    err(L.errShort);
+    shakeDigits();
+    if (op.length !== 2) { $('#phOpC').hidden = false; $('#phOpC').focus(); }
+    else { (dBoxes.find(b => !b.value) || dBoxes[0]).focus(); }
+    return;
+  }
   if (!(window.crypto && crypto.subtle)) { err(L.errCrypto); return; }
+
+  loginBusy = true;
   err('');
-  btn.disabled = true;
-  btn.textContent = L.checking;
+  showAuthOverlay('loading', L.checking, L.checkingSub);
   try {
     const portal = await fetchStaffPortal();
-    if (!portal) { err(L.errNoData); return; }
-    const data = await unlockStaff(rawPhone);
-    if (!data) { err(L.errNotFound); return; }
-    currentPhoneRaw = rawPhone;
+    if (!portal) { showAuthOverlay(null); err(L.errNoData); shakeDigits(); return; }
+    const data = await unlockStaff(full);
+    if (!data) { showAuthOverlay(null); err(L.errNotFound); shakeDigits(); dBoxes[6].focus(); return; }
+
+    $('#digitsRow').classList.add('ok');
+    const firstName = (data.staff && data.staff.name) ? data.staff.name.split(/\s+/)[0] : '';
+    showAuthOverlay('ok', firstName ? L.welcome(firstName) : L.pageTitle, L.welcomeSub);
+
+    currentPhoneRaw = full;
     unlocked = data;
-    saveSession(rawPhone);
+    saveSession(full);
     startSubs(data._recId);
+
+    await new Promise(r => setTimeout(r, 760));
+    $('#loginCard').classList.add('exiting');
+    $('#loginBg').classList.add('fade-out');
+    await new Promise(r => setTimeout(r, 380));
+
+    showAuthOverlay(null);
+    $('#loginCard').classList.remove('exiting');
     $('#login').hidden = true;
+    setAuthMode(false);
     $('#view').hidden = false;
+    $('#view').classList.remove('cab-enter');
+    void $('#view').offsetWidth;
+    $('#view').classList.add('cab-enter');
     renderAll();
     window.scrollTo(0, 0);
   } catch (e) {
+    showAuthOverlay(null);
     err(L.errNet);
+    shakeDigits();
   } finally {
-    btn.disabled = false;
-    btn.textContent = I18N[lang].enter;
+    loginBusy = false;
   }
 }
 
 async function restoreSession() {
   const saved = loadSession();
-  if (!saved || !(window.crypto && crypto.subtle)) return;
-  $('#ph').value = saved.phone;
+  if (!saved || !(window.crypto && crypto.subtle)) {
+    setAuthMode(true);
+    return;
+  }
+  fillPhoneFromRaw(saved.phone, false);
+  setAuthMode(true);
   $('#login').hidden = true;
   $('#loading').hidden = false;
   try {
     const portal = await fetchStaffPortal();
     if (!portal) { $('#loading').hidden = true; $('#login').hidden = false; $('#err').textContent = I18N[lang].errNoData; return; }
     const data = await unlockStaff(saved.phone);
-    if (!data) { clearSession(); $('#loading').hidden = true; $('#login').hidden = false; return; }
+    if (!data) { clearSession(); clearPhoneBoxes(); $('#loading').hidden = true; $('#login').hidden = false; return; }
     currentPhoneRaw = saved.phone;
     unlocked = data;
     startSubs(data._recId);
     $('#loading').hidden = true;
+    setAuthMode(false);
     $('#view').hidden = false;
+    $('#view').classList.add('cab-enter');
     renderAll();
   } catch (e) {
     $('#loading').hidden = true;
@@ -898,18 +1297,20 @@ async function restoreSession() {
   }
 }
 
-$('#go').onclick = login;
-$('#ph').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 $('#logoutBtn').onclick = () => {
   clearSession();
   stopSubs();
   unlocked = null;
   currentPhoneRaw = '';
-  $('#ph').value = '';
+  clearPhoneBoxes();
+  showAuthOverlay(null);
+  $('#loginCard').classList.remove('exiting');
+  $('#view').classList.remove('cab-enter');
   $('#view').hidden = true;
   $('#login').hidden = false;
+  setAuthMode(true);
   $('#err').textContent = '';
-  $('#ph').focus();
+  dBoxes[0].focus();
 };
 
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
