@@ -364,19 +364,19 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&am
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
 const OP_CODES = ['50', '51', '55', '70', '77', '99', '10'];
 
-/* 11 Storefront Categories */
+/* 11 Storefront Categories — all with interactive configurators */
 const SHOP_CATS = [
   { id: 'cctv', tone: 't-red', hasWiz: true },
-  { id: 'intercom', tone: 't-warn' },
-  { id: 'network', tone: 't-blue' },
-  { id: 'alarm', tone: 't-red' },
-  { id: 'smarthome', tone: 't-ok' },
-  { id: 'electrical', tone: 't-warn' },
-  { id: 'monitors', tone: 't-purp' },
-  { id: 'ups', tone: 't-ok' },
-  { id: 'audio', tone: 't-purp' },
-  { id: 'racks', tone: 't-gray' },
-  { id: 'barriers', tone: 't-blue' }
+  { id: 'intercom', tone: 't-warn', hasWiz: true },
+  { id: 'network', tone: 't-blue', hasWiz: true },
+  { id: 'alarm', tone: 't-red', hasWiz: true },
+  { id: 'smarthome', tone: 't-ok', hasWiz: true },
+  { id: 'electrical', tone: 't-warn', hasWiz: true },
+  { id: 'monitors', tone: 't-purp', hasWiz: true },
+  { id: 'ups', tone: 't-ok', hasWiz: true },
+  { id: 'audio', tone: 't-purp', hasWiz: true },
+  { id: 'racks', tone: 't-gray', hasWiz: true },
+  { id: 'barriers', tone: 't-blue', hasWiz: true }
 ];
 const CAT_IDS = SHOP_CATS.map(c => c.id);
 
@@ -472,6 +472,11 @@ const I18N = {
     wizStep: (i, n) => `Шаг ${i} из ${n}`,
     wizTitle: 'Подбор видеонаблюдения',
     wizResTitle: 'Ваш подбор видеонаблюдения',
+    wizCatTitle: t => `Подбор: ${t}`,
+    wizCatResTitle: t => `Ваш подбор — ${t}`,
+    wizGrpMain: 'Подходящие товары из каталога',
+    wizNoCatalogNote: 'Готовые позиции в этой категории подбираются индивидуально под проект — нажмите «Отправить ответы мастеру на расчёт», и мы подготовим точное предложение.',
+    wizOrderGen: (catName, firstAns) => `Подбор (${catName}): ${firstAns}`,
     wizAccTitle: 'Автоматически рассчитанные аксессуары и расходники',
     wizAccSub: 'Количество рассчитано под ваш объект и число камер — можно скорректировать перед добавлением',
     wizAddAcc: n => `Добавить аксессуары в корзину (${n})`,
@@ -675,6 +680,11 @@ const I18N = {
     wizStep: (i, n) => `Addım ${i} / ${n}`,
     wizTitle: 'Videomüşahidə seçimi',
     wizResTitle: 'Sizin videomüşahidə seçiminiz',
+    wizCatTitle: t => `Seçim: ${t}`,
+    wizCatResTitle: t => `Sizin seçiminiz — ${t}`,
+    wizGrpMain: 'Kataloqdan uyğun məhsullar',
+    wizNoCatalogNote: 'Bu kateqoriyadakı modellər layihənizə uyğun fərdi seçilir — «Cavabları ustaya hesablamaya göndər» düyməsini sıxın, sizə dəqiq təklif göndərək.',
+    wizOrderGen: (catName, firstAns) => `Seçim (${catName}): ${firstAns}`,
     wizAccTitle: 'Avtomatik hesablanmış aksesuarlar və materiallar',
     wizAccSub: 'Say obyektinizə və kamera sayına uyğun hesablanıb — əlavə etməzdən əvvəl dəyişə bilərsiniz',
     wizAddAcc: n => `Aksesuarları səbətə əlavə et (${n})`,
@@ -809,8 +819,9 @@ let pageLimit = 30;
 let cart = []; // { id, name, price, unit, qty }
 let orderDone = null;
 
-/* CCTV Wizard State */
-let wizStep = 0; // 0..6
+/* Interactive Wizard State (all 11 categories) */
+let wizCat = 'cctv';
+let wizStep = 0;
 let wizDir = 'next'; // 'next' | 'prev'
 let wizAns = {
   obj: '', objOther: '',
@@ -821,6 +832,7 @@ let wizAns = {
   cab: '', cabOther: '',
   brand: '', brandOther: ''
 };
+let wizExtraAns = {}; // { [catId]: { q0: '...', q0Other: '...' } }
 let wizAccDraft = []; // auto-calculated editable accessory items
 
 const KNOWN_BRANDS = ['Hikvision', 'Ubiquiti', 'Dahua', 'MikroTik', 'TP-Link', 'Keenetic', 'Cudy', 'EZVIZ', 'Ajax', 'Uniview', 'Shturmann', 'Schneider', 'Legrand', 'Famatel', 'Zubr', 'Teltonika', 'Starlink', 'WD Purple'];
@@ -1042,9 +1054,441 @@ function wizSummaryPairs() {
 }
 
 function wizSummaryComment() {
-  if (!wizAns.obj && !wizAns.cams) return '';
-  const pairs = wizSummaryPairs().filter(([, v]) => v && v !== '—');
-  return `[${I18N[lang].wizTitle}]\n` + pairs.map(([k, v]) => `${k}: ${v}`).join('\n');
+  if (wizCat === 'cctv') {
+    if (!wizAns.obj && !wizAns.cams) return '';
+    const pairs = wizSummaryPairs().filter(([, v]) => v && v !== '—');
+    return `[${I18N[lang].wizTitle}]\n` + pairs.map(([k, v]) => `${k}: ${v}`).join('\n');
+  }
+  const ans = wizExtraAns[wizCat];
+  if (!ans || !Object.keys(ans).length) return '';
+  const pairs = extraSummaryPairs(wizCat).filter(([, v]) => v && v !== '—');
+  const catName = (I18N[lang].cats[wizCat] && I18N[lang].cats[wizCat].t) || wizCat;
+  return `[${I18N[lang].wizCatTitle(catName)}]\n` + pairs.map(([k, v]) => `${k}: ${v}`).join('\n');
+}
+
+/* Declarative Bilingual Wizards for the other 10 categories */
+const WIZ_EXTRA = {
+  intercom: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'Куда устанавливается домофон?', h: 'От объекта зависят влагозащита панели и схема подключения.', sum: 'Объект', ph: 'Например, ворота склада…',
+        opts: [['house','Частный дом / калитка','Уличная панель IP65 + открытие замка'],['apt','Квартира','Домофон у двери или в подъезд'],['office','Офис / ресепшн','Контроль входа сотрудников и гостей'],['multi','Многоквартирный подъезд','Многоабонентская система'],['other','Другое','Указать вручную']] },
+      az: { t: 'Domofon harada quraşdırılacaq?', h: 'Obyektdən çağırış panelinin qoruması və qoşulma sxemi asılıdır.', sum: 'Obyekt', ph: 'Məsələn, anbar qapısı…',
+        opts: [['house','Fərdi ev / həyət qapısı','Çöl paneli IP65 + kilid açma'],['apt','Mənzil','Qapı önü və ya blok girişi'],['office','Ofis / resepşn','İşçilərin və qonaqların girişi'],['multi','Çoxmənzilli bina','Çoxabonentli sistem'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'cfg', ico: 'intercom', cols2: true,
+      ru: { t: 'Сколько мониторов и вызывных панелей нужно?', h: 'Определим базовую комплектацию системы.', sum: 'Комплект', ph: 'Например, 2 калитки и 4 экрана',
+        opts: [['1_1','1 панель + 1 монитор','Классический комплект','Популярный'],['1_2','1 панель + 2–3 монитора','Для дома в 2–3 этажа'],['2_1','2 панели + 1–2 монитора','Два входа / калитка + дверь'],['peep','Умный видеоглазок','Вместо обычного дверного глазка'],['other','Другое','Указать вручную']] },
+      az: { t: 'Neçə monitor və çağırış paneli lazımdır?', h: 'Sistemin əsas komplektasiyasını müəyyən edək.', sum: 'Dəst', ph: 'Məsələn, 2 qapı və 4 ekran',
+        opts: [['1_1','1 panel + 1 monitor','Klassik dəst','Populyar'],['1_2','1 panel + 2–3 monitor','2–3 mərtəbəli ev üçün'],['2_1','2 panel + 1–2 monitor','İki giriş üçün'],['peep','Ağıllı videogözcük','Adi qapı gözcüyü əvəzinə'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'sys', ico: 'signal',
+      ru: { t: 'Тип подключения и управление со смартфона', h: 'IP-домофон позволяет отвечать и открывать дверь с телефона.', sum: 'Тип',
+        opts: [['ip','IP-домофон (Wi-Fi / PoE + приложение)','Звонок и открытие со смартфона','Рекомендуем'],['analog','Аналоговый видеодомофон (4-проводной)','Простое и бюджетное решение'],['unsure','Не знаю — подскажите при осмотре','Подберём оптимальный вариант']] },
+      az: { t: 'Qoşulma növü və telefondan idarəetmə', h: 'IP domofon telefonla cavab verməyə və qapını açmağa imkan verir.', sum: 'Növ',
+        opts: [['ip','IP domofon (Wi-Fi / PoE + tətbiq)','Zəng və qapı açma telefondan','Tövsiyə'],['analog','Analoq videodomofon (4 naqilli)','Sadə və sərfəli həll'],['unsure','Bilmirəm — baxış zamanı məsləhət verin','Optimal variant seçək']] } },
+    { k: 'lock', ico: 'cable',
+      ru: { t: 'Нужен ли электрозамок и прокладка кабеля?', h: 'Сразу включим замок, блок питания и кабель в расчёт.', sum: 'Замок / кабель', ph: 'Опишите текущую ситуацию…',
+        opts: [['lock_cab','Нужен электрозамок + кабель «под ключ»','Полный комплект с монтажом'],['cab_only','Замок не нужен — только кабель и монтаж','Только вызов и просмотр'],['ready','Замок и кабели уже установлены','Нужен только сам домофон'],['other','Другое','Указать вручную']] },
+      az: { t: 'Elektron kilid və kabel çəkilişi lazımdırmı?', h: 'Kilid, qida bloku və kabeli hesablamaya daxil edək.', sum: 'Kilid / kabel', ph: 'Hazırkı vəziyyəti qeyd edin…',
+        opts: [['lock_cab','Elektron kilid + kabel «açar təhvil»','Tam montaj dəsti'],['cab_only','Kilid lazım deyil — yalnız kabel və montaj','Yalnız zəng və görüntü'],['ready','Kilid və kabellər artıq hazırdır','Yalnız domofon lazımdır'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Покажем в первую очередь модели выбранного бренда.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Hikvision','Hikvision','Работает в приложении Hik-Connect','Топ'],['Dahua','Dahua','Надёжные IP-комплекты, DMSS'],['EZVIZ','EZVIZ','Умные Wi-Fi домофоны и глазки'],['any','Любой (рекомендация мастера)','Подберём лучший по бюджету'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Seçdiyiniz brendin modellərini göstərəcəyik.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Hikvision','Hikvision','Hik-Connect tətbiqi ilə işləyir','Top'],['Dahua','Dahua','Etibarlı IP dəstlər, DMSS'],['EZVIZ','EZVIZ','Ağıllı Wi-Fi domofon və gözcüklər'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Büdcəyə ən uyğun variant'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  network: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'На каком объекте нужна сеть?', h: 'От стен и планировки зависит выбор роутера и точек доступа.', sum: 'Объект', ph: 'Например, фитнес-зал…',
+        opts: [['apt','Квартира','Стабильный Wi-Fi во всех комнатах'],['house','Частный дом (2+ этажа / двор)','Бесшовный роуминг + улица'],['office','Офис','Много устройств, VPN, стабильность'],['horeca','Кафе / ресторан / отель','Гостевой Wi-Fi + кассы'],['warehouse','Склад / предприятие','Большая площадь и линии связи'],['other','Другое','Указать вручную']] },
+      az: { t: 'Şəbəkə hansı obyekt üçün lazımdır?', h: 'Divarlar və planlamadan router və Wi-Fi nöqtələri asılıdır.', sum: 'Obyekt', ph: 'Məsələn, fitnes zalı…',
+        opts: [['apt','Mənzil','Bütün otaqlarda stabil Wi-Fi'],['house','Fərdi ev (2+ mərtəbə / həyət)','Kəsintisiz Wi-Fi + həyət'],['office','Ofis','Çoxlu cihaz, VPN, stabillik'],['horeca','Kafe / restoran / otel','Qonaq Wi-Fi + kassa'],['warehouse','Anbar / müəssisə','Geniş ərazi və xətlər'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'area', ico: 'wifi', cols2: true,
+      ru: { t: 'Примерная площадь покрытия', h: 'Рассчитаем нужное количество Wi-Fi точек доступа.', sum: 'Площадь', ph: 'Укажите площадь и этажность…',
+        opts: [['s','До 80 м²','1 роутер / 1 точка доступа','1 точка'],['m','80–150 м²','1–2 точки доступа / Mesh','2 точки'],['l','150–300 м²','Дом 2–3 этажа / средний офис','3–4 точки'],['xl','300+ м²','Большой объект / территория','5+ точек'],['other','Другое','Указать вручную']] },
+      az: { t: 'Təxmini əhatə sahəsi', h: 'Lazım olan Wi-Fi giriş nöqtələrinin sayını hesablayaq.', sum: 'Sahə', ph: 'Sahəni və mərtəbə sayını yazın…',
+        opts: [['s','80 m²-ə qədər','1 router / 1 giriş nöqtəsi','1 nöqtə'],['m','80–150 m²','1–2 giriş nöqtəsi / Mesh','2 nöqtə'],['l','150–300 m²','2–3 mərtəbəli ev / ofis','3–4 nöqtə'],['xl','300+ m²','Böyük obyekt / ərazi','5+ nöqtə'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'task', ico: 'signal',
+      ru: { t: 'Что именно требуется организовать?', h: 'Определим нужен ли PoE-коммутатор, роутер или 4G/Starlink.', sum: 'Задача', ph: 'Опишите задачу…',
+        opts: [['combo','Комплекс: Wi-Fi + проводная сеть LAN «под ключ»','Роутер, PoE-коммутатор, точки и розетки','Популярный'],['wifi','Бесшовный Wi-Fi (Mesh / точки доступа)','Убрать «мёртвые зоны» без обрывов'],['lan','Проводная сеть LAN (коммутатор + розетки)','Для ПК, ТВ, камер, серверов'],['lte','Мобильный 4G/5G интернет или Starlink','Для дачи / без оптики'],['other','Другое','Указать вручную']] },
+      az: { t: 'Dəqiq nə təşkil etmək lazımdır?', h: 'PoE kommutator, router və ya 4G/Starlink ehtiyacını müəyyən edək.', sum: 'Məqsəd', ph: 'Tələbi yazın…',
+        opts: [['combo','Kompleks: Wi-Fi + kabelli LAN «açar təhvil»','Router, PoE kommutator, nöqtələr, rozetkalar','Populyar'],['wifi','Kəsintisiz Wi-Fi (Mesh / giriş nöqtələri)','Ölü zonaları aradan qaldırmaq'],['lan','Kabelli LAN şəbəkəsi (kommutator + rozetkalar)','PC, TV, kamera və serverlər üçün'],['lte','Mobil 4G/5G internet və ya Starlink','Bağ evi / optikasız ərazi üçün'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'cab', ico: 'cable',
+      ru: { t: 'Проложены ли сетевые кабели (UTP)?', h: 'Поймём, включать ли кабель Cat6 и розетки в расчёт.', sum: 'Кабели', ph: 'Уточните состояние кабелей…',
+        opts: [['turnkey','Нет — проложить с нуля «под ключ»','Включим расчёт кабеля Cat6 и розеток'],['partial','Частично проложены','Нужно дотянуть часть линий'],['done','Да, кабели уже выведены в щиток/стойку','Только оборудование и обжим RJ-45'],['other','Другое','Указать вручную']] },
+      az: { t: 'Şəbəkə kabelləri (UTP) çəkilibmi?', h: 'Cat6 kabel və rozetkaların əlavə olunacağını müəyyən edək.', sum: 'Kabellər', ph: 'Kabel vəziyyətini yazın…',
+        opts: [['turnkey','Xeyr — sıfırdan «açar təhvil» çəkmək lazımdır','Cat6 kabel və rozetkalar hesablanacaq'],['partial','Qismən çəkilib','Bəzi xətləri əlavə çəkmək lazımdır'],['done','Bəli, kabellər artıq şkafa/şitə çıxarılıb','Yalnız avadanlıq və RJ-45 montajı'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Отфильтруем каталог по вашему выбору.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Ubiquiti','Ubiquiti (UniFi)','Премиум Wi-Fi для домов и офисов','Топ'],['MikroTik','MikroTik','Мощная маршрутизация и VPN'],['Keenetic','Keenetic','Стабильный Wi-Fi и Mesh для дома'],['TP-Link','TP-Link / Omada','Популярное и надёжное решение'],['Cudy','Cudy','Отличное соотношение цена/скорость'],['any','Любой (рекомендация мастера)','Подберём оптимально под задачу'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Kataloqu seçiminizə uyğun göstərək.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Ubiquiti','Ubiquiti (UniFi)','Ev və ofislər üçün premium Wi-Fi','Top'],['MikroTik','MikroTik','Güclü marşrutlaşdırma və VPN'],['Keenetic','Keenetic','Ev üçün stabil Wi-Fi və Mesh'],['TP-Link','TP-Link / Omada','Populyar və etibarlı həll'],['Cudy','Cudy','Qiymət və sürət balansı'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Optimal seçim edək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  alarm: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'Какой объект нужно защитить?', h: 'Подберём нужные типы датчиков и сирен.', sum: 'Объект', ph: 'Например, аптека, гараж…',
+        opts: [['apt','Квартира','Дверь, движение, защита от протечки'],['house','Частный дом / дача','Внутренний и уличный периметр'],['office','Офис / магазин','Охрана + контроль входа сотрудников'],['warehouse','Склад / предприятие','Много зон и контроль доступа'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı obyekti qorumaq lazımdır?', h: 'Uyğun sensor və sirena növlərini seçək.', sum: 'Obyekt', ph: 'Məsələn, aptek, qaraj…',
+        opts: [['apt','Mənzil','Qapı, hərəkət, su sızmasına qarşı'],['house','Fərdi ev / bağ','Daxili və çöl perimetr'],['office','Ofis / mağaza','Mühafizə + girişə nəzarət'],['warehouse','Anbar / müəssisə','Çoxlu zona və SKUD'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'task', ico: 'lock',
+      ru: { t: 'Какая система безопасности нужна?', h: 'Можно выбрать сигнализацию, СКУД или всё вместе.', sum: 'Задача', ph: 'Опишите задачу…',
+        opts: [['alarm','Охранная сигнализация (датчики + сирена + телефон)','Уведомления на смартфон и охрану','Популярный'],['skud','СКУД — контроль доступа (карты / отпечаток / лица)','Терминалы, замки, учёт времени'],['leak','Защита от протечки воды / дыма / газа','Умные датчики + перекрытие крана'],['combo','Комплекс: сигнализация + СКУД','Полная безопасность объекта'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı təhlükəsizlik sistemi lazımdır?', h: 'Siqnalizasiya, SKUD və ya kompleks seçə bilərsiniz.', sum: 'Sistem', ph: 'Tələbi yazın…',
+        opts: [['alarm','Mühafizə siqnalizasiyası (sensor + sirena + telefon)','Telefona bildiriş və mühafizə','Populyar'],['skud','SKUD — girişə nəzarət (kart / barmaq izi / üz)','Terminallar, kilidlər, vaxt uçotu'],['leak','Su sızması / tüstü / qaz mühafizəsi','Ağıllı sensorlar + klapan'],['combo','Kompleks: siqnalizasiya + SKUD','Tam təhlükəsizlik'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'scale', ico: 'signal', cols2: true,
+      ru: { t: 'Примерное количество зон или дверей', h: 'Рассчитаем комплект датчиков и замков.', sum: 'Масштаб', ph: 'Укажите число датчиков/дверей…',
+        opts: [['s','Базовый (1–4 датчика / 1 дверь)','Квартира или малый офис'],['m','Средний (5–10 датчиков / 2–3 двери)','Дом или магазин'],['l','Большой (11–20 датчиков / 4–6 дверей)','Крупный дом или офис'],['xl','Крупный объект (20+ зон)','Предприятие / бизнес-центр'],['other','Другое','Указать вручную']] },
+      az: { t: 'Təxmini zona və ya qapı sayı', h: 'Sensor və kilid dəstini hesablayaq.', sum: 'Miqyas', ph: 'Sensor/qapı sayını yazın…',
+        opts: [['s','Baza (1–4 sensor / 1 qapı)','Mənzil və ya kiçik ofis'],['m','Orta (5–10 sensor / 2–3 qapı)','Ev və ya mağaza'],['l','Böyük (11–20 sensor / 4–6 qapı)','Geniş ev və ya ofis'],['xl','İri obyekt (20+ zona)','Müəssisə / biznes mərkəzi'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'wire', ico: 'cable',
+      ru: { t: 'Беспроводная или проводная система?', h: 'Беспроводная ставится за пару часов без порчи ремонта.', sum: 'Исполнение',
+        opts: [['wireless','Беспроводная (без штробления, быстрый монтаж)','Идеально после ремонта','Рекомендуем'],['wired','Проводная (на этапе ремонта)','Закладка кабеля заранее'],['unsure','По рекомендации специалиста','Подскажем на осмотре']] },
+      az: { t: 'Simsiz yoxsa kabelli sistem?', h: 'Simsiz sistem təmirə zərər vermədən bir neçə saata qurulur.', sum: 'Bağlantı',
+        opts: [['wireless','Simsiz (divar qazmadan sürətli montaj)','Təmirdən sonra ideal','Tövsiyə'],['wired','Kabelli (təmir mərhələsində)','Kabelin əvvəlcədən çəkilməsi'],['unsure','Mütəxəssis tövsiyəsi ilə','Baxış zamanı məsləhət verək']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Оба лидера рынка доступны со склада и под заказ.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Ajax','Ajax','Премиум беспроводная сигнализация','Топ'],['Hikvision','Hikvision (AX PRO / MinMoe)','Сигнализация + СКУД по лицу в Hik-Connect'],['EZVIZ','EZVIZ','Умные замки и домашние датчики'],['any','Любой (рекомендация мастера)','Подберём лучший вариант'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Bazar liderləri anbardan və sifarişlə mövcuddur.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Ajax','Ajax','Premium simsiz siqnalizasiya','Top'],['Hikvision','Hikvision (AX PRO / MinMoe)','Siqnalizasiya + üzlə SKUD, Hik-Connect'],['EZVIZ','EZVIZ','Ağıllı kilidlər və ev sensorları'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Ən uyğun variantı seçək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  smarthome: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'Тип объекта для «Умного дома»', h: 'Определим масштаб сценариев и оборудования.', sum: 'Объект', ph: 'Например, пентхаус…',
+        opts: [['apt','Квартира','Освещение, климат, протечка'],['house','Частный дом / вилла','Весь дом + участок и ворота'],['office','Офис / переговорная','Свет, климат, сценарии доступа'],['other','Другое','Указать вручную']] },
+      az: { t: '«Ağıllı ev» üçün obyekt növü', h: 'Ssenari və avadanlıq miqyasını müəyyən edək.', sum: 'Obyekt', ph: 'Məsələn, penthaus…',
+        opts: [['apt','Mənzil','İşıqlandırma, iqlim, su sızması'],['house','Fərdi ev / villa','Bütün ev + həyət və darvaza'],['office','Ofis / iclas otağı','İşıq, iqlim, giriş ssenariləri'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'scope', ico: 'smart', cols2: true,
+      ru: { t: 'Что хотите автоматизировать?', h: 'Выберите главный приоритет системы.', sum: 'Функции', ph: 'Опишите желаемые сценарии…',
+        opts: [['light','Умное освещение и выключатели','Сценарии «Я ушёл», диммеры, LED'],['climate','Климат, кондиционеры и шторы','Температура по расписанию'],['safety','Безопасность (протечка, дым, умный замок)','Автоперекрытие воды и оповещения'],['full','Всё в комплексе + настенная панель','Полный «Умный дом»','Топ'],['other','Другое','Указать вручную']] },
+      az: { t: 'Nəyi avtomatlaşdırmaq istəyirsiniz?', h: 'Əsas prioriteti seçin.', sum: 'Funksiyalar', ph: 'İstədiyiniz ssenariləri yazın…',
+        opts: [['light','Ağıllı işıqlandırma və açarlar','Ssenarilər, dimmer, LED'],['climate','İqlim, kondisioner və pərdələr','Cədvəl üzrə temperatur'],['safety','Təhlükəsizlik (su sızması, tüstü, kilid)','Suyun avtomatik kəsilməsi'],['full','Hamısı birlikdə + divar paneli','Tam «Ağıllı ev»','Top'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'stage', ico: 'cable',
+      ru: { t: 'На какой стадии ремонт на объекте?', h: 'Важно для выбора реле с нулевой линией или без неё.', sum: 'Стадия ремонта', ph: 'Уточните этап…',
+        opts: [['repair','Идёт ремонт (можно заложить кабели)','Максимум надёжности и вариантов'],['done','Ремонт уже завершён','Беспроводные реле, розетки и датчики'],['plan','Проектирование с нуля','Спроектируем электрику сразу под умный дом'],['other','Другое','Указать вручную']] },
+      az: { t: 'Obyektdə təmir hansı mərhələdədir?', h: 'Rele və kabel seçimini buna görə edəcəyik.', sum: 'Təmir mərhələsi', ph: 'Mərhələni qeyd edin…',
+        opts: [['repair','Təmir gedir (kabel çəkmək mümkündür)','Maksimal etibarlılıq'],['done','Təmir artıq bitib','Simsiz rele, rozetka və sensorlar'],['plan','Sıfırdan layihələndirmə','Elektriki ağıllı evə uyğun planlayaq'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'ctrl', ico: 'signal',
+      ru: { t: 'Как удобнее управлять системой?', h: 'Подберём шлюз и интерфейс управления.', sum: 'Управление',
+        opts: [['app_voice','Смартфон + голос (Siri / Алиса / Google)','Удобно дома и удалённо','Популярный'],['panel','Настенная сенсорная панель + смартфон','Единый центр управления на стене'],['auto','По рекомендации мастера','Подберём оптимальный протокол Zigbee / Wi-Fi']] },
+      az: { t: 'Sistemi necə idarə etmək rahatdır?', h: 'Uyğun şlüz və idarəetmə panelini seçək.', sum: 'İdarəetmə',
+        opts: [['app_voice','Smartfon + səs (Siri / Google / Alisa)','Evdən və uzaqdan rahat','Populyar'],['panel','Divar sensor paneli + smartfon','Divarda vahid idarəetmə mərkəzi'],['auto','Ustanın tövsiyəsi ilə','Optimal Zigbee / Wi-Fi protokolu']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемая экосистема / бренд', h: 'Совместимость всех датчиков в одном приложении.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Tuya','Tuya / Smart Life','Огромный выбор устройств, доступно','Популярный'],['Aqara','Aqara (Zigbee / Apple Home)','Быстрый отклик, премиум-качество'],['EZVIZ','EZVIZ','Единое приложение с камерами'],['any','Любой (рекомендация мастера)','Подберём надёжную связку'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı ekosistem / brendə üstünlük verirsiniz?', h: 'Bütün sensorların bir tətbiqdə işləməsi üçün.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Tuya','Tuya / Smart Life','Geniş cihaz seçimi, sərfəli','Populyar'],['Aqara','Aqara (Zigbee / Apple Home)','Sürətli reaksiya, premium keyfiyyət'],['EZVIZ','EZVIZ','Kameralarla vahid tətbiq'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Etibarlı dəst seçək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  electrical: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'На каком объекте требуются работы?', h: 'Определим требования к щиту и защите.', sum: 'Объект', ph: 'Например, гараж, салон…',
+        opts: [['apt','Квартира','Щиток, защита напряжения, свет'],['house','Частный дом','Ввод, стабилизация, уличный свет'],['office','Офис / магазин','Линии питания, LED-освещение'],['warehouse','Склад / цех','Силовые линии 380В, прожекторы'],['other','Другое','Указать вручную']] },
+      az: { t: 'İşlər hansı obyektdə aparılacaq?', h: 'Şit və qoruma tələblərini müəyyən edək.', sum: 'Obyekt', ph: 'Məsələn, qaraj, salon…',
+        opts: [['apt','Mənzil','Şit, gərginlik qoruması, işıq'],['house','Fərdi ev','Giriş xətti, stabillik, çöl işığı'],['office','Ofis / mağaza','Güc xətləri, LED işıqlandırma'],['warehouse','Anbar / sex','380V xətlər, projektorlar'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'task', ico: 'bolt', cols2: true,
+      ru: { t: 'Что именно требуется?', h: 'Подберём автоматику, кабель и освещение.', sum: 'Задача', ph: 'Опишите задачу…',
+        opts: [['panel','Сборка / замена электрощита и автоматики','Автоматы, УЗО, реле напряжения','Популярный'],['led','LED-освещение (ленты, светильники, блоки)','Подсветка, треки, уличный свет'],['protect','Защита от скачков + розетки / выключатели','Реле Zubr, замена фурнитуры'],['turnkey','Электромонтаж и кабель «под ключ»','Полная разводка кабеля и щит'],['other','Другое','Указать вручную']] },
+      az: { t: 'Dəqiq nə lazımdır?', h: 'Avtomatika, kabel və işıqlandırmanı seçək.', sum: 'İş növü', ph: 'Tələbi yazın…',
+        opts: [['panel','Elektrik şitinin yığılması / yenilənməsi','Avtomatlar, UZO, gərginlik relesi','Populyar'],['led','LED işıqlandırma (lent, çıraq, qida bloku)','Daxili və çöl LED həlləri'],['protect','Gərginlik qoruması + rozetka / açarlar','Zubr relesi, furnitura'],['turnkey','Sıfırdan elektrik montajı «açar təhvil»','Tam kabel çəkilişi və şit'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'scale', ico: 'rack', cols2: true,
+      ru: { t: 'Масштаб / площадь объекта', h: 'Рассчитаем размер щита и количество автоматов.', sum: 'Масштаб', ph: 'Укажите площадь или число линий…',
+        opts: [['s','До 70 м²','Щит 12 модулей'],['m','70–150 м²','Щит 18–24 модуля'],['l','150–300 м²','Щит 36 модулей'],['xl','300+ м²','Большой щит / несколько щитов'],['other','Другое','Указать вручную']] },
+      az: { t: 'Obyektin sahəsi / miqyası', h: 'Şitin ölçüsünü və avtomat sayını hesablayaq.', sum: 'Miqyas', ph: 'Sahəni və ya xətt sayını yazın…',
+        opts: [['s','70 m²-ə qədər','12 modulluq şit'],['m','70–150 m²','18–24 modulluq şit'],['l','150–300 m²','36 modulluq şit'],['xl','300+ m²','Böyük şit / bir neçə şit'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'phase', ico: 'bolt',
+      ru: { t: 'Тип электросети на объекте', h: 'Нужно для подбора вводного автомата и реле напряжения.', sum: 'Сеть',
+        opts: [['1p','Однофазная (220В)','Стандарт для квартир и большинства домов'],['3p','Трёхфазная (380В)','Крупные дома, офисы, предприятия'],['unsure','Не знаю — проверите при осмотре','Определим на месте']] },
+      az: { t: 'Elektrik şəbəkəsinin növü', h: 'Giriş avtomatı və gərginlik relesi üçün vacibdir.', sum: 'Şəbəkə',
+        opts: [['1p','Birfazalı (220V)','Mənzil və evlərin əksəriyyəti'],['3p','Üçfazalı (380V)','Böyük evlər, ofislər, müəssisələr'],['unsure','Bilmirəm — baxışda yoxlayarsınız','Yerində müəyyən edək']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд автоматики', h: 'Работаем с проверенными сертифицированными брендами.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Schneider','Schneider Electric','Надёжная автоматика и щиты','Топ'],['Legrand','Legrand','Автоматы, розетки, выключатели'],['Zubr','Zubr','Лучшая защита от скачков напряжения'],['any','Любой (рекомендация мастера)','Оптимально по цене и качеству'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Yalnız sınanmış sertifikatlı brendlərlə işləyirik.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Schneider','Schneider Electric','Etibarlı avtomatika və şitlər','Top'],['Legrand','Legrand','Avtomatlar, rozetka və açarlar'],['Zubr','Zubr','Gərginlik dəyişməsinə qarşı qoruma'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Qiymət və keyfiyyət balansı'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  monitors: [
+    { k: 'use', ico: 'monitor', cols2: true,
+      ru: { t: 'Для какой задачи нужен экран?', h: 'Мониторы 24/7, ТВ и видеостены сильно отличаются по ресурсу.', sum: 'Назначение', ph: 'Например, витрина магазина…',
+        opts: [['cctv','Монитор для видеонаблюдения 24/7','Рассчитан на круглосуточную работу','Популярный'],['tv','Телевизор / Smart TV','Для дома, офиса, переговорной'],['proj','Проектор + экран','Для конференц-зала или кинотеатра'],['wall','Видеостена / рекламный LED-экран','Большой формат для бизнеса'],['other','Другое','Указать вручную']] },
+      az: { t: 'Ekran hansı məqsəd üçün lazımdır?', h: '24/7 monitorlar, TV və videodivarlar fərqli resursa malikdir.', sum: 'Məqsəd', ph: 'Məsələn, vitrin ekranı…',
+        opts: [['cctv','Videomüşahidə monitoru (24/7)','Fasiləsiz iş üçün nəzərdə tutulub','Populyar'],['tv','Televizor / Smart TV','Ev, ofis və iclas otağı üçün'],['proj','Proyektor + ekran','Konfrans zalı və ya ev kinoteatrı'],['wall','Videodivar / reklam LED ekranı','Biznes üçün böyük format'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'size', ico: 'focus', cols2: true,
+      ru: { t: 'Желаемая диагональ экрана', h: 'Подберём оптимальный размер под расстояние просмотра.', sum: 'Диагональ', ph: 'Укажите размер в дюймах…',
+        opts: [['22_27','22"–27"','Пост охраны / рабочий стол'],['32_43','32"–43"','Комната / кабинет / до 16 камер'],['50_65','50"–65"','Гостиная / переговорная / 16–32 камеры'],['75p','75"+ / видеостена / проектор','Большой зал или диспетчерская'],['other','Другое','Указать вручную']] },
+      az: { t: 'Ekran diaqonalı nə qədər olsun?', h: 'Baxış məsafəsinə uyğun ölçü seçək.', sum: 'Diaqonal', ph: 'Ölçünü düymlə yazın…',
+        opts: [['22_27','22"–27"','Mühafizə postu / iş masası'],['32_43','32"–43"','Otaq / kabinet / 16 kameraya qədər'],['50_65','50"–65"','Qonaq otağı / iclas otağı'],['75p','75"+ / videodivar / proyektor','Böyük zal və ya dispetçer mərkəzi'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'qty', ico: 'monitor', cols2: true,
+      ru: { t: 'Сколько экранов требуется?', h: 'Рассчитаем количество кронштейнов и кабелей.', sum: 'Количество', ph: 'Укажите количество…',
+        opts: [['1','1 экран','Базовый вариант'],['2','2 экрана','Два поста или зоны'],['3_4','3–4 экрана','Диспетчерская / торговый зал'],['5p','5+ экранов / видеостена','Матрица 2×2, 3×3 и более'],['other','Другое','Указать вручную']] },
+      az: { t: 'Neçə ekran lazımdır?', h: 'Kronşteyn və kabel sayını hesablayaq.', sum: 'Say', ph: 'Sayı qeyd edin…',
+        opts: [['1','1 ekran','Əsas variant'],['2','2 ekran','İki post və ya zona'],['3_4','3–4 ekran','Dispetçer / satış zalı'],['5p','5+ ekran / videodivar','2×2, 3×3 və daha böyük'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'mount', ico: 'cable',
+      ru: { t: 'Нужен ли кронштейн и подключение HDMI?', h: 'Добавим правильный кронштейн и кабель нужной длины.', sum: 'Крепление / HDMI', ph: 'Укажите длину линии…',
+        opts: [['wall_hdmi','Да — настенный кронштейн + кабель HDMI','Полный комплект для монтажа','Рекомендуем'],['ext','Передача HDMI на расстояние >15 м (удлинитель)','По витой паре Cat6 без потерь'],['stand','Только экран (установка на подставку)','Без настенного крепления'],['other','Другое','Указать вручную']] },
+      az: { t: 'Kronşteyn və HDMI qoşulması lazımdırmı?', h: 'Uyğun kronşteyn və kabel əlavə edək.', sum: 'Montaj / HDMI', ph: 'Xəttin uzunluğunu yazın…',
+        opts: [['wall_hdmi','Bəli — divar kronşteyni + HDMI kabel','Tam montaj dəsti','Tövsiyə'],['ext','15 m-dən uzun HDMI ötürülməsi (uzadıcı)','Cat6 kabel üzərindən itkisiz'],['stand','Yalnız ekran (masaüstü dayağa)','Divar montajı olmadan'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Подберём доступные модели.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Hikvision','Hikvision','Профессиональные мониторы 24/7 и видеостены','Топ'],['Dahua','Dahua','Надёжные мониторы для CCTV'],['Samsung','Samsung / LG','Smart TV и коммерческие панели'],['any','Любой (рекомендация мастера)','Лучший вариант под задачу'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Mövcud modelləri seçək.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Hikvision','Hikvision','Peşəkar 24/7 monitor və videodivarlar','Top'],['Dahua','Dahua','CCTV üçün etibarlı monitorlar'],['Samsung','Samsung / LG','Smart TV və kommersiya panelləri'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Ən uyğun variant'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  ups: [
+    { k: 'load_type', ico: 'home', cols2: true,
+      ru: { t: 'Что нужно защитить от отключения света?', h: 'Для роутера, камер, серверов и котла нужны разные типы ИБП.', sum: 'Оборудование', ph: 'Например, кассовый терминал…',
+        opts: [['cctv','Видеонаблюдение и регистратор','Непрерывная запись при отключении света'],['net','Роутер, Wi-Fi и сетевой шкаф','Интернет не пропадает при скачках'],['pc','Компьютер / сервер / рабочая станция','Защита данных и дисков'],['home','Котёл отопления / бытовая техника / дом','Чистая синусоида + внешние АКБ'],['other','Другое','Указать вручную']] },
+      az: { t: 'İşıq sönəndə nəyi qorumaq lazımdır?', h: 'Router, kamera, server və kombi üçün fərqli UPS növləri lazımdır.', sum: 'Avadanlıq', ph: 'Məsələn, kassa aparatı…',
+        opts: [['cctv','Videomüşahidə və qeydiyyatçı','İşıq söndükdə fasiləsiz çəkiliş'],['net','Router, Wi-Fi və şəbəkə şkafı','İnternetin kəsilməməsi üçün'],['pc','Kompüter / server / iş yeri','Məlumatların və disklərin qoruması'],['home','Kombi / məişət texnikası / ev','Təmiz sinusoida + xarici akkumulyator'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'power', ico: 'battery', cols2: true,
+      ru: { t: 'Примерная нагрузка (мощность)', h: 'Справа — ориентировочная мощность нужного ИБП.', sum: 'Нагрузка',
+        opts: [['300','До 300 Вт','Роутер + 4–8 камер','600–1000VA'],['600','300–600 Вт','ПК / 8–16 камер + NVR','1000–1500VA'],['1200','600–1200 Вт','Стойка / 16–32 камеры','2000–3000VA'],['1500p','1500+ Вт','Серверная / дом / котёл','Online 3kVA+'],['unsure','Не знаю — рассчитаете вы','Подберём по списку техники']] },
+      az: { t: 'Təxmini güc yükü', h: 'Sağda uyğun UPS gücü göstərilib.', sum: 'Güc',
+        opts: [['300','300 Vt-a qədər','Router + 4–8 kamera','600–1000VA'],['600','300–600 Vt','PC / 8–16 kamera + NVR','1000–1500VA'],['1200','600–1200 Vt','Şkaf / 16–32 kamera','2000–3000VA'],['1500p','1500+ Vt','Server otağı / ev / kombi','Online 3kVA+'],['unsure','Bilmirəm — siz hesablayın','Avadanlıq siyahısına görə seçək']] } },
+    { k: 'time', ico: 'bolt', cols2: true,
+      ru: { t: 'Сколько времени нужно работать без света?', h: 'Для долгой автономии требуются внешние аккумуляторы AGM/LiFePO4.', sum: 'Автономность', ph: 'Укажите желаемое время…',
+        opts: [['15m','15–30 минут','Стандартный встроенный ИБП','Базовый'],['1_2h','1–2 часа','Усиленный ИБП или Mini-UPS'],['3_6h','3–6 часов','ИБП + внешние АКБ 12В'],['8hp','8+ часов','Инвертор + батареи высокой ёмкости'],['other','Другое','Указать вручную']] },
+      az: { t: 'İşıqsız nə qədər işləməlidir?', h: 'Uzun müddət üçün xarici AGM/LiFePO4 akkumulyatorlar lazımdır.', sum: 'İş müddəti', ph: 'İstədiyiniz müddəti yazın…',
+        opts: [['15m','15–30 dəqiqə','Standart daxili UPS','Baza'],['1_2h','1–2 saat','Gücləndirilmiş UPS və ya Mini-UPS'],['3_6h','3–6 saat','UPS + xarici 12V akkumulyatorlar'],['8hp','8+ saat','İnvertor + böyük tutumlu batareyalar'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'form', ico: 'rack',
+      ru: { t: 'Форм-фактор (куда ставится ИБП)', h: 'Подберём правильный корпус и кабели.', sum: 'Исполнение',
+        opts: [['tower','Напольный / настольный','Обычная установка рядом с техникой'],['rack','В телекоммуникационный шкаф 19" (Rackmount)','Для аккуратной стойки'],['mini','Мини-UPS 12В (компактный для роутера/камер)','Малый размер, долгая работа от 12В'],['unsure','По рекомендации мастера','Подберём по месту']] },
+      az: { t: 'Quraşdırma forması', h: 'Uyğun korpus və kabelləri seçək.', sum: 'Forma',
+        opts: [['tower','Döşəmə / masaüstü','Avadanlığın yanında adi quraşdırma'],['rack','19" telekommunikasiya şkafına (Rackmount)','Səliqəli server şkafı üçün'],['mini','Mini-UPS 12V (router / kameralar üçün)','Kompakt ölçü, 12V uzun iş'],['unsure','Ustanın tövsiyəsi ilə','Yerinə görə seçək']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Работаем с проверенными ИБП и свежими АКБ.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Shturmann','Shturmann','Надёжные ИБП и батареи в наличии','Топ'],['APC','APC / Schneider','Премиум-класс для серверов'],['SVC','SVC / Eaton','Надёжные решения для дома и офиса'],['any','Любой (рекомендация мастера)','Подберём оптимальный вариант'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Etibarlı UPS və yeni akkumulyatorlarla işləyirik.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Shturmann','Shturmann','Anbarda olan etibarlı UPS-lər','Top'],['APC','APC / Schneider','Serverlər üçün premium sinif'],['SVC','SVC / Eaton','Ev və ofis üçün etibarlı həllər'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Optimal variant seçək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  audio: [
+    { k: 'obj', ico: 'home', cols2: true,
+      ru: { t: 'Где будет установлена аудиосистема?', h: 'От помещения зависят мощность усилителя и тип акустики.', sum: 'Объект', ph: 'Например, фитнес-клуб, клиника…',
+        opts: [['cafe','Кафе / ресторан / лаунж','Чистый фоновый звук + зоны громкости'],['shop','Магазин / салон / офис','Фоновая музыка и объявления'],['house','Частный дом / двор / терраса','Мультирум или уличная акустика'],['hall','Конференц-зал / учебный класс','Чёткая речь, микрофоны'],['other','Другое','Указать вручную']] },
+      az: { t: 'Audio sistem harada quraşdırılacaq?', h: 'Məkandan gücləndirici və səsucaldan növü asılıdır.', sum: 'Obyekt', ph: 'Məsələn, fitnes klub, klinika…',
+        opts: [['cafe','Kafe / restoran / lounge','Təmiz fon səsi + səs zonaları'],['shop','Mağaza / salon / ofis','Fon musiqisi və elanlar'],['house','Fərdi ev / həyət / terras','Multirum və ya çöl akustikası'],['hall','Konfrans zalı / sinif','Aydın nitq, mikrofonlar'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'area', ico: 'audio', cols2: true,
+      ru: { t: 'Площадь и количество зон звука', h: 'Рассчитаем количество колонок и мощность усилителя.', sum: 'Площадь / зоны', ph: 'Укажите площадь и число зон…',
+        opts: [['s','До 60 м² (1 зона)','2–4 колонки'],['m','60–150 м² (1–2 зоны)','4–6 колонок'],['l','150–300 м² (2–4 зоны)','6–10 колонок'],['xl','300+ м² (многозонная)','10+ колонок, матричный усилитель'],['other','Другое','Указать вручную']] },
+      az: { t: 'Sahə və səs zonalarının sayı', h: 'Səsucaldan sayını və gücləndiricini hesablayaq.', sum: 'Sahə / zona', ph: 'Sahə və zona sayını yazın…',
+        opts: [['s','60 m²-ə qədər (1 zona)','2–4 səsucaldan'],['m','60–150 m² (1–2 zona)','4–6 səsucaldan'],['l','150–300 m² (2–4 zona)','6–10 səsucaldan'],['xl','300+ m² (çoxzonalı)','10+ səsucaldan, matris sistem'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'spk', ico: 'audio',
+      ru: { t: 'Какой тип колонок подходит под интерьер?', h: 'Учтём способ монтажа и влагозащиту.', sum: 'Колонки',
+        opts: [['ceil','Потолочные встраиваемые','Аккуратно, не видны на стенах','Популярный'],['wall','Настенные (в т.ч. уличные всепогодные)','Поворотные кронштейны, мощный звук'],['sub','Сателлиты + сабвуфер','Насыщенный бас для лаунжа/дома'],['unsure','Не знаю — подскажите под интерьер','Предложим лучший вариант']] },
+      az: { t: 'İnteryerə hansı səsucaldan növü uyğundur?', h: 'Montaj üsulunu və nəmə davamlılığı nəzərə alaq.', sum: 'Səsucaldanlar',
+        opts: [['ceil','Tavan daxili (quraşdırılan)','Səliqəli, divarda görünmür','Populyar'],['wall','Divarüstü (həmçinin çöl üçün)','Dönən kronşteyn, güclü səs'],['sub','Satellitlər + sabvufer','Lounge və ev üçün dolğun bas'],['unsure','Bilmirəm — interyerə görə məsləhət verin','Ən yaxşı variantı təklif edək']] } },
+    { k: 'cab', ico: 'cable',
+      ru: { t: 'Микрофон и прокладка акустического кабеля', h: 'Определим источник звука и объём кабельных работ.', sum: 'Опции / кабель', ph: 'Уточните пожелания…',
+        opts: [['bt_cab','Фоновая музыка (Bluetooth/Wi-Fi) + прокладка кабеля','Полный монтаж с нуля'],['mic_cab','Нужен микрофон + прокладка кабеля «под ключ»','Для объявлений или мероприятий'],['ready','Акустические кабели уже проведены','Нужны только колонки и усилитель'],['other','Другое','Указать вручную']] },
+      az: { t: 'Mikrofon və akustik kabel çəkilişi', h: 'Səs mənbəyini və kabel işlərini müəyyən edək.', sum: 'Seçim / kabel', ph: 'İstəklərinizi yazın…',
+        opts: [['bt_cab','Fon musiqisi (Bluetooth/Wi-Fi) + kabel çəkilişi','Sıfırdan tam montaj'],['mic_cab','Mikrofon + kabel çəkilişi «açar təhvil»','Elanlar və tədbirlər üçün'],['ready','Akustik kabellər artıq çəkilib','Yalnız səsucaldan və gücləndirici'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Подберём под ваш бюджет и акустику.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['JBL','JBL / Bose','Премиум звучание для кафе и дома','Топ'],['ITC','ITC / DSPPA','Проф. трансляционный звук (100V)'],['Sonos','Sonos / Yamaha','Умный мультирум по Wi-Fi'],['any','Любой (рекомендация мастера)','Оптимальный комплект'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Büdcəyə və akustikaya uyğun seçək.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['JBL','JBL / Bose','Kafe və ev üçün premium səs','Top'],['ITC','ITC / DSPPA','Peşəkar 100V translyasiya səsi'],['Sonos','Sonos / Yamaha','Wi-Fi ağıllı multirum'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Optimal dəst seçək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  racks: [
+    { k: 'kind', ico: 'rack', cols2: true,
+      ru: { t: 'Что именно вам требуется?', h: 'Подберём точный размер и совместимые комплектующие.', sum: 'Тип товара', ph: 'Например, уличный термошкаф…',
+        opts: [['rack','Телекоммуникационный шкаф 19" / стойка','Для роутеров, коммутаторов, NVR, ИБП','Популярный'],['boxes','Монтажные и распаечные коробки','IP65 герметичные и коробки под камеры'],['duct','Кабель-каналы и гофра-труба (ПВХ / ПНД)','Аккуратная и защищённая прокладка'],['parts','Патч-панели, органайзеры, полки, PDU','Наполнение для готовой 19" стойки'],['other','Другое','Указать вручную']] },
+      az: { t: 'Dəqiq nə lazımdır?', h: 'Dəqiq ölçü və uyğun hissələri seçək.', sum: 'Məhsul növü', ph: 'Məsələn, çöl termoşkafı…',
+        opts: [['rack','19" telekommunikasiya şkafı / dayaq','Router, kommutator, NVR, UPS üçün','Populyar'],['boxes','Montaj və paylayıcı qutular','IP65 germetik və kamera qutuları'],['duct','Kabel kanalları və qofra boru (PVX / PND)','Səliqəli və qorunan çəkiliş'],['parts','Patch-panel, orqanayzer, rəf, PDU','Hazır 19" şkafın komplektləşdirilməsi'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'size', ico: 'focus', cols2: true,
+      ru: { t: 'Размер шкафа или объём комплектующих', h: 'Учтём запас места для вентиляции и укладки кабелей.', sum: 'Размер / объём', ph: 'Укажите высоту (U) или количество…',
+        opts: [['s','Компактный (4U–6U / до 10 коробок)','Квартира или небольшой офис'],['m','Средний (9U–12U / 10–25 коробок)','Дом или средний офис','Популярный'],['l','Большой (15U–22U / 25–50 коробок)','Серверная или крупный объект'],['xl','Напольная стойка 27U–42U / опт','Бизнес-центр / предприятие'],['other','Другое','Указать вручную']] },
+      az: { t: 'Şkafın ölçüsü və ya material həcmi', h: 'Soyutma və kabel yığımı üçün ehtiyat yeri nəzərə alaq.', sum: 'Ölçü / həcm', ph: 'Hündürlüyü (U) və ya sayı yazın…',
+        opts: [['s','Kompakt (4U–6U / 10 qutuya qədər)','Mənzil və ya kiçik ofis'],['m','Orta (9U–12U / 10–25 qutu)','Ev və ya orta ofis','Populyar'],['l','Böyük (15U–22U / 25–50 qutu)','Server otağı və ya böyük obyekt'],['xl','Döşəmə şkafı 27U–42U / topdan','Biznes mərkəzi / müəssisə'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'env', ico: 'home',
+      ru: { t: 'Условия установки', h: 'Для улицы нужны УФ-стойкая ПНД-гофра и герметичность IP65.', sum: 'Условия',
+        opts: [['in','В помещении (офис / дом / серверная)','Стандартное исполнение IP20/IP30'],['out','На улице (влага, пыль, солнце)','Защита IP65, УФ-стойкие материалы'],['mix','Смешанные (улица + помещение)','Скомбинируем материалы']] },
+      az: { t: 'Quraşdırma şəraiti', h: 'Çöl üçün UV davamlı PND qofra və IP65 qoruma lazımdır.', sum: 'Şərait',
+        opts: [['in','Daxili məkan (ofis / ev / server otağı)','Standart IP20/IP30'],['out','Çöl şəraiti (yağış, toz, günəş)','IP65 qoruma, UV davamlı material'],['mix','Qarışıq (çöl + daxili)','Materialları kombinə edək']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Покажем доступные модели в наличии.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['Shturmann','Shturmann','Шкафы 19", патч-панели, органайзеры','Топ'],['Hikvision','Hikvision','Оригинальные коробки и кронштейны'],['any','Любой (рекомендация мастера)','Подберём всё совместимое'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Anbarda olan modelləri göstərək.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['Shturmann','Shturmann','19" şkaflar, patch-panel, orqanayzerlər','Top'],['Hikvision','Hikvision','Orijinal qutular və kronşteynlər'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','Uyğun dəsti seçək'],['other','Digər','Əl ilə qeyd et']] } }
+  ],
+  barriers: [
+    { k: 'kind', ico: 'barrier', cols2: true,
+      ru: { t: 'Что требуется установить?', h: 'Определим тип автоматики и пропускной системы.', sum: 'Система', ph: 'Например, боллард или калитка…',
+        opts: [['barrier','Автоматический шлагбаум (для авто)','Парковка, двор ЖК, въезд на объект','Популярный'],['turnstile','Турникет (трипод / калитка)','Проходная офиса, фитнеса, завода'],['gate','Автоматика для ворот (откатные / распашные)','Привод для частного дома или склада'],['anpr','Шлагбаум + распознавание номеров (ANPR)','Автоматический въезд по госномеру','Топ'],['other','Другое','Указать вручную']] },
+      az: { t: 'Nə quraşdırmaq lazımdır?', h: 'Avtomatika və buraxılış sistemini müəyyən edək.', sum: 'Sistem', ph: 'Məsələn, bollard və ya qapı…',
+        opts: [['barrier','Avtomatik şlaqbaum (avtomobil üçün)','Parkinq, həyət, obyekt girişi','Populyar'],['turnstile','Turniket (tripod / sürətli keçid)','Ofis, fitnes, zavod buraxılışı'],['gate','Darvaza avtomatikası (sürüşən / açılan)','Fərdi ev və ya anbar üçün motor'],['anpr','Şlaqbaum + nömrə tanıma (ANPR)','Dövlət nömrəsi ilə avtomatik giriş','Top'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'width', ico: 'focus', cols2: true,
+      ru: { t: 'Ширина проезда или число проходов', h: 'От ширины зависят длина стрелы и опора.', sum: 'Ширина / поток', ph: 'Укажите ширину в метрах…',
+        opts: [['3_4','До 3–4 м (или 1 турникет)','Стандартный въезд'],['4_6','4–6 м (или 2 турникета)','Широкий проезд + опора стрелы'],['6p','6+ м (двойной въезд / 3+ турникета)','Встречная установка или широкая проходная'],['measure','Уточнить при замере мастера','Сделаем точный замер на месте'],['other','Другое','Указать вручную']] },
+      az: { t: 'Keçid eni və ya keçid sayı', h: 'Enindən oxun uzunluğu və dayağı asılıdır.', sum: 'En / axın', ph: 'Eni metrlə yazın…',
+        opts: [['3_4','3–4 m-ə qədər (və ya 1 turniket)','Standart giriş'],['4_6','4–6 m (və ya 2 turniket)','Geniş keçid + ox dayağı'],['6p','6+ m (ikiqat giriş / 3+ turniket)','Qarşı-qarşıya və ya geniş buraxılış'],['measure','Ustanın ölçməsində dəqiqləşsin','Yerində dəqiq ölçək'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'access', ico: 'lock', cols2: true,
+      ru: { t: 'Как будет открываться доступ?', h: 'Сразу заложим нужные считыватели, пульты или камеру.', sum: 'Открытие', ph: 'Укажите способ…',
+        opts: [['remote','Пульты-брелоки','Просто и надёжно для жильцов/сотрудников'],['anpr','Камера распознавания номеров (ANPR)','Открывается сам по базе номеров'],['skud','Карты / отпечаток / распознавание лиц','Учёт проходов и сотрудников'],['phone','Звонок с телефона / приложение / кнопка охраны','GSM-модуль или Wi-Fi управление'],['other','Другое','Указать вручную']] },
+      az: { t: 'Keçid necə açılacaq?', h: 'Lazımi oxuyucu, pult və ya kameranı əlavə edək.', sum: 'Açılış üsulu', ph: 'Üsulu qeyd edin…',
+        opts: [['remote','Pult-breloklar','Sakinlər və işçilər üçün sadə'],['anpr','Nömrə tanıma kamerası (ANPR)','Baza üzrə avtomatik açılış'],['skud','Kart / barmaq izi / üz tanıma','Keçid və iş vaxtı uçotu'],['phone','Telefon zəngi / tətbiq / mühafizə düyməsi','GSM modul və ya Wi-Fi idarəetmə'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'site', ico: 'cable',
+      ru: { t: 'Подготовка площадки и питание 220В', h: 'Нужны ли бетонирование тумбы и прокладка силового кабеля?', sum: 'Площадка', ph: 'Опишите состояние въезда…',
+        opts: [['ready','Основание и кабель 220В уже готовы','Только монтаж и пусконаладка'],['turnkey','Нужно сделать фундамент и кабель «под ключ»','Включим бетонирование, кабель и гофру ПНД'],['inspect','Оцените на месте при осмотре','Согласуем смету после выезда'],['other','Другое','Указать вручную']] },
+      az: { t: 'Meydançanın hazırlığı və 220V xətti', h: 'Beton bünövrə və güc kabeli çəkilişi lazımdırmı?', sum: 'Hazırlıq', ph: 'Girişin vəziyyətini yazın…',
+        opts: [['ready','Bünövrə və 220V kabel artıq hazırdır','Yalnız quraşdırma və sazlama'],['turnkey','Bünövrə və kabel «açar təhvil» lazımdır','Betonlama, kabel və PND qofra daxil'],['inspect','Yerində baxışda qiymətləndirin','Baxışdan sonra smeta təqdim edək'],['other','Digər','Əl ilə qeyd et']] } },
+    { k: 'brand', ico: 'shield', cols2: true,
+      ru: { t: 'Предпочитаемый бренд', h: 'Работаем с проверенной европейской и азиатской автоматикой.', sum: 'Бренд', ph: 'Введите бренд…',
+        opts: [['CAME','CAME (Италия)','Классика для интенсивных въездов','Топ'],['Nice','Nice / BFT','Надёжная автоматика для шлагбаумов и ворот'],['Hikvision','Hikvision','Шлагбаумы + ANPR камеры + турникеты'],['ZKTeco','ZKTeco','Турникеты и шлагбаумы с СКУД'],['any','Любой (рекомендация мастера)','Оптимально по интенсивности и бюджету'],['other','Другое','Указать вручную']] },
+      az: { t: 'Hansı brendə üstünlük verirsiniz?', h: 'Etibarlı Avropa və Asiya avtomatikası ilə işləyirik.', sum: 'Brend', ph: 'Brendi yazın…',
+        opts: [['CAME','CAME (İtaliya)','İntensiv girişlər üçün klassika','Top'],['Nice','Nice / BFT','Şlaqbaum və darvaza üçün etibarlı avtomatika'],['Hikvision','Hikvision','Şlaqbaum + ANPR kamera + turniketlər'],['ZKTeco','ZKTeco','Turniket və SKUD şlaqbaumları'],['any','Fərqi yoxdur (ustanın tövsiyəsi)','İntensivlik və büdcəyə uyğun'],['other','Digər','Əl ilə qeyd et']] } }
+  ]
+};
+
+function extraSummaryPairs(catId) {
+  const steps = WIZ_EXTRA[catId] || [];
+  const ans = wizExtraAns[catId] || {};
+  return steps.map(st => {
+    const loc = st[lang] || st.ru;
+    const v = ans[st.k] || '';
+    if (!v) return [loc.sum, '—'];
+    if (v === 'other') return [loc.sum, (ans[st.k + 'Other'] || '').trim() || (loc.opts.find(o => o[0] === 'other') || ['', '—'])[1]];
+    const found = loc.opts.find(o => o[0] === v);
+    return [loc.sum, found ? found[1] : v];
+  });
+}
+
+function buildExtraAccessories(catId) {
+  const a = wizExtraAns[catId] || {};
+  const isAz = lang === 'az';
+  const pcs = I18N[lang].unitPcs, m = I18N[lang].unitM;
+  const item = (id, ruN, azN, ruD, azD, qty, unit = pcs) => ({ id: `${catId}_${id}`, on: true, name: isAz ? azN : ruN, desc: isAz ? azD : ruD, qty, unit });
+  const list = [];
+
+  if (catId === 'intercom') {
+    const isIp = a.sys !== 'analog';
+    if (a.lock === 'lock_cab') {
+      list.push(item('lock', 'Электрозамок (магнитный / механический) + кронштейн', 'Elektron kilid (maqnit / mexaniki) + kronşteyn', 'Для удалённого открытия калитки или двери', 'Qapının uzaqdan açılması üçün', 1));
+      list.push(item('psu', 'Блок питания 12В + кнопка выхода', '12V qida bloku + çıxış düyməsi', 'Питание замка и выход изнутри', 'Kilidin qidalanması və daxildən çıxış', 1));
+    }
+    if (a.lock !== 'ready') {
+      list.push(item('cab', isIp ? 'Кабель UTP Cat6 (витая пара)' : 'Кабель 4-жильный для домофона + питание', isIp ? 'UTP Cat6 kabel' : 'Domofon üçün 4 naqilli kabel', 'Средний расчёт линии от панели до монитора', 'Paneldən monitora orta məsafə', a.obj === 'house' ? 30 : 15, m));
+    }
+    list.push(item('mnt', 'Козырёк / монтажный короб и крепёж', 'Yağış qoruyucu / montaj qutusu və bərkidici', 'Защита вызывной панели и аккуратный монтаж', 'Çağırış panelinin qorunması və səliqəli montaj', 1));
+  } else if (catId === 'network') {
+    const apCnt = a.area === 'xl' ? 5 : (a.area === 'l' ? 3 : (a.area === 'm' ? 2 : 1));
+    if (a.task !== 'lan' && a.task !== 'lte') {
+      list.push(item('ap', 'Рекомендуемое число Wi-Fi точек доступа', 'Tövsiyə edilən Wi-Fi giriş nöqtəsi sayı', 'Рассчитано под выбранную площадь без мёртвых зон', 'Ölü zonalar olmadan seçilmiş sahəyə uyğun', apCnt));
+    }
+    if (apCnt >= 2 || a.task === 'combo' || a.task === 'lan') {
+      const ports = apCnt >= 4 ? 16 : 8;
+      list.push(item('sw', `PoE-коммутатор ${ports}-портовый`, `${ports}-portlu PoE kommutator`, 'Питание точек доступа и проводных розеток', 'Giriş nöqtələri və LAN rozetkaları üçün', 1));
+    }
+    if (a.cab !== 'done') {
+      const baseM = a.area === 'xl' ? 200 : (a.area === 'l' ? 120 : (a.area === 'm' ? 70 : 40));
+      const cabM = a.cab === 'partial' ? Math.round(baseM / 2) : baseM;
+      list.push(item('utp', 'Кабель UTP Cat6 (100% медь)', 'UTP Cat6 kabel (100% mis)', 'Прокладка линий до точек доступа и розеток', 'Giriş nöqtələri və rozetkalara xətlər', cabM, m));
+    }
+    list.push(item('rj', 'Коннекторы RJ-45 + патч-корды', 'RJ-45 başlıqlar + patch-kordlar', 'Обжим и подключение оборудования', 'Qoşulma və sıxma üçün', apCnt * 4 + 4));
+    if (a.task === 'combo' || a.task === 'lan') {
+      list.push(item('sock', 'Интернет-розетки RJ-45 Cat6', 'RJ-45 Cat6 internet rozetkaları', 'Для стационарных ПК, ТВ и рабочих мест', 'PC, TV və iş masaları üçün', apCnt * 2));
+    }
+  } else if (catId === 'alarm') {
+    const zones = a.scale === 'xl' ? 20 : (a.scale === 'l' ? 12 : (a.scale === 'm' ? 6 : 3));
+    if (a.task !== 'skud') {
+      list.push(item('hub', 'Централь сигнализации (Hub)', 'Siqnalizasiya mərkəzi (Hub)', 'Мозг системы с GSM/Ethernet оповещением', 'GSM/Ethernet bildirişli əsas blok', 1));
+      list.push(item('sens', 'Комплект датчиков (движение / открытие / протечка)', 'Sensor dəsti (hərəkət / açılma / su sızması)', 'Ориентировочно по выбранному числу зон', 'Seçilmiş zona sayına uyğun təxmini', zones));
+      list.push(item('sir', 'Сирена оповещения (внутренняя / уличная)', 'Xəbərdarlıq sirenası (daxili / çöl)', 'Звуковое и световое оповещение при тревоге', 'Həyəcan zamanı səs və işıq siqnalı', 1));
+    }
+    if (a.task === 'skud' || a.task === 'combo') {
+      const doors = a.scale === 'xl' ? 6 : (a.scale === 'l' ? 4 : (a.scale === 'm' ? 2 : 1));
+      list.push(item('lk', 'Электрозамок + кнопка выхода + блок питания 12В', 'Elektron kilid + çıxış düyməsi + 12V qida bloku', 'Комплект на каждую точку прохода', 'Hər keçid qapısı üçün dəst', doors));
+      list.push(item('crd', 'Карты / брелоки доступа (комплект)', 'Keçid kartları / breloklar', 'Для сотрудников и пользователей', 'İşçilər və istifadəçilər üçün', doors * 10));
+    }
+    list.push(item('bat', 'Резервный аккумулятор 12В 7А·ч', 'Ehtiyat akkumulyator 12V 7Ah', 'Автономная работа при отключении света', 'İşıq söndükdə avtonom iş üçün', 1));
+  } else if (catId === 'smarthome') {
+    const rooms = a.obj === 'house' ? 8 : (a.obj === 'office' ? 5 : 4);
+    list.push(item('hub', 'Умный шлюз (Zigbee / Wi-Fi Hub)', 'Ağıllı şlüz (Zigbee / Wi-Fi Hub)', 'Связывает все датчики и сценарии', 'Bütün sensorları və ssenariləri birləşdirir', 1));
+    list.push(item('rel', 'Умные реле / выключатели света', 'Ağıllı relelər / işıq açarları', 'По основным зонам объекта', 'Obyektin əsas zonalarına uyğun', rooms));
+    if (a.scope === 'safety' || a.scope === 'full') {
+      list.push(item('leak', 'Датчики протечки / климата / дыма', 'Su sızması / iqlim / tüstü sensorları', 'Контроль безопасности 24/7', '24/7 təhlükəsizlik nəzarəti', Math.max(2, Math.round(rooms / 2))));
+    }
+    if (a.ctrl === 'panel' || a.scope === 'full') {
+      list.push(item('pnl', 'Настенная сенсорная панель управления', 'Divar sensor idarəetmə paneli', 'Быстрый доступ ко всем сценариям', 'Bütün ssenarilərə sürətli giriş', 1));
+    }
+  } else if (catId === 'electrical') {
+    const mods = a.scale === 'xl' ? 36 : (a.scale === 'l' ? 36 : (a.scale === 'm' ? 24 : 12));
+    const lines = a.scale === 'xl' ? 18 : (a.scale === 'l' ? 14 : (a.scale === 'm' ? 10 : 6));
+    list.push(item('box', `Электрический щит (${mods} модулей)`, `Elektrik şiti (${mods} modul)`, 'Под расчётное количество линий с запасом', 'Ehtiyat yerlə xətt sayına uyğun', 1));
+    list.push(item('rel', a.phase === '3p' ? 'Реле напряжения 3-фазное (380В)' : 'Реле напряжения Zubr (220В, 63A)', a.phase === '3p' ? '3 fazalı gərginlik relesi (380V)' : 'Zubr gərginlik relesi (220V, 63A)', 'Защита техники от скачков и обрыва нуля', 'Texnikanı gərginlik sıçrayışından qoruyur', 1));
+    list.push(item('brk', 'Автоматические выключатели + УЗО', 'Avtomatik açarlar + UZO', '16A на свет, 25A на розетки и защита от утечки', 'İşıq 16A, rozetka 25A və sızma qoruması', lines));
+    if (a.task === 'turnkey') {
+      list.push(item('cab', 'Силовой кабель NYM / ВВГнг (3×1.5 + 3×2.5)', 'Güc kabeli NYM / VVGng (3×1.5 + 3×2.5)', 'Ориентировочный метраж с гофрой', 'Qofra ilə təxmini metraj', lines * 15, m));
+    }
+    list.push(item('cons', 'Клеммы, шины, наконечники и крепёж', 'Klemmalar, şinlər və montaj materialları', 'Для безопасной и аккуратной сборки щита', 'Təhlükəsiz və səliqəli yığım üçün', 1));
+  } else if (catId === 'monitors') {
+    const q = a.qty === '5p' ? 4 : (a.qty === '3_4' ? 3 : (a.qty === '2' ? 2 : 1));
+    if (a.mount !== 'stand') {
+      list.push(item('mnt', 'Кронштейн для экрана (настенный / потолочный)', 'Ekran üçün kronşteyn (divar / tavan)', 'Под выбранную диагональ VESA', 'Seçilmiş VESA ölçüsünə uyğun', q));
+    }
+    if (a.mount === 'ext') {
+      list.push(item('ext', 'HDMI-удлинитель по витой паре Cat6 (до 50–100 м)', 'Cat6 üzərindən HDMI uzadıcı (50–100 m)', 'Передача изображения без потерь на большое расстояние', 'Uzaq məsafəyə itkisiz görüntü ötürülməsi', q));
+    } else {
+      list.push(item('hdmi', 'Кабель HDMI 2.0 (4K) + силовой фильтр', 'HDMI 2.0 (4K) kabel + gərginlik filtri', 'Качественное подключение без помех', 'Keyfiyyətli qoşulma üçün', q));
+    }
+  } else if (catId === 'ups') {
+    const va = a.power === '1500p' ? '3000VA Online' : (a.power === '1200' ? '2000VA' : (a.power === '600' ? '1500VA' : '1000VA'));
+    list.push(item('ups', `Рекомендуемый ИБП (${va})`, `Tövsiyə edilən UPS (${va})`, 'Рассчитан под выбранную нагрузку с запасом', 'Seçilmiş yükə ehtiyatla hesablanıb', 1));
+    if (a.time === '3_6h' || a.time === '8hp') {
+      list.push(item('bat', 'Внешние аккумуляторы AGM / LiFePO4 12В', 'Xarici AGM / LiFePO4 12V akkumulyatorlar', 'Для длительной автономной работы без света', 'Uzunmüddətli avtonom iş üçün', a.time === '8hp' ? 4 : 2));
+    }
+    if (a.form === 'rack') {
+      list.push(item('pdu', 'Блок розеток PDU 19" 1U + кабели IEC', 'PDU 19" 1U rozetka bloku + IEC kabellər', 'Аккуратное распределение питания в шкафу', 'Şkafda səliqəli enerji paylanması', 1));
+    }
+  } else if (catId === 'audio') {
+    const spkCnt = a.area === 'xl' ? 10 : (a.area === 'l' ? 8 : (a.area === 'm' ? 4 : 2));
+    list.push(item('amp', 'Усилитель / трансляционный микшер', 'Gücləndirici / translyasiya mikşeri', 'С Bluetooth / USB и регулировкой зон', 'Bluetooth / USB və zona tənzimləməsi ilə', 1));
+    list.push(item('spk', 'Комплект колонок', 'Səsucaldan dəsti', 'Ориентировочное число под выбранную площадь', 'Seçilmiş sahəyə uyğun təxmini say', spkCnt));
+    if (a.cab !== 'ready') {
+      list.push(item('cab', 'Акустический кабель 2×1.5 мм² (медь)', 'Akustik kabel 2×1.5 mm² (mis)', 'Прокладка линий до каждой колонки', 'Hər səsucaldana xətt çəkilişi', spkCnt * 15, m));
+    }
+    if (a.cab === 'mic_cab') {
+      list.push(item('mic', 'Микрофон (настольный или радиомикрофон)', 'Mikrofon (masaüstü və ya radiomikrofon)', 'Для объявлений и выступлений', 'Elanlar və çıxışlar üçün', 1));
+    }
+  } else if (catId === 'racks') {
+    const qty = a.size === 'xl' ? 30 : (a.size === 'l' ? 20 : (a.size === 'm' ? 12 : 6));
+    if (a.kind === 'rack' || a.kind === 'parts') {
+      list.push(item('pp', 'Патч-панель Cat6 19" + кабельный органайзер 1U', 'Cat6 19" patch-panel + 1U kabel orqanayzeri', 'Для аккуратной коммутации кабелей в шкафу', 'Şkafda səliqəli kabel yığımı üçün', 1));
+      list.push(item('pdu', 'Блок розеток PDU 19" 1U + полка', 'PDU 19" 1U rozetka bloku + rəf', 'Питание и размещение оборудования', 'Avadanlıqların qidalanması və yerləşdirilməsi', 1));
+      list.push(item('kit', 'Комплект крепежа M6 (винты + гайки + стяжки)', 'M6 montaj dəsti (bolt + qayka + bağlayıcı)', 'Для фиксации оборудования в направляющих', 'Avadanlığın bərkidilməsi üçün', 1));
+    } else {
+      list.push(item('box', a.env === 'out' ? 'Герметичные коробки IP65 (УФ-стойкие)' : 'Монтажные коробки / кабель-канал', a.env === 'out' ? 'IP65 germetik qutular (UV davamlı)' : 'Montaj qutuları / kabel kanalı', 'Расчёт под указанный объём', 'Seçilmiş həcmə uyğun', qty));
+      list.push(item('gof', a.env === 'out' ? 'Гофра-труба ПНД уличная с протяжкой' : 'Гофра-труба ПВХ с протяжкой', a.env === 'out' ? 'Çöl üçün PND qofra boru' : 'Daxili PVX qofra boru', 'Защита кабельных трасс', 'Kabel xətlərinin qoruması', qty * 5, m));
+    }
+  } else if (catId === 'barriers') {
+    const isTurn = a.kind === 'turnstile';
+    if (!isTurn) {
+      list.push(item('photo', 'Фотоэлементы безопасности + сигнальная лампа', 'Təhlükəsizlik fotoelementləri + siqnal lampası', 'Защита автомобиля от случайного закрытия стрелы', 'Avtomobili təsadüfi bağlanmadan qoruyur', 1));
+      if (a.width === '4_6' || a.width === '6p') {
+        list.push(item('rest', 'Стационарная опора (подставка) для стрелы', 'Ox üçün sabit dayaq', 'Снижает нагрузку на редуктор при длинной стреле', 'Uzun oxda reduktorun yükünü azaldır', 1));
+      }
+    }
+    if (a.access === 'remote') {
+      list.push(item('rem', 'Пульты-брелоки управления', 'İdarəetmə pult-brelokları', 'Базовый комплект (можно увеличить)', 'Əsas dəst (artırmaq olar)', 5));
+    } else if (a.access === 'anpr' || a.kind === 'anpr') {
+      list.push(item('anpr', 'Камера распознавания номеров (ANPR) + стойка', 'Nömrə tanıma kamerası (ANPR) + dayaq', 'Автоматический въезд по базе номеров', 'Baza üzrə avtomatik giriş', 1));
+    } else if (a.access === 'skud') {
+      list.push(item('skud', 'Считыватель / терминал СКУД + карты доступа', 'SKUD oxuyucu / terminal + keçid kartları', 'Контроль прохода сотрудников', 'İşçilərin keçid nəzarəti', 1));
+    }
+    if (a.site === 'turnkey') {
+      list.push(item('pwr', 'Силовой кабель 3×2.5 + гофра ПНД уличная', 'Güc kabeli 3×2.5 + çöl PND qofra', 'Подводка питания 220В к тумбе', '220V enerjinin çəkilməsi', 30, m));
+    }
+  }
+  wizAccDraft = list;
+}
+
+function buildAllWizAccessories() {
+  if (wizCat === 'cctv') buildWizAccessories();
+  else buildExtraAccessories(wizCat);
+}
+
+function matchExtraProducts(catId) {
+  const ans = wizExtraAns[catId] || {};
+  const brRaw = (ans.brand && ans.brand !== 'any' && ans.brand !== 'other') ? ans.brand.toLowerCase() : '';
+  const pool = products.filter(p => detectShopCat(p) === catId);
+  const scoreBrand = p => (!brRaw ? 1 : (detectBrand(p).toLowerCase().includes(brRaw) || (p.name || '').toLowerCase().includes(brRaw) ? 3 : 0));
+  const sorted = [...pool].sort((a, b) => scoreBrand(b) - scoreBrand(a));
+  return sorted.slice(0, 12);
 }
 
 function matchWizProducts() {
@@ -1279,7 +1723,9 @@ function renderHome(L) {
     pageLimit = 30;
     const catMeta = SHOP_CATS.find(x => x.id === cid);
     if (catMeta && catMeta.hasWiz) {
+      wizCat = cid;
       wizStep = 0;
+      wizDir = 'next';
       mode = 'wiz';
     } else {
       mode = 'cat';
@@ -1290,56 +1736,104 @@ function renderHome(L) {
   $('#allCatBtn').onclick = () => { activeCat = 'all'; brandFilter = 'all'; stockOnly = false; searchQ = ''; pageLimit = 30; mode = 'all'; render(); window.scrollTo(0, 0); };
 }
 
-function wizStepAnimSvg(step) {
-  switch (step) {
-    case 0: // Object + pulsing radar waves (iOS-safe SMIL)
+/* 17 iOS-Safari-safe native SVG SMIL animated icons */
+function wizAnimSvg(key) {
+  switch (key) {
+    case 'home':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17L18 7l13 10"/><path d="M9 14.5V29h18V14.5"/><rect x="15" y="21" width="6" height="8" rx="1"/><circle cx="27" cy="9" r="2" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.25;1" dur="1.3s" repeatCount="indefinite"/></circle><circle cx="27" cy="9" r="2.5" stroke-width="1.6"><animate attributeName="r" values="2.5;7.5" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0" dur="1.8s" repeatCount="indefinite"/></circle></svg>';
-    case 1: // Scanning CCTV camera + blinking REC LED
+    case 'cam':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><animateTransform attributeName="transform" type="rotate" values="-10 10 18; 10 10 18; -10 10 18" dur="2.8s" repeatCount="indefinite"/><path d="M5 14l17-5 5 8-17 5z"/><path d="M23 17l4 1.2 1.2 3.8-4 1.2"/><circle cx="11" cy="15.5" r="1.7" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.15;1" dur="1s" repeatCount="indefinite"/></circle></g><path d="M10 22v7h8"/></svg>';
-    case 2: // IP / Analog animated signal pulse
+    case 'signal':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="10" height="8" rx="2"/><rect x="23" y="12" width="10" height="8" rx="2"/><path d="M13 16h10" stroke-width="2.2" stroke-dasharray="3 3"><animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/></path><circle cx="28" cy="16" r="1.5" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.2;1" dur="1.1s" repeatCount="indefinite"/></circle><path d="M28 24v4M24 28h8" stroke-width="1.8"/></svg>';
-    case 3: // Megapixel focus viewfinder zooming
+    case 'focus':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(18 18)"><g><animateTransform attributeName="transform" type="scale" values="1;0.84;1" dur="2s" repeatCount="indefinite"/><path d="M-12 -6v-5h5M7 -11h5v5M12 6v5h-5M-7 11h-5v-5"/></g></g><circle cx="18" cy="18" r="5.5"/><circle cx="18" cy="18" r="2.2" fill="currentColor" stroke="none"><animate attributeName="r" values="1.8;3;1.8" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/></circle></svg>';
-    case 4: // Spinning HDD storage platter + activity LED
+    case 'hdd':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="24" height="28" rx="3.5"/><g><animateTransform attributeName="transform" type="rotate" from="0 18 16" to="360 18 16" dur="4s" repeatCount="indefinite"/><circle cx="18" cy="16" r="6.5" stroke-dasharray="11 5 16 5"/><circle cx="18" cy="16" r="2"/></g><line x1="11" y1="27" x2="18" y2="27"/><circle cx="24" cy="27" r="1.6" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.15;1" dur="0.9s" repeatCount="indefinite"/></circle></svg>';
-    case 5: // Animated cable tracing
+    case 'cable':
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="10" r="3"/><circle cx="29" cy="26" r="3"/><path d="M10 10h9a4 4 0 0 1 4 4v8a4 4 0 0 0 3 4" stroke-width="2.2" stroke-dasharray="4 4"><animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.1s" repeatCount="indefinite"/></path></svg>';
-    default: // Floating shield & pulsing checkmark
+    case 'intercom':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="20" height="28" rx="4"/><circle cx="18" cy="14" r="3.5"/><circle cx="18" cy="14" r="3.5" stroke-width="1.5"><animate attributeName="r" values="3.5;7.5" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.8;0" dur="1.8s" repeatCount="indefinite"/></circle><rect x="14" y="24" width="8" height="3" rx="1.5" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.35;1" dur="1.4s" repeatCount="indefinite"/></rect></svg>';
+    case 'wifi':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M5 14a18 18 0 0 1 26 0"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.8s" begin="0.4s" repeatCount="indefinite"/></path><path d="M9.5 19a12 12 0 0 1 17 0"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.8s" begin="0.2s" repeatCount="indefinite"/></path><path d="M14 23.5a6 6 0 0 1 8 0"><animate attributeName="opacity" values="0.2;1;0.2" dur="1.8s" begin="0s" repeatCount="indefinite"/></path><circle cx="18" cy="28" r="2.2" fill="currentColor" stroke="none"/></svg>';
+    case 'lock':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="16" width="22" height="15" rx="3"/><path d="M12 16v-4a6 6 0 0 1 12 0v4"><animateTransform attributeName="transform" type="translate" values="0 0; 0 -2; 0 0" dur="2.2s" repeatCount="indefinite"/></path><circle cx="18" cy="23.5" r="2.2" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.3;1" dur="1.2s" repeatCount="indefinite"/></circle></svg>';
+    case 'smart':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17L18 6l13 11"/><path d="M9 14.5V29h18V14.5"/><circle cx="18" cy="21" r="2.5" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="2.5" stroke-width="1.6"><animate attributeName="r" values="2.5;7" dur="1.9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0" dur="1.9s" repeatCount="indefinite"/></circle></svg>';
+    case 'bolt':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L8 20h9l-2 12 13-17h-9l1-11z"><animate attributeName="opacity" values="1;0.4;1" dur="1.3s" repeatCount="indefinite"/></path></svg>';
+    case 'monitor':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="28" height="19" rx="2.5"/><line x1="12" y1="30" x2="24" y2="30"/><line x1="18" y1="25" x2="18" y2="30"/><line x1="8" y1="11" x2="28" y2="11" stroke-width="1.5" opacity="0.7"><animate attributeName="y1" values="10;21;10" dur="2.4s" repeatCount="indefinite"/><animate attributeName="y2" values="10;21;10" dur="2.4s" repeatCount="indefinite"/></line></svg>';
+    case 'battery':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="25" height="16" rx="3"/><line x1="32" y1="15" x2="32" y2="21" stroke-width="2.5"/><rect x="8" y="14" width="4" height="8" rx="1" fill="currentColor" stroke="none"><animate attributeName="opacity" values="0.25;1;0.25" dur="1.6s" begin="0s" repeatCount="indefinite"/></rect><rect x="14.5" y="14" width="4" height="8" rx="1" fill="currentColor" stroke="none"><animate attributeName="opacity" values="0.25;1;0.25" dur="1.6s" begin="0.3s" repeatCount="indefinite"/></rect><rect x="21" y="14" width="4" height="8" rx="1" fill="currentColor" stroke="none"><animate attributeName="opacity" values="0.25;1;0.25" dur="1.6s" begin="0.6s" repeatCount="indefinite"/></rect></svg>';
+    case 'audio':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="20" height="28" rx="3.5"/><circle cx="18" cy="10" r="1.5" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="5.5"/><circle cx="18" cy="21" r="2.2" fill="currentColor" stroke="none"><animate attributeName="r" values="2;3.6;2" dur="1.2s" repeatCount="indefinite"/></circle></svg>';
+    case 'rack':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="26" height="26" rx="3"/><line x1="5" y1="13.5" x2="31" y2="13.5"/><line x1="5" y1="22.5" x2="31" y2="22.5"/><circle cx="10" cy="9.2" r="1.3" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.2;1" dur="1s" begin="0s" repeatCount="indefinite"/></circle><circle cx="10" cy="18" r="1.3" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.2;1" dur="1s" begin="0.35s" repeatCount="indefinite"/></circle><circle cx="10" cy="26.8" r="1.3" fill="currentColor" stroke="none"><animate attributeName="opacity" values="1;0.2;1" dur="1s" begin="0.7s" repeatCount="indefinite"/></circle></svg>';
+    case 'barrier':
+      return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="16" width="8" height="14" rx="1.5"/><line x1="2" y1="30" x2="34" y2="30"/><g><animateTransform attributeName="transform" type="rotate" values="0 12 19; -42 12 19; -42 12 19; 0 12 19" dur="3.4s" repeatCount="indefinite"/><line x1="12" y1="19" x2="32" y2="19" stroke-width="2.6"/></g></svg>';
+    default: // shield
       return '<svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><g><animateTransform attributeName="transform" type="translate" values="0 0; 0 -2.5; 0 0" dur="2.2s" repeatCount="indefinite"/><path d="M18 4l11 4.5v9c0 7.2-4.7 12.2-11 14.5-6.3-2.3-11-7.3-11-14.5v-9L18 4z"/><path d="M13.5 18l3 3 6.5-6.5" stroke-width="2.3"><animate attributeName="opacity" values="0.45;1;0.45" dur="1.8s" repeatCount="indefinite"/></path></g></svg>';
   }
 }
 
-function renderCctvWizard(L) {
-  const totalSteps = 7;
-  const pct = Math.round(((wizStep + 1) / totalSteps) * 100);
-  let qTitle = '', qHint = '', opts = [], field = '', otherField = '', otherPh = '', extraNote = '', isNumOther = false, cols2 = false;
+const CCTV_ICONS = ['home', 'cam', 'signal', 'focus', 'hdd', 'cable', 'shield'];
 
-  if (wizStep === 0) {
-    qTitle = L.q1Title; qHint = L.q1Hint; opts = L.q1Opts; field = 'obj'; otherField = 'objOther'; otherPh = L.q1Ph; cols2 = true;
-  } else if (wizStep === 1) {
-    qTitle = L.q2Title; qHint = L.q2Hint; opts = L.q2Opts; field = 'cams'; otherField = 'camsCustom'; otherPh = L.q2Ph; isNumOther = true; cols2 = true;
-  } else if (wizStep === 2) {
-    qTitle = L.q3Title; qHint = L.q3Hint; opts = L.q3Opts; field = 'sys';
-  } else if (wizStep === 3) {
-    qTitle = L.q4Title; qHint = L.q4Hint; opts = L.q4Opts; field = 'mp'; extraNote = L.wizMpNote; cols2 = true;
-  } else if (wizStep === 4) {
-    qTitle = L.q5Title; qHint = L.q5Hint; field = 'arch'; otherField = 'archOther'; otherPh = L.q5Ph; cols2 = true;
-    const tbs = [1, 2, 4, 6, 8, 16];
-    opts = tbs.map(tb => ({
-      v: String(tb),
-      t: tb <= 8 ? L.q5Tb(tb) : `${L.q5Tb(tb)} (2 × ${L.q5Tb(8)})`,
-      s: tb <= 2 ? 'WD Purple / SkyHawk' : L.q5SubBig,
-      r: L.wizDaysApprox(calcArchiveDays(tb))
-    }));
-    opts.push({ v: 'other', t: L.q5OtherT, s: '' });
-    extraNote = L.wizDaysNote(wizCamCount(), wizMpNum());
-  } else if (wizStep === 5) {
-    qTitle = L.q6Title; qHint = L.q6Hint; opts = L.q6Opts; field = 'cab'; otherField = 'cabOther'; otherPh = L.q6Ph;
+function renderWizard(L) {
+  const isCctv = wizCat === 'cctv';
+  const extraSteps = !isCctv ? (WIZ_EXTRA[wizCat] || []) : [];
+  const totalSteps = isCctv ? 7 : extraSteps.length;
+  if (wizStep >= totalSteps) wizStep = 0;
+  const pct = Math.round(((wizStep + 1) / totalSteps) * 100);
+  const catName = (L.cats[wizCat] && L.cats[wizCat].t) || '';
+  const wizTitleTxt = isCctv ? L.wizTitle : L.wizCatTitle(catName);
+
+  let qTitle = '', qHint = '', opts = [], field = '', otherField = '', otherPh = '', extraNote = '', isNumOther = false, cols2 = false, icoKey = 'shield';
+  let curVal = '', curOtherVal = '';
+
+  if (isCctv) {
+    icoKey = CCTV_ICONS[wizStep] || 'shield';
+    if (wizStep === 0) {
+      qTitle = L.q1Title; qHint = L.q1Hint; opts = L.q1Opts; field = 'obj'; otherField = 'objOther'; otherPh = L.q1Ph; cols2 = true;
+    } else if (wizStep === 1) {
+      qTitle = L.q2Title; qHint = L.q2Hint; opts = L.q2Opts; field = 'cams'; otherField = 'camsCustom'; otherPh = L.q2Ph; isNumOther = true; cols2 = true;
+    } else if (wizStep === 2) {
+      qTitle = L.q3Title; qHint = L.q3Hint; opts = L.q3Opts; field = 'sys';
+    } else if (wizStep === 3) {
+      qTitle = L.q4Title; qHint = L.q4Hint; opts = L.q4Opts; field = 'mp'; extraNote = L.wizMpNote; cols2 = true;
+    } else if (wizStep === 4) {
+      qTitle = L.q5Title; qHint = L.q5Hint; field = 'arch'; otherField = 'archOther'; otherPh = L.q5Ph; cols2 = true;
+      const tbs = [1, 2, 4, 6, 8, 16];
+      opts = tbs.map(tb => ({
+        v: String(tb),
+        t: tb <= 8 ? L.q5Tb(tb) : `${L.q5Tb(tb)} (2 × ${L.q5Tb(8)})`,
+        s: tb <= 2 ? 'WD Purple / SkyHawk' : L.q5SubBig,
+        r: L.wizDaysApprox(calcArchiveDays(tb))
+      }));
+      opts.push({ v: 'other', t: L.q5OtherT, s: '' });
+      extraNote = L.wizDaysNote(wizCamCount(), wizMpNum());
+    } else if (wizStep === 5) {
+      qTitle = L.q6Title; qHint = L.q6Hint; opts = L.q6Opts; field = 'cab'; otherField = 'cabOther'; otherPh = L.q6Ph;
+    } else {
+      qTitle = L.q7Title; qHint = L.q7Hint; opts = L.q7Opts; field = 'brand'; otherField = 'brandOther'; otherPh = L.q7Ph; cols2 = true;
+    }
+    curVal = wizAns[field] || '';
+    curOtherVal = otherField ? (wizAns[otherField] || '') : '';
   } else {
-    qTitle = L.q7Title; qHint = L.q7Hint; opts = L.q7Opts; field = 'brand'; otherField = 'brandOther'; otherPh = L.q7Ph; cols2 = true;
+    const st = extraSteps[wizStep];
+    const loc = st[lang] || st.ru;
+    icoKey = st.ico || 'shield';
+    cols2 = Boolean(st.cols2);
+    qTitle = loc.t;
+    qHint = loc.h || '';
+    opts = loc.opts.map(o => ({ v: o[0], t: o[1], s: o[2] || '', r: o[3] || '' }));
+    field = st.k;
+    otherField = loc.ph ? (st.k + 'Other') : '';
+    otherPh = loc.ph || '';
+    const store = wizExtraAns[wizCat] || (wizExtraAns[wizCat] = {});
+    curVal = store[field] || '';
+    curOtherVal = otherField ? (store[otherField] || '') : '';
   }
 
-  const curVal = wizAns[field];
   const needsOther = (curVal === 'other' || curVal === '64+') && otherField;
 
   let html = `<div class="wiz-wrap">
@@ -1348,12 +1842,12 @@ function renderCctvWizard(L) {
       <button type="button" class="skip-link" id="wizSkip">${esc(L.skipToCat)}</button>
     </div>
     <div class="wiz-prog">
-      <div class="wiz-ptop"><span>${esc(L.wizTitle)} · ${esc(L.wizStep(wizStep + 1, totalSteps))}</span><span>${pct}%</span></div>
+      <div class="wiz-ptop"><span>${esc(wizTitleTxt)} · ${esc(L.wizStep(wizStep + 1, totalSteps))}</span><span>${pct}%</span></div>
       <div class="wiz-pbar"><div class="wiz-pfill" style="width:${pct}%"></div></div>
     </div>
     <section class="wiz-card ${wizDir === 'prev' ? 'in-prev' : 'in-next'}">
       <div class="wiz-head">
-        <div class="wiz-ico" aria-hidden="true">${wizStepAnimSvg(wizStep)}</div>
+        <div class="wiz-ico" aria-hidden="true">${wizAnimSvg(icoKey)}</div>
         <div class="wiz-htxt">
           <h2>${esc(qTitle)}</h2>
           <div class="wiz-hint">${esc(qHint)}</div>
@@ -1369,7 +1863,7 @@ function renderCctvWizard(L) {
         </button>`).join('')}
       </div>
       ${needsOther ? `<div class="wiz-other">
-        <input id="wizOtherInp" type="${isNumOther ? 'number' : 'text'}" ${isNumOther ? 'min="65" max="999" inputmode="numeric"' : 'maxlength="120"'} placeholder="${esc(otherPh)}" value="${esc(wizAns[otherField] || '')}">
+        <input id="wizOtherInp" type="${isNumOther ? 'number' : 'text'}" ${isNumOther ? 'min="65" max="999" inputmode="numeric"' : 'maxlength="120"'} placeholder="${esc(otherPh)}" value="${esc(curOtherVal)}">
       </div>` : ''}
       ${extraNote ? `<div class="wiz-note">${esc(extraNote)}</div>` : ''}
       <div class="err" id="wizErr"></div>
@@ -1383,16 +1877,23 @@ function renderCctvWizard(L) {
   $('#app').innerHTML = html;
 
   $('#wizBackCats').onclick = () => { mode = 'home'; render(); window.scrollTo(0, 0); };
-  $('#wizSkip').onclick = () => { activeCat = 'cctv'; mode = 'cat'; render(); window.scrollTo(0, 0); };
+  $('#wizSkip').onclick = () => { activeCat = wizCat; mode = 'cat'; render(); window.scrollTo(0, 0); };
+
+  const setVal = (k, val) => {
+    if (isCctv) wizAns[k] = val;
+    else { if (!wizExtraAns[wizCat]) wizExtraAns[wizCat] = {}; wizExtraAns[wizCat][k] = val; }
+  };
+  const getVal = k => isCctv ? wizAns[k] : ((wizExtraAns[wizCat] && wizExtraAns[wizCat][k]) || '');
 
   const advance = () => {
     const errEl = $('#wizErr');
-    if (!wizAns[field]) return;
-    if (wizAns[field] === '64+' && isNumOther) {
-      const num = Math.round(Number(wizAns[otherField]));
+    const v = getVal(field);
+    if (!v) return;
+    if (v === '64+' && isNumOther) {
+      const num = Math.round(Number(getVal(otherField)));
       if (!Number.isFinite(num) || num < 65) { errEl.textContent = L.wizErrCams; if ($('#wizOtherInp')) $('#wizOtherInp').focus(); return; }
-    } else if (wizAns[field] === 'other' && otherField) {
-      if (!(wizAns[otherField] || '').trim()) { errEl.textContent = L.wizErrOther; if ($('#wizOtherInp')) $('#wizOtherInp').focus(); return; }
+    } else if (v === 'other' && otherField) {
+      if (!(getVal(otherField) || '').trim()) { errEl.textContent = L.wizErrOther; if ($('#wizOtherInp')) $('#wizOtherInp').focus(); return; }
     }
     errEl.textContent = '';
     if (wizStep < totalSteps - 1) {
@@ -1401,7 +1902,7 @@ function renderCctvWizard(L) {
       render();
       window.scrollTo(0, 0);
     } else {
-      buildWizAccessories();
+      buildAllWizAccessories();
       mode = 'wiz_res';
       render();
       window.scrollTo(0, 0);
@@ -1409,7 +1910,7 @@ function renderCctvWizard(L) {
   };
 
   $('#app').querySelectorAll('[data-wv]').forEach(b => b.onclick = () => {
-    wizAns[field] = b.dataset.wv;
+    setVal(field, b.dataset.wv);
     if (b.dataset.wv === 'other' || b.dataset.wv === '64+') {
       render();
       if ($('#wizOtherInp')) $('#wizOtherInp').focus();
@@ -1422,28 +1923,29 @@ function renderCctvWizard(L) {
 
   if ($('#wizOtherInp')) {
     const inp = $('#wizOtherInp');
-    inp.oninput = () => { wizAns[otherField] = inp.value; $('#wizErr').textContent = ''; };
+    inp.oninput = () => { setVal(otherField, inp.value); $('#wizErr').textContent = ''; };
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); advance(); } });
   }
   if ($('#wizPrev')) $('#wizPrev').onclick = () => { wizDir = 'prev'; wizStep--; render(); window.scrollTo(0, 0); };
   $('#wizNext').onclick = advance;
 }
 
-function renderCctvResults(L) {
-  const pairs = wizSummaryPairs();
-  const matched = matchWizProducts();
+function renderWizardResults(L) {
+  const isCctv = wizCat === 'cctv';
+  const catName = (L.cats[wizCat] && L.cats[wizCat].t) || '';
+  const pairs = isCctv ? wizSummaryPairs() : extraSummaryPairs(wizCat);
   const selAcc = wizAccDraft.filter(a => a.on && a.qty > 0);
-  const ch = wizNvrChannels();
+  const resTitle = isCctv ? L.wizResTitle : L.wizCatResTitle(catName);
 
   let html = `<div class="back-bar">
     <button type="button" class="back-btn" id="resBackCats">${esc(L.backCats)}</button>
-    <button type="button" class="skip-link" id="resAllCctv">${esc(L.skipToCat)}</button>
+    <button type="button" class="skip-link" id="resAllCat">${esc(L.skipToCat)}</button>
   </div>`;
 
   // 1. Summary card
   html += `<section class="res-sum">
     <div class="res-top">
-      <h2>${esc(L.wizResTitle)}</h2>
+      <h2>${esc(resTitle)}</h2>
       <button type="button" class="btn sm" id="resRestart">${esc(L.restartWiz)}</button>
     </div>
     <div class="res-tags">
@@ -1479,25 +1981,37 @@ function renderCctvResults(L) {
     </div>
   </section>`;
 
-  // 3. Grouped matching catalog items
-  if (matched.cams.length) {
-    html += `<div class="grp-h">${esc(L.wizGrpCams)}<span>${matched.cams.length}</span></div>`;
-    html += '<div class="plist">' + matched.cams.map(productCardHtml).join('') + '</div>';
-  }
-  if (matched.nvrs.length) {
-    html += `<div class="grp-h">${esc(L.wizGrpNvr(ch))}<span>${matched.nvrs.length}</span></div>`;
-    html += '<div class="plist">' + matched.nvrs.map(productCardHtml).join('') + '</div>';
-  }
-  if (matched.extras.length) {
-    html += `<div class="grp-h">${esc(L.wizGrpExtra)}<span>${matched.extras.length}</span></div>`;
-    html += '<div class="plist">' + matched.extras.map(productCardHtml).join('') + '</div>';
+  // 3. Matching catalog items
+  if (isCctv) {
+    const matched = matchWizProducts();
+    const ch = wizNvrChannels();
+    if (matched.cams.length) {
+      html += `<div class="grp-h">${esc(L.wizGrpCams)}<span>${matched.cams.length}</span></div>`;
+      html += '<div class="plist">' + matched.cams.map(productCardHtml).join('') + '</div>';
+    }
+    if (matched.nvrs.length) {
+      html += `<div class="grp-h">${esc(L.wizGrpNvr(ch))}<span>${matched.nvrs.length}</span></div>`;
+      html += '<div class="plist">' + matched.nvrs.map(productCardHtml).join('') + '</div>';
+    }
+    if (matched.extras.length) {
+      html += `<div class="grp-h">${esc(L.wizGrpExtra)}<span>${matched.extras.length}</span></div>`;
+      html += '<div class="plist">' + matched.extras.map(productCardHtml).join('') + '</div>';
+    }
+  } else {
+    const items = matchExtraProducts(wizCat);
+    if (items.length) {
+      html += `<div class="grp-h">${esc(L.wizGrpMain)}<span>${items.length}</span></div>`;
+      html += '<div class="plist">' + items.map(productCardHtml).join('') + '</div>';
+    } else {
+      html += `<div class="wiz-note" style="margin-top:0">${esc(L.wizNoCatalogNote)}</div>`;
+    }
   }
 
   $('#app').innerHTML = html;
 
   $('#resBackCats').onclick = () => { mode = 'home'; render(); window.scrollTo(0, 0); };
-  $('#resAllCctv').onclick = () => { activeCat = 'cctv'; mode = 'cat'; render(); window.scrollTo(0, 0); };
-  $('#resRestart').onclick = () => { wizStep = 0; mode = 'wiz'; render(); window.scrollTo(0, 0); };
+  $('#resAllCat').onclick = () => { activeCat = wizCat; mode = 'cat'; render(); window.scrollTo(0, 0); };
+  $('#resRestart').onclick = () => { wizStep = 0; wizDir = 'prev'; mode = 'wiz'; render(); window.scrollTo(0, 0); };
 
   $('#app').querySelectorAll('[data-achk]').forEach(cb => cb.onchange = () => {
     wizAccDraft[Number(cb.dataset.achk)].on = cb.checked;
@@ -1528,11 +2042,15 @@ function renderCctvResults(L) {
   };
 
   $('#sendCalcBtn').onclick = () => {
-    // Ensure cart has the selected kit + summary item if empty so checkout works cleanly
     if (!cart.length) {
-      const sysShort = wizAns.sys === 'analog' ? L.sysAnalogShort : 'IP';
-      const brShort = (wizAns.brand && wizAns.brand !== 'any') ? (wizAns.brand === 'other' ? wizAns.brandOther : wizAns.brand) : L.brandRecShort;
-      addToCart({ id: 'wiz_kit_' + uid(), name: L.calcOrderItem(wizCamCount(), sysShort, wizMpNum(), brShort || '—'), price: 0, unit: L.unitPcs }, 1, true);
+      if (isCctv) {
+        const sysShort = wizAns.sys === 'analog' ? L.sysAnalogShort : 'IP';
+        const brShort = (wizAns.brand && wizAns.brand !== 'any') ? (wizAns.brand === 'other' ? wizAns.brandOther : wizAns.brand) : L.brandRecShort;
+        addToCart({ id: 'wiz_kit_' + uid(), name: L.calcOrderItem(wizCamCount(), sysShort, wizMpNum(), brShort || '—'), price: 0, unit: L.unitPcs }, 1, true);
+      } else {
+        const firstAns = (pairs[0] && pairs[0][1]) || catName;
+        addToCart({ id: 'wiz_kit_' + uid(), name: L.wizOrderGen(catName, firstAns), price: 0, unit: L.unitPcs }, 1, true);
+      }
       for (const a of wizAccDraft) {
         if (a.on && a.qty > 0) addToCart({ id: 'wiz_' + a.id, name: a.name, price: 0, unit: a.unit }, a.qty, true);
       }
@@ -1606,7 +2124,7 @@ function renderCatalogView(L) {
   $('#app').innerHTML = html;
 
   $('#catBack').onclick = () => { mode = 'home'; searchQ = ''; render(); window.scrollTo(0, 0); };
-  if ($('#catStartWiz')) $('#catStartWiz').onclick = () => { wizStep = 0; mode = 'wiz'; render(); window.scrollTo(0, 0); };
+  if ($('#catStartWiz')) $('#catStartWiz').onclick = () => { wizCat = activeCat; wizStep = 0; wizDir = 'next'; mode = 'wiz'; render(); window.scrollTo(0, 0); };
   const qInp = $('#qInp');
   qInp.oninput = () => { searchQ = qInp.value; pageLimit = 30; renderListOnly(); };
   if ($('#qClr')) $('#qClr').onclick = () => { searchQ = ''; pageLimit = 30; render(); };
@@ -1647,8 +2165,8 @@ function render() {
   }
 
   if (mode === 'home') renderHome(L);
-  else if (mode === 'wiz') renderCctvWizard(L);
-  else if (mode === 'wiz_res') renderCctvResults(L);
+  else if (mode === 'wiz') renderWizard(L);
+  else if (mode === 'wiz_res') renderWizardResults(L);
   else renderCatalogView(L);
 }
 
@@ -1922,7 +2440,7 @@ $('#hdrCustomBtn').onclick = openCustomModal;
 document.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => {
   lang = b.dataset.lang;
   try { localStorage.setItem('tm-reg-lang', lang); } catch (e) {}
-  if (mode === 'wiz_res') buildWizAccessories();
+  if (mode === 'wiz_res') buildAllWizAccessories();
   render();
 });
 
